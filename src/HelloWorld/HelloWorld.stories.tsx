@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { HexGrid } from './index'
+import { HelloWorld } from './index'
 
-const meta: Meta<typeof HexGrid> = { component: HexGrid }
+const meta: Meta<typeof HelloWorld> = { component: HelloWorld }
 export default meta
-type Story = StoryObj<typeof HexGrid>
+type Story = StoryObj<typeof HelloWorld>
 
 export const Basic: Story = {}

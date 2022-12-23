@@ -1,5 +1,5 @@
-export type HexGridProps = {
+export type HelloWorldProps = {
   value?: string
 }
 
-export const HexGrid = ({ value = 'Hello World' }: HexGridProps) => <h1>{value}</h1>
+export const HelloWorld = ({ value = 'Hello World' }: HelloWorldProps) => <h1>{value}</h1>
