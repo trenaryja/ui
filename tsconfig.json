@@ -1,21 +1,11 @@
 {
   "compilerOptions": {
-    // Default
-    "target": "ESNext",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    // Added
-    "lib": ["dom", "esnext"],
     "jsx": "react-jsx",
     "module": "ESNext",
-    "declaration": true,
-    "declarationDir": "types",
-    "sourceMap": true,
-    "outDir": "dist",
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "emitDeclarationOnly": true
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true
   }
 }

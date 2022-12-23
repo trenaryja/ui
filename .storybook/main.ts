@@ -1,8 +1,6 @@
-module.exports = {
+export default {
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: ['@storybook/addon-links', '@storybook/addon-essentials'],
   framework: '@storybook/react',
-  docs: {
-    docsPage: 'automatic',
-  },
+  docs: { docsPage: 'automatic' },
 }

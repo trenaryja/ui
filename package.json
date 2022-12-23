@@ -2,19 +2,58 @@
   "name": "@trenaryja/ui",
   "version": "0.0.1",
   "description": "",
-  "type": "module",
-  "scripts": {
-    "storybook": "start-storybook -p 6006 --quiet",
-    "build-storybook": "build-storybook"
-  },
-  "keywords": [
-    "react",
-    "typescript",
-    "component",
-    "library"
-  ],
   "author": "Justin Trenary",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"yarn build --watch\" \"yarn storybook\"",
+    "build": "tsup --onSuccess \"yarn yalc publish\"",
+    "type-check": "tsc",
+    "lint": "eslint --ignore-path .gitignore \"{src,tests}/**/*.+(ts|js|tsx)\"",
+    "lint:fix": "yarn lint --fix && prettier --write .",
+    "storybook": "start-storybook -p 6006 --quiet",
+    "build-storybook": "build-storybook",
+    "deploy-storybook": "storybook-to-ghpages",
+    "release": "yarn build && yarn release-it"
+  },
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@babel/core": "7.20.7",
+    "@storybook/addon-essentials": "6.5.15",
+    "@storybook/addon-links": "6.5.15",
+    "@storybook/builder-webpack5": "6.5.15",
+    "@storybook/manager-webpack5": "6.5.15",
+    "@storybook/react": "6.5.15",
+    "@storybook/storybook-deployer": "2.8.16",
+    "@types/node": "18.11.17",
+    "@types/react": "18.0.26",
+    "@types/react-dom": "18.0.9",
+    "@typescript-eslint/eslint-plugin": "5.47.0",
+    "@typescript-eslint/parser": "5.47.0",
+    "babel-loader": "9.1.0",
+    "concurrently": "7.6.0",
+    "eslint": "8.30.0",
+    "prettier": "2.8.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "release-it": "15.5.1",
+    "tsup": "6.5.0",
+    "typescript": "4.9.4",
+    "yalc": "1.0.0-pre.53"
+  },
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17"
+  },
   "prettier": {
     "semi": false,
     "printWidth": 120,
@@ -22,20 +61,25 @@
     "singleQuote": true,
     "jsxSingleQuote": true
   },
-  "devDependencies": {
-    "@babel/core": "^7.20.7",
-    "@storybook/addon-essentials": "^6.5.15",
-    "@storybook/addon-links": "^6.5.15",
-    "@storybook/addons": "^6.5.15",
-    "@storybook/builder-webpack5": "^6.5.15",
-    "@storybook/manager-webpack5": "^6.5.15",
-    "@storybook/react": "^6.5.15",
-    "@storybook/theming": "^6.5.15",
-    "@types/react": "^18.0.26",
-    "babel-loader": "^9.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^4.9.4"
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ]
   },
-  "dependencies": {}
+  "release-it": {
+    "git": {
+      "commitMessage": "chore(release): v${version}"
+    },
+    "github": {
+      "release": true
+    },
+    "npm": {
+      "publish": false
+    }
+  }
 }

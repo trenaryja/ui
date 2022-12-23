@@ -5,8 +5,6 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  actions: {
-    disable: true,
-  },
+  actions: { disable: true },
   // docsOnly: true,
 }
