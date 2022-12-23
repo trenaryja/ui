@@ -17,7 +17,7 @@ jobs:
           version: 7
       - run: pnpm install
       - run: pnpm run build
-      - run: pnpm run deploy-storybook --ci
+      - run: pnpm run deploy-storybook -- --ci
         env:
           GH_TOKEN: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
 
@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
       - run: pnpm install
       - run: pnpm run build
       - run: npm publish --access public
