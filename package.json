@@ -2,9 +2,8 @@
   "name": "@trenaryja/ui",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "ncu": "npx npm-check-updates",
     "storybook": "start-storybook -p 6006 --quiet",
     "build-storybook": "build-storybook"
   },
@@ -28,8 +27,8 @@
     "@storybook/addon-essentials": "^6.5.15",
     "@storybook/addon-links": "^6.5.15",
     "@storybook/addons": "^6.5.15",
-    "@storybook/builder-webpack4": "^6.5.15",
-    "@storybook/manager-webpack4": "^6.5.15",
+    "@storybook/builder-webpack5": "^6.5.15",
+    "@storybook/manager-webpack5": "^6.5.15",
     "@storybook/react": "^6.5.15",
     "@storybook/theming": "^6.5.15",
     "@types/react": "^18.0.26",
