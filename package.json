@@ -18,7 +18,7 @@
     "storybook": "start-storybook -p 6006 --quiet",
     "build-storybook": "build-storybook",
     "deploy-storybook": "storybook-to-ghpages",
-    "release": "pnpm run build && release-it"
+    "release": "pnpm run build && dotenv release-it --"
   },
   "types": "./dist/index.d.ts",
   "exports": {
@@ -45,6 +45,7 @@
     "@typescript-eslint/parser": "5.47.0",
     "babel-loader": "9.1.0",
     "concurrently": "7.6.0",
+    "dotenv-cli": "^6.0.0",
     "eslint": "8.30.0",
     "prettier": "2.8.1",
     "react": "18.2.0",
