@@ -13,6 +13,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
+      - uses: pnpm/action-setup@v2
       - run: pnpm install
       - run: pnpm run deploy-storybook --ci
         env:
