@@ -16,6 +16,8 @@ jobs:
         with:
           node-version: lts/*
       - uses: pnpm/action-setup@v2
+        with:
+          version: 7
       - run: pnpm install
 
       - name: Check types
