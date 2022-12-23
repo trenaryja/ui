@@ -25,13 +25,13 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Check types
-        run: yarn type-check
+        run: pnpm run type-check
 
       - name: Check linting
-        run: yarn lint
+        run: pnpm run lint
 
       - name: Build storybook
-        run: yarn build-storybook
+        run: pnpm run build-storybook
 
       - name: Build package
-        run: yarn build
+        run: pnpm run build

@@ -13,8 +13,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: lts/*
-      - run: yarn
-      - run: yarn deploy-storybook --ci
+      - run: pnpm i
+      - run: pnpm run deploy-storybook --ci
         env:
           GH_TOKEN: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
 # Uncomment to enable auto publishing to npm
@@ -27,8 +27,8 @@ jobs:
 #        with:
 #          node-version: lts/*
 #          registry-url: https://registry.npmjs.org/
-#      - run: yarn
-#      - run: yarn build
+#      - run: pnpm install
+#      - run: pnpm run build build
 #      - run: npm publish --access public
 #        env:
 #          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
