@@ -1,8 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { HelloWorld } from './index'
+import { HelloWorld } from '.'
 
-const meta: Meta<typeof HelloWorld> = { component: HelloWorld }
+const storyGroup = 'components/'
+const storyName = 'HelloWorld'
+const meta: Meta<typeof HelloWorld> = {
+  title: `${storyGroup}${storyName}`,
+  component: HelloWorld,
+}
 export default meta
 type Story = StoryObj<typeof HelloWorld>
 
-export const Basic: Story = {}
+export const Default: Story = { storyName }
