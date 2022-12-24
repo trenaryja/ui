@@ -21,6 +21,8 @@
     "deploy-storybook": "storybook-to-ghpages",
     "release": "pnpm run build && dotenv release-it --"
   },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
