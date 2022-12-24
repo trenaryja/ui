@@ -2,14 +2,17 @@
 
 This library is a collection of reusable UI components for my projects. There's no real system or pattern in place, just a hodge-podge of random components/ideas that I've come up with. If it inspires you, or you somehow find any of it useful, then hell yeah please tell me about it!
 
-## Links
+<a target="_blank" href="https://trenaryja.github.io/ui">
+  <img src="https://img.shields.io/badge/Storybook-gray?logo=storybook" height="32" align="left" />
+</a>
 
-<style>
-    img {height: 2.5rem}
-</style>
+<a target="_blank" href="https://github.com/trenaryja/ui">
+  <img src="https://img.shields.io/badge/Github-gray?logo=github" height="32" align="left" />
+</a>
 
-| <a target="_blank" href="https://www.npmjs.com/package/@trenaryja/ui"><img src="https://github.com/npm/logos/raw/master/npm%20logo/npm-logo-red.svg"/></a> | <a target="_blank" href="https://trenaryja.github.io/ui"><img src="https://github.com/storybookjs/brand/raw/main/logo/logo-storybook-inverse.svg"/></a> | <a target="_blank" href="https://github.com/trenaryja/ui"><img src="https://upload.wikimedia.org/wikipedia/commons/2/29/GitHub_logo_2013.svg"/></a> |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+<a target="_blank" href="https://www.npmjs.com/package/@trenaryja/ui">
+  <img src="https://img.shields.io/badge/npm-gray?logo=npm" height="32" />
+</a>
 
 ## Getting Started
 
