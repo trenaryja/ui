@@ -1,16 +1,23 @@
-## What's included?
+# @trenary/ui
 
-- ⚡️[tsup](https://github.com/egoist/tsup) - The simplest and fastest way to bundle your TypeScript libraries. Used to bundle package as ESM and CJS modules. Supports TypeScript, Code Splitting, PostCSS, and more out of the box.
-- 🔗 [Yalc](https://github.com/wclr/yalc) - Better workflow than npm | pnpm run link for package authors.
-- 📖 [Storybook](https://storybook.js.org/) - Build UI components and pages in isolation. It streamlines UI development, testing, and documentation.
-- 🔼 [Release-it](https://github.com/release-it/release-it/) - release-it is a command line tool to automatically generate a new GitHub Release and populates it with the changes (commits) made since the last release.
-- 🐙 [Publish via Github Actions](https://docs.github.com/en/actions) - CI/CD workflows for your package. Integrate with Github Releases to automate publishing package to NPM and Storybook to Github Pages.
-- ☑️ [ESLint](https://eslint.org/) - A linter for JavaScript. Includes a simple configuration for React projects based on the recommended ESLint configs.
-- 🎨 [Prettier](https://prettier.io/) - An opinionated code formatter.
+This library is a collection of reusable UI components for my projects. There's no real system or pattern in place, just a hodge-podge of random components/ideas that I've come up with. If it inspires you, or you somehow find any of it useful, then hell yeah please tell me about it!
 
-## Usage
+## Links
 
-### Developing
+<style>
+    img {height: 2.5rem}
+</style>
+
+| <a target="_blank" href="https://www.npmjs.com/package/@trenaryja/ui"><img src="https://github.com/npm/logos/raw/master/npm%20logo/npm-logo-red.svg"/></a> | <a target="_blank" href="https://trenaryja.github.io/ui"><img src="https://github.com/storybookjs/brand/raw/main/logo/logo-storybook-inverse.svg"/></a> | <a target="_blank" href="https://github.com/trenaryja/ui"><img src="https://upload.wikimedia.org/wikipedia/commons/2/29/GitHub_logo_2013.svg"/></a> |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+
+## Getting Started
+
+```console
+npm install @trenary
+```
+
+## Developing
 
 Watch and rebuild code with `tsup` and runs Storybook to preview your UI during development.
 
@@ -26,34 +33,31 @@ Build package with `tsup` for production.
 pnpm run build
 ```
 
-### Linking
+### Linking/Testing
 
-Often times you want to `link` the package you're developing to another project locally to test it out to circumvent the need to publish it to NPM.
+Often times you want to link the package you're developing to another project locally to test it out to circumvent the need to publish it to NPM.
 
-For this we use [yalc](https://github.com/wclr/yalc) which is a tool for local package development and simulating the publishing and installation of packages. Make sure it is globally installed, then in a project where you want to consume your package simply run:
+For this we use `yalc` which is a tool for local package development and simulating the publishing and installation of packages. Make sure it is globally installed, then in a project where you want to consume your package simply run:
 
 ```console
 yalc add my-react-package
 ```
 
-Learn more about `yalc` [here](https://github.com/wclr/yalc).
-
 ### Releasing, tagging & publishing to NPM
 
 Create a semantic version tag and publish to Github Releases. When a new release is detected a Github Action will automatically build the package and publish it to NPM. Additionally, a Storybook will be published to Github pages.
-
-Learn more about how to use the `release-it` command [here](https://github.com/release-it/release-it).
 
 ```console
 pnpm run release
 ```
 
-When you are ready to publish to NPM simply run the following command:
+## What tools are used?
 
-```console
-pnpm run publish
-```
-
-#### Auto publish after Github Release
-
-❗Important note: in order to publish package to NPM you must add your token as a Github Action secret. Learn more on how to configure your repository and publish packages through Github Actions [here](https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages).
+- 📦[pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
+- ⚡️[tsup](https://github.com/egoist/tsup) - The simplest and fastest way to bundle your TypeScript libraries. Used to bundle package as ESM and CJS modules.
+- 🔗 [Yalc](https://github.com/wclr/yalc) - Better workflow than npm link for package authors.
+- 📖 [Storybook](https://storybook.js.org/) - Build UI components and pages in isolation. It streamlines UI development, testing, and documentation.
+- 🔼 [Release-it](https://github.com/release-it/release-it/) - A command line tool to automatically generate a new GitHub/NPM Release
+- 🐙 [Github Actions](https://docs.github.com/en/actions) - CI/CD workflows that integrate with Github Releases to automate publishing the package to NPM and Storybook to Github Pages.
+- ☑️ [ESLint](https://eslint.org/) - A linter for JavaScript.
+- 🎨 [Prettier](https://prettier.io/) - An opinionated code formatter.
