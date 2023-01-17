@@ -1,3 +1,4 @@
+export * from './decorators'
 export const parameters = {
   controls: {
     matchers: {
