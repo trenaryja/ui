@@ -3,7 +3,7 @@ import React from 'react'
 
 export const decorators = [
   (Story) => (
-    <Box m={'xl'}>
+    <Box m={'xl'} ff='sans-serif'>
       <Story />
     </Box>
   ),

@@ -20,7 +20,7 @@ export const Default: Story = {
   render: (args) => {
     return (
       <div style={{ width: '10rem', resize: 'horizontal', overflow: 'auto' }}>
-        <ScaledText {...args} />
+        <ScaledText lines={[]} {...args} />
       </div>
     )
   },
