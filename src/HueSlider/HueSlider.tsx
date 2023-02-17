@@ -22,7 +22,6 @@ export const HueSlider = (props: HueSliderProps) => {
     <Slider
       label={showLabel ? label : null}
       defaultValue={defaultValue}
-      onChange={handleChange}
       styles={{
         thumb: {
           borderColor: color,
@@ -40,6 +39,7 @@ export const HueSlider = (props: HueSliderProps) => {
         },
       }}
       {...props}
+      onChange={handleChange}
     />
   )
 }
