@@ -1,26 +1,28 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { ScaledText } from '.'
 
-const storyGroup = 'components/'
-const storyName = 'ScaledText'
+type Story = StoryObj<typeof ScaledText>
 const meta: Meta<typeof ScaledText> = {
-  title: `${storyGroup}${storyName}`,
+  title: 'components/ScaledText',
   component: ScaledText,
 }
 export default meta
-type Story = StoryObj<typeof ScaledText>
+
+const defaultValues = {
+  lines: ['Hello', 'World', '👋🌎'],
+}
 
 export const Default: Story = {
-  storyName,
+  name: 'ScaledText',
   argTypes: {
     lines: {
-      defaultValue: ['Hello', 'World', '👋🌎'],
+      defaultValue: defaultValues.lines,
     },
   },
   render: (args) => {
     return (
       <div style={{ width: '10rem', resize: 'horizontal', overflow: 'auto' }}>
-        <ScaledText lines={[]} {...args} />
+        <ScaledText {...args} lines={args.lines ?? defaultValues.lines} />
       </div>
     )
   },

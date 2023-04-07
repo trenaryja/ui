@@ -1,13 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { HueSlider } from '.'
 
-const storyGroup = 'components/'
-const storyName = 'HueSlider'
+type Story = StoryObj<typeof HueSlider>
 const meta: Meta<typeof HueSlider> = {
-  title: `${storyGroup}${storyName}`,
+  title: 'components/HueSlider',
   component: HueSlider,
 }
 export default meta
-type Story = StoryObj<typeof HueSlider>
 
-export const Default: Story = { storyName }
+export const Default: Story = { name: 'HueSlider' }
