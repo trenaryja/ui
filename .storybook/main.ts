@@ -1,11 +1,14 @@
-import { StorybookConfig } from '@storybook/core-common'
+import { StorybookConfig } from '@storybook/react-webpack5'
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
   addons: ['@storybook/addon-essentials'],
-  framework: '@storybook/react',
-  features: { postcss: false },
+  framework: {
+    name: '@storybook/react-webpack5',
+    options: {},
+  },
   logLevel: 'silent',
+  docs: { autodocs: false },
 }
 
 export default config

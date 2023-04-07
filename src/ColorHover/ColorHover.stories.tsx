@@ -1,19 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { ColorHover } from '.'
 
-const storyGroup = 'components/'
-const storyName = 'ColorHover'
+type Story = StoryObj<typeof ColorHover>
 const meta: Meta<typeof ColorHover> = {
-  title: `${storyGroup}${storyName}`,
+  title: 'components/ColorHover',
   component: ColorHover,
 }
 export default meta
-type Story = StoryObj<typeof ColorHover>
 
 export const Default: Story = {
-  storyName,
+  name: 'ColorHover',
   render: (args) => (
-    <ColorHover color='currentcolor' {...args}>
+    <ColorHover {...args} color={args.color ?? 'currentcolor'}>
       Hover Me
     </ColorHover>
   ),

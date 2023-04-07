@@ -2,17 +2,9 @@
 
 This library is a collection of reusable UI components for my projects. There's no real system or pattern in place, just a hodge-podge of random components/ideas that I've come up with. If it inspires you, or you somehow find any of it useful, then hell yeah please tell me about it!
 
-<a target="_blank" href="https://trenaryja.github.io/ui">
-  <img src="https://img.shields.io/badge/Storybook-gray?logo=storybook" height="32" align="left" />
-</a>
-
-<a target="_blank" href="https://github.com/trenaryja/ui">
-  <img src="https://img.shields.io/badge/Github-gray?logo=github" height="32" align="left" />
-</a>
-
-<a target="_blank" href="https://www.npmjs.com/package/@trenaryja/ui">
-  <img src="https://img.shields.io/badge/npm-gray?logo=npm" height="32" />
-</a>
+[![Storybook](https://img.shields.io/badge/Storybook-gray?logo=storybook)](https://trenaryja.github.io/ui)
+[![Github](https://img.shields.io/badge/Github-gray?logo=github)](https://github.com/trenaryja/ui)
+[![npm](https://img.shields.io/badge/npm-gray?logo=npm)](https://www.npmjs.com/package/@trenaryja/ui)
 
 ## Getting Started
 
