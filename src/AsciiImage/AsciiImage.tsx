@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from 'react'
+import { CSSProperties, useRef, useState } from 'react'
 import { clampDimensions, getAscii, getFontDimensions } from './utils'
 
 export type AsciiImageProps = {
@@ -25,11 +25,12 @@ export const AsciiImage = ({
   const [ascii, setAscii] = useState('')
   const [imgHeight, setImgHeight] = useState(0)
   const [imgWidth, setImgWidth] = useState(0)
+  const ref = useRef<HTMLDivElement>(null)
 
   const image = new Image()
   image.crossOrigin = 'Anonymous'
   image.onload = () => {
-    const { fontHeight, fontWidth } = getFontDimensions()
+    const { fontHeight, fontWidth } = getFontDimensions(ref, preStyle)
     const { width, height } = clampDimensions({
       width: image.width,
       height: image.height,
@@ -46,7 +47,10 @@ export const AsciiImage = ({
   image.src = src
 
   return (
-    <div style={{ display: 'grid', gridTemplateAreas: 'stack', placeItems: 'center', width: 'fit-content', ...style }}>
+    <div
+      ref={ref}
+      style={{ display: 'grid', gridTemplateAreas: 'stack', placeItems: 'center', width: 'fit-content', ...style }}
+    >
       {showImage && (
         <img
           src={src}
