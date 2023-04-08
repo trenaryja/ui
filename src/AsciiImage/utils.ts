@@ -1,3 +1,5 @@
+import { CSSProperties, RefObject } from 'react'
+
 export const convertToGrayScales = (context: CanvasRenderingContext2D | null, width: number, height: number) => {
   if (context === null) return []
   const imageData = context.getImageData(0, 0, width, height)
@@ -54,13 +56,13 @@ export const convertToAscii = (grayScales: number[], width: number, characterRam
   }, '')
 }
 
-export const getFontDimensions = () => {
+export const getFontDimensions = (ref: RefObject<HTMLDivElement>, preStyle: CSSProperties = {}) => {
   const pre = document.createElement('pre')
-  pre.style.display = 'inline'
+  ref.current?.append(pre)
+  Object.assign(pre.style, preStyle)
   pre.textContent = ' '
-  document.body.appendChild(pre)
   const { width, height } = pre.getBoundingClientRect()
-  document.body.removeChild(pre)
+  ref.current?.removeChild(pre)
   return { fontWidth: width, fontHeight: height }
 }
 
