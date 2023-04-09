@@ -1,3 +1,4 @@
+import { DEFAULT_THEME } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
 import { ColorHover } from '.'
 
@@ -11,7 +12,7 @@ export default meta
 export const Default: Story = {
   name: 'ColorHover',
   render: (args) => (
-    <ColorHover {...args} color={args.color ?? 'currentcolor'}>
+    <ColorHover {...args} color={args.color ?? DEFAULT_THEME.colors.dark[5]}>
       Hover Me
     </ColorHover>
   ),

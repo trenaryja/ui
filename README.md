@@ -2,9 +2,10 @@
 
 This library is a collection of reusable UI components for my projects. There's no real system or pattern in place, just a hodge-podge of random components/ideas that I've come up with. If it inspires you, or you somehow find any of it useful, then hell yeah please tell me about it!
 
-[![Storybook](https://img.shields.io/badge/Storybook-gray?logo=storybook)](https://trenaryja.github.io/ui)
-[![Github](https://img.shields.io/badge/Github-gray?logo=github)](https://github.com/trenaryja/ui)
-[![npm](https://img.shields.io/badge/npm-gray?logo=npm)](https://www.npmjs.com/package/@trenaryja/ui)
+[![Storybook](https://img.shields.io/badge/Storybook-gray?&style=badge&logo=storybook&logoColor=white)](https://trenaryja.github.io/ui)
+[![Github](https://img.shields.io/badge/Github-gray?&style=badge&logo=github&logoColor=white)](https://github.com/trenaryja/ui)
+[![npm](https://img.shields.io/npm/v/@trenaryja/ui?&style=badge&logo=npm&logoColor=white&color=black)](https://www.npmjs.com/package/@trenaryja/ui)
+[![Bundlephobia](https://img.shields.io/bundlephobia/minzip/@trenaryja/ui?logoColor=white&style=badge&label=Bundlephobia&logo=webpack&color=black)](https://bundlephobia.com/package/@trenaryja/ui)
 
 ## Getting Started
 

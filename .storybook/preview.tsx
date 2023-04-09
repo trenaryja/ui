@@ -7,7 +7,7 @@ const preview: Preview = {
   decorators: [
     (Story) => (
       <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
-        <Box m={'xl'} ff='sans-serif'>
+        <Box m='xl' ff='sans-serif'>
           <Story />
         </Box>
       </MantineProvider>
@@ -22,7 +22,6 @@ const preview: Preview = {
     },
     actions: { disable: true },
     docs: { theme: ensure(themes.dark) },
-    // docsOnly: true,
   },
 }
 
