@@ -1,5 +1,10 @@
 import { CSSProperties, RefObject } from 'react'
 
+export const characterRamps = {
+  short: ' .:-=+*#%@',
+  standard: '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`\'.',
+} as const
+
 export const convertToGrayScales = (context: CanvasRenderingContext2D | null, width: number, height: number) => {
   if (context === null) return []
   const imageData = context.getImageData(0, 0, width, height)

@@ -1,11 +1,13 @@
 import { CSSProperties, useRef, useState } from 'react'
-import { clampDimensions, getAscii, getFontDimensions } from './utils'
+import { AnyOther } from '../utils'
+import { characterRamps, clampDimensions, getAscii, getFontDimensions } from './utils'
 
 export type AsciiImageProps = {
   src: string
   maxHeight?: number
   maxWidth?: number
-  characterRamp?: string
+  characterRamp?: keyof typeof characterRamps | AnyOther<string>
+  reverseRamp?: boolean
   showImage?: boolean
   style?: CSSProperties
   imgStyle?: CSSProperties
@@ -16,16 +18,21 @@ export const AsciiImage = ({
   src,
   maxHeight = 50,
   maxWidth = 50,
-  characterRamp = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`\'. ',
+  characterRamp = 'short',
+  reverseRamp,
   showImage = false,
   style,
   imgStyle,
-  preStyle,
+  preStyle = { fontSize: '.4em' },
 }: AsciiImageProps) => {
   const [ascii, setAscii] = useState('')
   const [imgHeight, setImgHeight] = useState(0)
   const [imgWidth, setImgWidth] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
+
+  let _characterRamp =
+    characterRamp in characterRamps ? characterRamps[characterRamp as keyof typeof characterRamps] : characterRamp
+  if (reverseRamp) _characterRamp = _characterRamp.split('').reverse().join('')
 
   const image = new Image()
   image.crossOrigin = 'Anonymous'
@@ -39,7 +46,7 @@ export const AsciiImage = ({
       fontHeight,
       fontWidth,
     })
-    const ascii = getAscii(width, height, image, characterRamp)
+    const ascii = getAscii(width, height, image, _characterRamp)
     setAscii(ascii)
     setImgHeight(height * fontHeight)
     setImgWidth(width * fontWidth)
