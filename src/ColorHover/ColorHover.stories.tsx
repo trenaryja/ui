@@ -6,19 +6,16 @@ type Story = StoryObj<typeof ColorHover>
 const meta: Meta<typeof ColorHover> = {
   title: 'components/ColorHover',
   component: ColorHover,
+  argTypes: {
+    color: { control: 'color' },
+    as: { control: 'radio', options: ['div', 'h1', 'span'] },
+    style: { table: { disable: true } },
+  },
 }
 export default meta
 
 export const Default: Story = {
   name: 'ColorHover',
-  render: (args) => (
-    <ColorHover {...args} color={args.color ?? DEFAULT_THEME.colors.dark[5]}>
-      Hover Me
-    </ColorHover>
-  ),
-  argTypes: {
-    color: { control: { type: 'color' } },
-    as: { control: { type: 'select', options: ['h1', 'span', 'a', 'div'] } },
-    style: { table: { disable: true } },
-  },
+  render: (args) => <ColorHover {...args}>Hover Me</ColorHover>,
+  args: { color: DEFAULT_THEME.colors.dark[5] },
 }

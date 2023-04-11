@@ -8,22 +8,16 @@ const meta: Meta<typeof ScaledText> = {
 }
 export default meta
 
-const defaultValues = {
-  lines: ['Hello', 'World', '👋🌎'],
-}
-
 export const Default: Story = {
   name: 'ScaledText',
-  argTypes: {
-    lines: {
-      defaultValue: defaultValues.lines,
-    },
-  },
   render: (args) => {
     return (
       <div style={{ width: '10rem', resize: 'horizontal', overflow: 'auto' }}>
-        <ScaledText {...args} lines={args.lines ?? defaultValues.lines} />
+        <ScaledText {...args} />
       </div>
     )
+  },
+  args: {
+    lines: ['Hello', 'World', '👋🌎'],
   },
 }

@@ -14,12 +14,6 @@ const preview: Preview = {
     ),
   ],
   parameters: {
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/,
-      },
-    },
     actions: { disable: true },
     docs: { theme: ensure(themes.dark) },
   },
