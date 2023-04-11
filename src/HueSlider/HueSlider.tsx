@@ -1,42 +1,56 @@
 import { Slider, SliderProps } from '@mantine/core'
-import { useState } from 'react'
-import { mapRange } from '../utils'
+import { useMemo, useState } from 'react'
+import tinycolor from 'tinycolor2'
+import { getColorFromHue, getHue, hueColors, sliderGradient } from './utils'
 
-export type HueSliderProps = SliderProps & {
+export type HueSliderProps = Omit<SliderProps, 'value' | 'defaultValue'> & {
   showLabel?: boolean
+  value?: number | tinycolor.ColorInput
+  defaultValue?: number | tinycolor.ColorInput
 }
 
-const calculateHsl = (value: number) => `hsl(${Math.round(mapRange(value, 0, 100, 0, 360))} 100% 50%)`
-const average = (min: number | undefined, max: number | undefined) => ((min ?? 0) + (max ?? 100)) / 2
+export const HueSlider = ({
+  onChange,
+  styles,
+  label,
+  showLabel = false,
+  min = 0,
+  max = 360,
+  value,
+  defaultValue,
+  ...props
+}: HueSliderProps) => {
+  const _value = useMemo(() => getHue(value), [value])
+  const _defaultValue = useMemo(() => getHue(defaultValue) ?? 0, [defaultValue])
+  const [_thumbColor, setThumbColor] = useState<tinycolor.Instance>(getColorFromHue(_defaultValue, min, max))
+  const thumbColor = _value === undefined ? _thumbColor : getColorFromHue(_value, min, max)
+  const thumbHex = `#${thumbColor.toHex()}`
 
-export const HueSlider = (props: HueSliderProps) => {
-  const { onChange, showLabel, label, min, max, defaultValue = average(min, max) } = props
-  const [color, setColor] = useState<string>(calculateHsl(defaultValue))
-
-  const handleChange = (value: number) => {
-    setColor(calculateHsl(value))
-    onChange?.(value)
+  const handleChange = (newValue: number) => {
+    setThumbColor(getColorFromHue(newValue, min, max))
+    onChange?.(newValue)
   }
 
   return (
     <Slider
       label={showLabel ? label : null}
-      defaultValue={defaultValue}
+      value={_value}
+      defaultValue={_defaultValue}
+      min={min}
+      max={max}
       styles={{
         thumb: {
-          borderColor: color,
-          backgroundColor: color,
-          ':focus': {
-            outlineColor: color,
-          },
+          borderColor: thumbHex,
+          backgroundColor: thumbHex,
+          ':focus': { outlineColor: thumbHex },
         },
-        bar: { display: 'none' },
+        bar: {
+          display: 'none',
+        },
         track: {
-          '::before': {
-            background:
-              'linear-gradient( to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100% )',
-          },
+          '::before': { background: sliderGradient(hueColors) },
         },
+        ...styles,
       }}
       {...props}
       onChange={handleChange}

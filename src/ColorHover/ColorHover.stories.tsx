@@ -16,6 +16,5 @@ export default meta
 
 export const Default: Story = {
   name: 'ColorHover',
-  render: (args) => <ColorHover {...args}>Hover Me</ColorHover>,
-  args: { color: DEFAULT_THEME.colors.dark[5] },
+  args: { color: DEFAULT_THEME.colors.dark[5], children: 'Hover Me' },
 }
