@@ -70,7 +70,7 @@ export const ColorPicker: Story = {
           />
           <GradientSlider
             thumbColor={thumbColor}
-            gradient={['transparent', thumbColor]}
+            gradient={['#0000', thumbColor]}
             value={alpha * 100}
             onChange={(x) => setAlpha(x / 100)}
           />
