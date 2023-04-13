@@ -29,7 +29,7 @@ export const GradientSlider = ({
   const gradientColors = useMemo(() => gradient.map((x) => chroma(x)), [gradient])
   const trackBackground = useMemo(() => sliderGradient(gradientColors), [gradientColors])
   const scale = useMemo(() => {
-    if (thumbColor || !includeColorOnChange) return undefined
+    if (thumbColor) return undefined
     return chroma.scale(gradientColors).domain([min, max])
   }, [gradientColors, min, max])
   const [_thumbColor, setThumbColor] = useState(getThumbColor(thumbColor, scale, defaultValue ?? 0))
