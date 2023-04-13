@@ -1,4 +1,5 @@
 export * from './AsciiImage'
 export * from './ColorHover'
+export * from './GradientSlider'
 export * from './HueSlider'
 export * from './ScaledText'
