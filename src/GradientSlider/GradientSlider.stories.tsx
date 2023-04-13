@@ -2,8 +2,7 @@ import { Flex, Text } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
 import chroma from 'chroma-js'
 import { useState } from 'react'
-import { GradientSlider } from '.'
-import { GradientSliderProps } from '../../dist'
+import { GradientSlider, GradientSliderProps } from '.'
 import { HueSlider } from '../HueSlider'
 
 type Story = StoryObj<typeof GradientSlider>
