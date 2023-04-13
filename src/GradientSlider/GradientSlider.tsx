@@ -2,16 +2,19 @@ import { Slider, SliderProps } from '@mantine/core'
 import chroma, { Color } from 'chroma-js'
 import { useMemo, useState } from 'react'
 import { ChromaColor } from '../utils'
-import { sliderGradient } from './utils'
+import { getThumbColor, sliderGradient } from './utils'
 
 export type GradientSliderProps = Omit<SliderProps, ''> & {
   showLabel?: boolean
   gradient: ChromaColor[]
-  onChange?: (value: number, color: Color) => void
+  thumbColor?: ChromaColor
+  onChange?: (value: number, color?: Color) => void
+  includeColorOnChange?: boolean
 }
 
 export const GradientSlider = ({
   onChange,
+  includeColorOnChange = false,
   styles,
   label,
   showLabel = false,
@@ -20,17 +23,26 @@ export const GradientSlider = ({
   value,
   defaultValue,
   gradient,
+  thumbColor,
   ...props
 }: GradientSliderProps) => {
-  const scale = useMemo(() => chroma.scale(gradient.map((x) => chroma(x))).domain([min, max]), [gradient, min, max])
-  const [_thumbColor, setThumbColor] = useState<string>(scale(defaultValue ?? 0).hex())
-  const thumbColor = value === undefined ? _thumbColor : scale(value).hex()
-  const trackBackground = sliderGradient(gradient.map((x) => chroma(x).hex()))
+  const gradientColors = useMemo(() => gradient.map((x) => chroma(x)), [gradient])
+  const trackBackground = useMemo(() => sliderGradient(gradientColors), [gradientColors])
+  const scale = useMemo(() => {
+    if (thumbColor || !includeColorOnChange) return undefined
+    return chroma.scale(gradientColors).domain([min, max])
+  }, [gradientColors, min, max])
+  const [_thumbColor, setThumbColor] = useState(getThumbColor(thumbColor, scale, defaultValue ?? 0))
+  const thumbHex = getThumbColor(thumbColor, scale, value, _thumbColor).hex()
 
   const handleChange = (newValue: number) => {
-    const color = scale(newValue)
-    setThumbColor(color.hex())
-    onChange?.(newValue, color)
+    if ((includeColorOnChange || thumbColor === undefined) && scale !== undefined) {
+      const color = scale(newValue)
+      if (thumbColor === undefined) setThumbColor(color)
+      onChange?.(newValue, color)
+      return
+    }
+    onChange?.(newValue)
   }
 
   return (
@@ -42,18 +54,15 @@ export const GradientSlider = ({
       max={max}
       styles={{
         thumb: {
-          borderColor: thumbColor,
-          backgroundColor: thumbColor,
-          ':focus': { outlineColor: thumbColor },
+          borderColor: thumbHex,
+          backgroundColor: thumbHex,
+          ':focus': { outlineColor: thumbHex },
         },
         bar: {
           display: 'none',
         },
         track: {
-          '::before': {
-            backgroundImage: `linear-gradient(to right, white, black)`,
-            background: trackBackground,
-          },
+          '::before': { background: trackBackground },
         },
         ...styles,
       }}
