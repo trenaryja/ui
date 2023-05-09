@@ -20,7 +20,12 @@ export const ReadMe: StoryObj = {
         fit='cover'
         opacity={0.025}
         style={{ zIndex: -1 }}
-        src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZmYxMDhhY2RjMTY2ZWE2ZTQ2MDZiZGMzMzFkNDA2NjA0NTU0NDI0OCZjdD1n/1UUO43fwtuDX175I3i/giphy.gif'
+        // Hexagons
+        src='https://i.giphy.com/media/ehssta24116nk9VWyN/giphy.webp'
+        // Robin Williams
+        // src='https://i.giphy.com/media/1UUO43fwtuDX175I3i/giphy.webp'
+        // Lava Lamp
+        // src='https://i.giphy.com/media/3q3SUqPnxZGQpMNcjc/giphy.webp'
       />
       <ReactMarkdown
         components={{
