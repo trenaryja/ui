@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { ScaledText } from '.'
+import { ScaledText } from '..'
 
 type Story = StoryObj<typeof ScaledText>
 const meta: Meta<typeof ScaledText> = {

@@ -1,6 +1,6 @@
 import { DEFAULT_THEME } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
-import { ColorHover } from '.'
+import { ColorHover } from '..'
 
 type Story = StoryObj<typeof ColorHover>
 const meta: Meta<typeof ColorHover> = {
