@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { GradientSlider, GradientSliderProps } from '../GradientSlider'
+import { GradientSlider, GradientSliderProps } from '..'
 import { ChromaColor } from '../utils'
 import { getHue, hueColors } from './utils'
 

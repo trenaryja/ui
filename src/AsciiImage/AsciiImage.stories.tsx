@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { AsciiImage } from '.'
+import { AsciiImage } from '..'
 
 type Story = StoryObj<typeof AsciiImage>
 const meta: Meta<typeof AsciiImage> = {

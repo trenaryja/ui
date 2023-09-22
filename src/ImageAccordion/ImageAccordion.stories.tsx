@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
-import { ImageAccordion } from '.'
+import { ImageAccordion } from '..'
 
 type Story = StoryObj<typeof ImageAccordion>
 

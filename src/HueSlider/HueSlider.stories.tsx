@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { HueSlider } from '.'
+import { HueSlider } from '..'
 
 type Story = StoryObj<typeof HueSlider>
 const meta: Meta<typeof HueSlider> = {

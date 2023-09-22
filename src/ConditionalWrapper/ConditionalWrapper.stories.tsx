@@ -1,7 +1,7 @@
 import { Box, Switch, Text } from '@mantine/core'
 import { useToggle } from '@mantine/hooks'
 import { Meta, StoryObj } from '@storybook/react'
-import { ConditionalWrapper } from '.'
+import { ConditionalWrapper } from '..'
 
 const meta: Meta<typeof ConditionalWrapper> = {
   title: 'components/ConditionalWrapper',
