@@ -34,15 +34,10 @@
     "dist"
   ],
   "devDependencies": {
-    "@babel/core": "7.23.0",
-    "@babel/preset-env": "^7.22.20",
-    "@babel/preset-react": "^7.22.15",
-    "@babel/preset-typescript": "^7.23.0",
     "@storybook/addon-essentials": "7.4.6",
     "@storybook/addons": "^7.4.6",
-    "@storybook/core-common": "^7.4.6",
     "@storybook/react": "7.4.6",
-    "@storybook/react-webpack5": "7.4.6",
+    "@storybook/react-vite": "^7.4.6",
     "@storybook/storybook-deployer": "2.8.16",
     "@storybook/theming": "^7.4.6",
     "@types/chroma-js": "^2.4.1",
@@ -50,7 +45,6 @@
     "@types/react": "18.2.25",
     "@types/react-dom": "18.2.10",
     "@typescript-eslint/eslint-plugin": "6.7.4",
-    "babel-loader": "9.1.3",
     "concurrently": "8.2.1",
     "csstype": "^3.1.2",
     "dotenv-cli": "^7.3.0",
@@ -58,12 +52,19 @@
     "prettier": "3.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-markdown": "^8.0.7",
+    "react-markdown": "^9.0.0",
     "release-it": "16.2.1",
     "storybook": "7.4.6",
     "tsup": "7.2.0",
     "typescript": "5.2.2",
     "yalc": "1.0.0-pre.53"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@mantine/core": "^6.0.21",
+    "@mantine/hooks": "^6.0.21",
+    "chroma-js": "^2.4.2",
+    "honeycomb-grid": "^4.1.4"
   },
   "peerDependencies": {
     "react": ">=17",
@@ -91,12 +92,5 @@
     "npm": {
       "publish": false
     }
-  },
-  "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@mantine/core": "^6.0.21",
-    "@mantine/hooks": "^6.0.21",
-    "chroma-js": "^2.4.2",
-    "honeycomb-grid": "^4.1.4"
   }
 }
