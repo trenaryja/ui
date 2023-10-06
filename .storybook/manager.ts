@@ -13,7 +13,7 @@ addons.setConfig({
   theme: {
     ...themes.dark,
     brandTitle: '@trenaryja/ui',
-    brandUrl: 'https://justintrenary.netlify.app',
+    brandUrl: 'https://trenary.dev',
     brandImage: 'https://picsum.photos/350/150?grayscale',
     brandTarget: '_blank',
   },

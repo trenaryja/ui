@@ -1,7 +1,7 @@
 import { Image } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
 import ReactMarkdown from 'react-markdown'
-import readMe from '../README.md'
+import readMe from '../README.md?raw'
 
 const meta: Meta = { title: 'ReadMe', decorators: [] }
 export default meta

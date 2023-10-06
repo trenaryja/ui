@@ -14,7 +14,6 @@ const preview: Preview = {
     ),
   ],
   parameters: {
-    actions: { disable: true },
     docs: { theme: ensure(themes.dark) },
   },
 }
