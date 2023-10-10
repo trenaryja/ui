@@ -1,6 +1,5 @@
-import { Box, Switch, Text } from '@mantine/core'
-import { useToggle } from '@mantine/hooks'
 import { Meta, StoryObj } from '@storybook/react'
+import { useState } from 'react'
 import { ConditionalWrapper } from '..'
 
 const meta: Meta<typeof ConditionalWrapper> = {
@@ -13,29 +12,26 @@ type Story = StoryObj<typeof ConditionalWrapper>
 export const Default: Story = {
   name: 'ConditionalWrapper',
   render: () => {
-    const [condition, toggle] = useToggle()
+    const [isChecked, setIsChecked] = useState(false)
     return (
-      <Box sx={(theme) => ({ display: 'grid', gap: theme.spacing.xl })}>
-        <Switch onChange={() => toggle()} label='Apply Wrapper' />
+      <div className='grid gap-10'>
+        <div className='flex items-center gap-2'>
+          <input type='checkbox' id='checkbox' checked={isChecked} onChange={() => setIsChecked(!isChecked)} />
+          <label htmlFor='checkbox'>Apply Wrapper</label>
+        </div>
         <ConditionalWrapper
-          condition={condition}
+          condition={isChecked}
           wrapper={(children) => (
-            <Box
-              p='xl'
-              w='fit-content'
-              sx={(theme) => ({
-                backgroundImage: `repeating-radial-gradient( circle at 0 0, transparent 0, ${theme.black} .75rem ), repeating-linear-gradient( ${theme.colors.gray[9]}, ${theme.colors.gray[7]} )`,
-              })}
-            >
-              <Text component='h1' ta='center' fz='3rem' p='xl' bg='rgba(0,0,0,.5)'>
+            <div className='p-10 w-fit bg-gradient-to-r from-cyan-900 to-blue-900'>
+              <h1 className='text-center text-5xl p-10 bg-black bg-opacity-50 rounded-full whitespace-nowrap'>
                 {children}
-              </Text>
-            </Box>
+              </h1>
+            </div>
           )}
         >
           Hello World 👋🌎
         </ConditionalWrapper>
-      </Box>
+      </div>
     )
   },
 }

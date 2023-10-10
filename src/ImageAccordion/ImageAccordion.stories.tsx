@@ -1,4 +1,3 @@
-import { Box, Flex, Text } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
 import { ImageAccordion } from '..'
 
@@ -14,7 +13,6 @@ export const Default: Story = {
   name: 'ImageAccordion',
   render: () => (
     <ImageAccordion
-      // transitionDuration={750}
       sx={(theme) => ({
         display: 'grid',
         gap: theme.spacing.xs,
@@ -24,14 +22,10 @@ export const Default: Story = {
       {Array.from({ length: 5 }).map((_, i) => (
         <ImageAccordion.Item key={i} value={`${i}`} imageUrl={`https://source.unsplash.com/random/500x500/?${i}`}>
           <ImageAccordion.Control>
-            <Flex justify='center'>
-              <Text bg='rgba(0,0,0,.5)' p='xs'>
-                Accordion Item {i + 1}
-              </Text>
-            </Flex>
+            <p className='flex justify-center p-3 bg-black bg-opacity-50'>Accordion Item {i + 1}</p>
           </ImageAccordion.Control>
           <ImageAccordion.Panel>
-            <Box sx={{ aspectRatio: '1' }} />
+            <div className='aspect-square' />
           </ImageAccordion.Panel>
         </ImageAccordion.Item>
       ))}

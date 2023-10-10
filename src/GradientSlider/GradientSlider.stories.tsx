@@ -1,4 +1,3 @@
-import { Flex, Text } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
 import chroma from 'chroma-js'
 import { useState } from 'react'
@@ -27,14 +26,14 @@ export const Controlled: Story = {
   render: () => {
     const [hue, setHue] = useState(50)
     return (
-      <Flex direction='column' gap='lg'>
+      <div className='grid gap-10'>
         <h1>Uncontrolled</h1>
         <GradientSlider {...defaultArgs} />
         <h1>Controlled</h1>
         <GradientSlider {...defaultArgs} value={hue} onChange={(x) => setHue(x)} />
         <h1>Controlled & Locked</h1>
         <GradientSlider {...defaultArgs} value={hue} />
-      </Flex>
+      </div>
     )
   },
 }
@@ -48,8 +47,8 @@ export const ColorPicker: Story = {
     const color = chroma(hue, saturation, lightness, 'hsl').alpha(alpha)
     const thumbColor = color.hex('rgb')
     return (
-      <Flex gap='lg'>
-        <Flex direction='column' gap='lg' w='100%' justify='space-between'>
+      <div className='flex gap-10'>
+        <div className='flex flex-col gap-5 w-full justify-between'>
           <HueSlider thumbColor={thumbColor} value={hue} onChange={(x) => setHue(x)} />
           <GradientSlider
             thumbColor={thumbColor}
@@ -73,16 +72,14 @@ export const ColorPicker: Story = {
             value={alpha * 100}
             onChange={(x) => setAlpha(x / 100)}
           />
-        </Flex>
-        <Flex direction='column' w='10em' align='center'>
+        </div>
+        <div className='flex flex-col w-40 items-center'>
           <svg viewBox='0 0 1 1'>
             <rect width={1} height={1} fill={color.hex()} />
           </svg>
-          <Text fw='bolder' fz='lg'>
-            {color.hex()}
-          </Text>
-        </Flex>
-      </Flex>
+          <p className='font-extrabold text-lg'>{color.hex()}</p>
+        </div>
+      </div>
     )
   },
 }
