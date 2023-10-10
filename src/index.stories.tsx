@@ -1,4 +1,3 @@
-import { Image } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
 import ReactMarkdown from 'react-markdown'
 import readMe from '../README.md?raw'
@@ -11,29 +10,25 @@ export const ReadMe: StoryObj = {
     options: { showPanel: false },
   },
   render: () => (
-    <>
-      <Image
-        pos='fixed'
-        inset={0}
-        w='100%'
-        height='100vh'
-        fit='cover'
-        opacity={0.025}
-        style={{ zIndex: -1 }}
+    <div className='grid justify-center'>
+      <img
+        className='fixed grayscale opacity-10 object-cover inset-0 w-screen h-screen -z-10'
         // Hexagons
-        src='https://i.giphy.com/media/ehssta24116nk9VWyN/giphy.webp'
+        // src='https://i.giphy.com/media/ehssta24116nk9VWyN/giphy.webp'
         // Robin Williams
         // src='https://i.giphy.com/media/1UUO43fwtuDX175I3i/giphy.webp'
         // Lava Lamp
         // src='https://i.giphy.com/media/3q3SUqPnxZGQpMNcjc/giphy.webp'
+        // Dark Water
+        // src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDRlaHh0N2tqM2xib3F5dGg1dGxneG1pcTNjdXQyMGJ1czdibXI1YSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Byour3OgR0nWnRR6Tc/giphy.gif'
+        // Galaxy Zoom
+        // src='https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTJ1bXF2cmJvNnV0dTNqYTcybDZ5NHo4cW1wM3VibDc4cTA1bzNocyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/2UxWBIttMvvIJ55hTe/giphy.gif'
+        // Nodes and Edges
+        // src='https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExc2NwZzZ5aXZjMGdvbDBscWM0MnQ3bGZiZmNnbW5sd243dGNqbmc5MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ITRemFlr5tS39AzQUL/giphy.gif'
+        // Bulging Lines
+        src='https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2g4bTZsN2hxeGJoMjJlNWcwaDh0aTM1MXpoMmV3bTFiZG5saWwwdiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LLYMoDblVhhjvjRBtj/giphy.gif'
       />
-      <ReactMarkdown
-        components={{
-          pre: ({ children }) => <pre style={{ backgroundColor: '#FFF1', padding: '1rem' }}>{children}</pre>,
-        }}
-      >
-        {readMe}
-      </ReactMarkdown>
-    </>
+      <ReactMarkdown className='prose dark:prose-invert prose-img:inline-block prose-img:m-0'>{readMe}</ReactMarkdown>
+    </div>
   ),
 }
