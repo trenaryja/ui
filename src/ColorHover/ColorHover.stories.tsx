@@ -1,5 +1,5 @@
-import { DEFAULT_THEME } from '@mantine/core'
 import { Meta, StoryObj } from '@storybook/react'
+import colors from 'tailwindcss/colors'
 import { ColorHover } from '..'
 
 type Story = StoryObj<typeof ColorHover>
@@ -16,5 +16,5 @@ export default meta
 
 export const Default: Story = {
   name: 'ColorHover',
-  args: { color: DEFAULT_THEME.colors.dark[5], children: 'Hover Me' },
+  args: { color: colors.neutral[500], children: 'Hover Me' },
 }
