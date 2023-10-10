@@ -1,3 +1,5 @@
+import './index.css'
+
 export * from './AsciiImage/AsciiImage'
 export * from './ColorHover/ColorHover'
 export * from './ConditionalWrapper/ConditionalWrapper'
