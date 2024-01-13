@@ -12,22 +12,18 @@ export default meta
 export const Default: Story = {
   name: 'ImageAccordion',
   render: () => (
-    <ImageAccordion
-      sx={(theme) => ({
-        display: 'grid',
-        gap: theme.spacing.xs,
-        maxWidth: '500px',
-      })}
-    >
-      {Array.from({ length: 5 }).map((_, i) => (
-        <ImageAccordion.Item key={i} value={`${i}`} imageUrl={`https://source.unsplash.com/random/500x500/?${i}`}>
-          <ImageAccordion.Control>
-            <p className='flex justify-center p-3 bg-black bg-opacity-50'>Accordion Item {i + 1}</p>
-          </ImageAccordion.Control>
-          <ImageAccordion.Panel>
-            <div className='aspect-square' />
-          </ImageAccordion.Panel>
-        </ImageAccordion.Item>
+    <ImageAccordion type='single' collapsible>
+      {Array.from(Array(5).keys()).map((i) => (
+        <ImageAccordion.AccordionItem
+          value={`${i}`}
+          src={`https://source.unsplash.com/random/500x500/?${i})`}
+          className='grayscale'
+        >
+          <ImageAccordion.AccordionTrigger className='text-white bg-black/50'>
+            <div className='flex w-full justify-center p-2 font-bold'>Accordion Item {i + 1}</div>
+          </ImageAccordion.AccordionTrigger>
+          <ImageAccordion.AccordionContent className='aspect-square'></ImageAccordion.AccordionContent>
+        </ImageAccordion.AccordionItem>
       ))}
     </ImageAccordion>
   ),
