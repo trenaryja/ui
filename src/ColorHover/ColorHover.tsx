@@ -1,39 +1,13 @@
-import { css } from '@emotion/react'
-import { Property } from 'csstype'
-
-export type ColorHoverProps = {
-  color: Property.BackgroundColor | null | undefined
+export type ColorHoverProps = React.ComponentProps<'div'> & {
   as?: React.ElementType
-  children: React.ReactNode
-  style?: React.CSSProperties
 }
 
-export const ColorHover = ({ color, as = 'div', children, ...rest }: ColorHoverProps) => {
+export const ColorHover = ({ as = 'div', className, ...props }: ColorHoverProps) => {
   const Component = as
   return (
     <Component
-      css={css({
-        position: 'relative',
-        ':before': {
-          backgroundColor: color ?? undefined,
-          content: '""',
-          inset: 0,
-          position: 'absolute',
-          transform: 'scaleX(0)',
-          transformOrigin: 'right',
-          transition: 'transform 250ms ease-in-out',
-          zIndex: -1,
-        },
-        ':hover': {
-          ':before': {
-            transform: 'scaleX(1)',
-            transformOrigin: 'left',
-          },
-        },
-      })}
-      {...rest}
-    >
-      {children}
-    </Component>
+      className={`relative before:bg-neutral-500 before:content-[''] before:absolute before:inset-0 before:scale-x-0 before:origin-right before:transition-transform before:z-[-1] hover:before:scale-x-100 hover:before:origin-left transition-transform ${className}`}
+      {...props}
+    />
   )
 }
