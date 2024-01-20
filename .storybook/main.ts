@@ -16,6 +16,9 @@ const config: StorybookConfig = {
   },
   logLevel: 'silent',
   docs: { autodocs: false },
+  async viteFinal(config) {
+    return { ...config, build: { ...config.build, target: 'esnext' } }
+  },
 }
 
 export default config

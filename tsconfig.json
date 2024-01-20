@@ -3,9 +3,10 @@
     "esModuleInterop": true,
     "jsx": "preserve",
     "module": "ESNext",
+    "target": "ESNext",
     "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true
-  }
+    "noEmit": true,
+  },
 }
