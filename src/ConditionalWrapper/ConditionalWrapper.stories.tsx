@@ -22,8 +22,8 @@ export const Default: Story = {
         <ConditionalWrapper
           condition={isChecked}
           wrapper={(children) => (
-            <div className='p-10 w-fit bg-gradient-to-r from-cyan-900 to-blue-900'>
-              <h1 className='text-center text-5xl p-10 bg-black bg-opacity-50 rounded-full whitespace-nowrap'>
+            <div className='p-10 w-fit rounded-full bg-[repeating-radial-gradient(circle_at_50%_50%,_transparent_0,_black_1rem)]'>
+              <h1 className='grayscale text-center text-5xl p-10 bg-black bg-opacity-50 rounded-full whitespace-nowrap'>
                 {children}
               </h1>
             </div>
