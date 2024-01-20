@@ -1,4 +1,4 @@
-import { CSSProperties, RefObject } from 'react'
+import { RefObject } from 'react'
 
 export const characterRamps = {
   short: ' .:-=+*#%@',
@@ -27,17 +27,22 @@ export const convertToGrayScales = (context: CanvasRenderingContext2D | null, wi
   return grayScales
 }
 
-export type ClampDimensionOptions = {
+// TODO: bug when maxHeight is greater than image height
+export const clampDimensions = ({
+  height,
+  width,
+  maxHeight,
+  maxWidth,
+  fontHeight,
+  fontWidth,
+}: {
   height: number
   width: number
   maxHeight: number
   maxWidth: number
   fontHeight: number
   fontWidth: number
-}
-export const clampDimensions = (options: ClampDimensionOptions) => {
-  const { height, width, maxHeight, maxWidth, fontHeight, fontWidth } = options
-
+}) => {
   const rectifiedWidth = Math.floor((fontHeight / fontWidth) * width)
 
   if (height > maxHeight) {
@@ -61,13 +66,13 @@ export const convertToAscii = (grayScales: number[], width: number, characterRam
   }, '')
 }
 
-export const getFontDimensions = (ref: RefObject<HTMLDivElement>, preStyle: CSSProperties = {}) => {
+export const getFontDimensions = (ref: RefObject<HTMLDivElement>) => {
+  if (ref.current === null) return { fontWidth: 0, fontHeight: 0 }
   const pre = document.createElement('pre')
-  ref.current?.append(pre)
-  Object.assign(pre.style, preStyle)
+  ref.current.append(pre)
   pre.textContent = ' '
   const { width, height } = pre.getBoundingClientRect()
-  ref.current?.removeChild(pre)
+  ref.current.removeChild(pre)
   return { fontWidth: width, fontHeight: height }
 }
 
