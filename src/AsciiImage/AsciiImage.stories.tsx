@@ -11,7 +11,7 @@ const meta: Meta<typeof AsciiImage> = {
 }
 export default meta
 
-const src = 'https://source.unsplash.com/random/500x500/?face'
+const src = await fetch('https://source.unsplash.com/random/500x500/?face').then((res) => res.url)
 
 export const Default: Story = {
   render: (args) => <AsciiImage {...args} />,
@@ -22,13 +22,7 @@ export const BackgroundClip: Story = {
   ...Default,
   args: {
     ...Default.args,
-    preStyle: {
-      fontSize: '.4em',
-      backgroundImage: `url(${src})`,
-      backgroundSize: 'cover',
-      backgroundClip: 'text',
-      WebkitBackgroundClip: 'text',
-      color: 'transparent',
-    },
+    showImage: true,
+    preClassName: 'bg-clip-text text-transparent',
   },
 }
