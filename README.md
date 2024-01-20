@@ -10,7 +10,7 @@ This library is a collection of reusable UI components for my projects. There's 
 ## Getting Started
 
 ```console
-npm install @trenary/ui
+pnpm install @trenary/ui
 ```
 
 ## Developing

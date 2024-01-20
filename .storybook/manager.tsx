@@ -12,9 +12,9 @@ document.head.appendChild(link)
 addons.setConfig({
   theme: {
     ...themes.dark,
-    brandTitle: '@trenaryja/ui',
     brandUrl: 'https://trenary.dev',
-    brandImage: 'https://picsum.photos/350/150?grayscale',
+    brandTitle:
+      '<img src="https://source.unsplash.com/random/500x500/?hexagons" style="width: 100%; display: block; object-fit: cover; max-height: 10rem; object-position: center; border-radius: 1rem; filter: grayscale(1)" title="@trenaryja/ui" />',
     brandTarget: '_blank',
   },
 })

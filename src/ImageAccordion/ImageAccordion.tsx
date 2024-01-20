@@ -12,7 +12,7 @@ ImageAccordion.AccordionItem = React.forwardRef<
   <AccordionPrimitive.Item
     ref={ref}
     style={{ backgroundImage: `url('${src}')`, ...style }}
-    className={`rounded bg-no-repeat bg-cover ` + className}
+    className={`rounded bg-no-repeat bg-cover bg-center ` + className}
     {...props}
   />
 ))
