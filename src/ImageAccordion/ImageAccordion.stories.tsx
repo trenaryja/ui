@@ -13,16 +13,17 @@ export const Default: Story = {
   name: 'ImageAccordion',
   render: () => (
     <ImageAccordion type='single' collapsible>
-      {Array.from(Array(5).keys()).map((i) => (
+      {Array.from(Array(3).keys()).map((i) => (
         <ImageAccordion.AccordionItem
           value={`${i}`}
+          key={i}
           src={`https://source.unsplash.com/random/500x500/?${i})`}
-          className='grayscale'
+          className='grayscale data-[state=open]:pb-96 transition-all'
         >
           <ImageAccordion.AccordionTrigger className='text-white bg-black/50'>
             <div className='flex w-full justify-center p-2 font-bold'>Accordion Item {i + 1}</div>
           </ImageAccordion.AccordionTrigger>
-          <ImageAccordion.AccordionContent className='aspect-square'></ImageAccordion.AccordionContent>
+          <ImageAccordion.AccordionContent></ImageAccordion.AccordionContent>
         </ImageAccordion.AccordionItem>
       ))}
     </ImageAccordion>
