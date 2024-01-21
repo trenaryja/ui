@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
+import React from 'react'
 import { ConditionalWrapper } from '..'
 
 const meta: Meta<typeof ConditionalWrapper> = {
@@ -12,7 +12,8 @@ type Story = StoryObj<typeof ConditionalWrapper>
 export const Default: Story = {
   name: 'ConditionalWrapper',
   render: () => {
-    const [isChecked, setIsChecked] = useState(false)
+    const [isChecked, setIsChecked] = React.useState(false)
+
     return (
       <div className='grid gap-10'>
         <div className='flex items-center gap-2'>

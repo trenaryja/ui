@@ -1,6 +1,6 @@
 'use client'
 
-import { ElementRef, useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { AnyOther, cn } from '../utils'
 import { characterRamps, clampDimensions, getAscii, getFontDimensions } from './utils'
 
@@ -23,8 +23,8 @@ export const AsciiImage = ({
   showImage,
   preClassName,
 }: AsciiImageProps) => {
-  const [ascii, setAscii] = useState('')
-  const ref = useRef<ElementRef<'div'>>(null)
+  const [ascii, setAscii] = React.useState('')
+  const ref = React.useRef<React.ElementRef<'div'>>(null)
 
   let _characterRamp =
     characterRamp === undefined
@@ -34,7 +34,7 @@ export const AsciiImage = ({
         : characterRamp
   if (reverseRamp) _characterRamp = _characterRamp.split('').reverse().join('')
 
-  useEffect(() => {
+  React.useEffect(() => {
     const image = new Image()
     image.crossOrigin = 'Anonymous'
     image.onload = () => {

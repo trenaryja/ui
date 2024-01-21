@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react'
 import chroma from 'chroma-js'
-import { useState } from 'react'
+import React from 'react'
 import { GradientSlider, GradientSliderProps, HueSlider } from '..'
 
 type Story = StoryObj<typeof GradientSlider>
@@ -24,7 +24,7 @@ export const Default: Story = {
 export const Controlled: Story = {
   name: 'Controlled vs Uncontrolled',
   render: () => {
-    const [hue, setHue] = useState(50)
+    const [hue, setHue] = React.useState(50)
     return (
       <div className='grid gap-10'>
         <h1>Uncontrolled</h1>
@@ -40,10 +40,10 @@ export const Controlled: Story = {
 
 export const ColorPicker: Story = {
   render: () => {
-    const [hue, setHue] = useState(0)
-    const [saturation, setSaturation] = useState(1)
-    const [lightness, setLightness] = useState(0.5)
-    const [alpha, setAlpha] = useState(1)
+    const [hue, setHue] = React.useState(0)
+    const [saturation, setSaturation] = React.useState(1)
+    const [lightness, setLightness] = React.useState(0.5)
+    const [alpha, setAlpha] = React.useState(1)
     const color = chroma(hue, saturation, lightness, 'hsl').alpha(alpha)
     const thumbColor = color.hex('rgb')
     return (
