@@ -1,7 +1,7 @@
 'use client'
 
 import { ElementRef, useEffect, useRef, useState } from 'react'
-import { AnyOther } from '../utils'
+import { AnyOther, cn } from '../utils'
 import { characterRamps, clampDimensions, getAscii, getFontDimensions } from './utils'
 
 export type AsciiImageProps = {
@@ -56,7 +56,7 @@ export const AsciiImage = ({
   return (
     <div ref={ref} className='grid *:col-span-full *:row-span-full place-items-start'>
       <pre
-        className={`bg-cover bg-no-repeat w-fit text-[.4rem] ${preClassName}`}
+        className={cn('bg-cover bg-no-repeat w-fit text-[.4rem]', preClassName)}
         style={{ backgroundImage: showImage ? `url(${src})` : '' }}
       >
         {ascii}

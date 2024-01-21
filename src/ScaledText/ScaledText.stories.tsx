@@ -12,7 +12,7 @@ export const Default: Story = {
   name: 'ScaledText',
   render: (args) => {
     return (
-      <div style={{ width: '10rem', resize: 'horizontal', overflow: 'auto' }}>
+      <div className='w-60 resize-x overflow-auto'>
         <ScaledText {...args} />
       </div>
     )
