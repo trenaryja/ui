@@ -1,5 +1,3 @@
-import { RefObject } from 'react'
-
 export const characterRamps = {
   short: ' .:-=+*#%@',
   standard: '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`\'.',
@@ -66,7 +64,7 @@ export const convertToAscii = (grayScales: number[], width: number, characterRam
   }, '')
 }
 
-export const getFontDimensions = (ref: RefObject<HTMLDivElement>) => {
+export const getFontDimensions = (ref: React.RefObject<HTMLDivElement>) => {
   if (ref.current === null) return { fontWidth: 0, fontHeight: 0 }
   const pre = document.createElement('pre')
   ref.current.append(pre)

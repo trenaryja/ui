@@ -1,6 +1,6 @@
 import * as Slider from '@radix-ui/react-slider'
 import chroma, { Color } from 'chroma-js'
-import { useMemo, useState } from 'react'
+import React from 'react'
 import { ChromaColor } from '../utils'
 import { getThumbColor, sliderGradient } from './utils'
 
@@ -25,13 +25,13 @@ export const GradientSlider = ({
   gradient,
   thumbColor,
 }: GradientSliderProps) => {
-  const gradientColors = useMemo(() => gradient.map((x) => chroma(x)), [gradient])
-  const trackBackground = useMemo(() => sliderGradient(gradientColors), [gradientColors])
-  const scale = useMemo(() => {
+  const gradientColors = React.useMemo(() => gradient.map((x) => chroma(x)), [gradient])
+  const trackBackground = React.useMemo(() => sliderGradient(gradientColors), [gradientColors])
+  const scale = React.useMemo(() => {
     if (thumbColor) return undefined
     return chroma.scale(gradientColors).domain([min, max])
   }, [gradientColors, min, max])
-  const [_thumbColor, setThumbColor] = useState(getThumbColor(thumbColor, scale, defaultValue ?? 0))
+  const [_thumbColor, setThumbColor] = React.useState(getThumbColor(thumbColor, scale, defaultValue ?? 0))
   const thumbHex = getThumbColor(thumbColor, scale, value, _thumbColor).hex()
 
   const handleChange = (newValue: number) => {
