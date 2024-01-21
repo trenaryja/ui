@@ -1,0 +1,1 @@
+import{j as r}from"./jsx-runtime-37f7df21.js";import{e as s,t}from"./index-480d8fcb.js";import"./index-f1f2c4b1.js";const p={decorators:[e=>r(e,{})],parameters:{docs:{theme:s(t.dark)}}};export{p as default};
