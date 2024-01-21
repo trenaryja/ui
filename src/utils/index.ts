@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from 'clsx/lite'
+import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
 export interface Nothing {}

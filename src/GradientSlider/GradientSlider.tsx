@@ -45,18 +45,16 @@ export const GradientSlider = ({
   }
 
   return (
-    <div className='grid gap-10'>
-      <Slider.Root
-        value={value === undefined ? value : [value]}
-        defaultValue={defaultValue === undefined ? defaultValue : [defaultValue]}
-        onValueChange={(x) => handleChange(x[0])}
-        min={min}
-        max={max}
-        className='h-4 relative flex items-center select-none touch-none w-full'
-      >
-        <Slider.Track style={{ background: trackBackground }} className='bg-red-500 relative grow rounded-full h-2' />
-        <Slider.Thumb style={{ background: thumbHex }} className='block w-4 h-4 rounded-full focus:outline-none' />
-      </Slider.Root>
-    </div>
+    <Slider.Root
+      value={value === undefined ? value : [value]}
+      defaultValue={defaultValue === undefined ? defaultValue : [defaultValue]}
+      onValueChange={(x) => handleChange(x[0])}
+      min={min}
+      max={max}
+      className='h-4 relative flex items-center select-none touch-none w-full'
+    >
+      <Slider.Track style={{ background: trackBackground }} className='bg-red-500 relative grow rounded-full h-2' />
+      <Slider.Thumb style={{ background: thumbHex }} className='block w-4 h-4 rounded-full focus:outline-none' />
+    </Slider.Root>
   )
 }
