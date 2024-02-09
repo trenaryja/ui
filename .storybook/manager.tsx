@@ -14,7 +14,7 @@ addons.setConfig({
     ...themes.dark,
     brandUrl: 'https://trenary.dev',
     brandTitle:
-      '<img src="https://source.unsplash.com/random/500x500/?hexagons" style="width: 100%; display: block; object-fit: cover; max-height: 10rem; object-position: center; border-radius: 1rem; filter: grayscale(1)" title="@trenaryja/ui" />',
+      '<img src="https://source.unsplash.com/random/500x80/?hexagons" style="width: 100%; display: block; object-fit: cover; height: 5rem; object-position: center; border-radius: 1rem; filter: grayscale(1)" title="@trenaryja/ui" />',
     brandTarget: '_blank',
   },
 })
