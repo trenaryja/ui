@@ -1,3 +1,5 @@
+import { AsciiImageProps } from '..'
+
 export const characterRamps = {
   short: ' .:-=+*#%@',
   standard: '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`\'.',
@@ -74,14 +76,28 @@ export const getFontDimensions = (ref: React.RefObject<HTMLDivElement>) => {
   return { fontWidth: width, fontHeight: height }
 }
 
-export const getAscii = (width: number, height: number, image: HTMLImageElement, characterRamp: string) => {
+export const getAscii = (width: number, height: number, src: CanvasImageSource, characterRamp: string) => {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
 
   const context = canvas.getContext('2d')
-  context?.drawImage(image, 0, 0, width, height)
+  context?.drawImage(src, 0, 0, width, height)
   const grayScales = convertToGrayScales(context, width, height)
   const ascii = convertToAscii(grayScales, width, characterRamp)
   return ascii
+}
+
+export const getCharacterRamp = (
+  characterRamp: AsciiImageProps['characterRamp'],
+  reverseRamp: AsciiImageProps['reverseRamp'],
+) => {
+  let _characterRamp =
+    characterRamp === undefined
+      ? characterRamps.short
+      : characterRamp in characterRamps
+        ? characterRamps[characterRamp as keyof typeof characterRamps]
+        : characterRamp
+  if (reverseRamp) _characterRamp = _characterRamp.split('').reverse().join('')
+  return _characterRamp
 }

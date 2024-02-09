@@ -1,6 +1,7 @@
 import './index.css'
 
 export * from './AsciiImage/AsciiImage'
+export * from './AsciiVideo/AsciiVideo'
 export * from './ColorHover/ColorHover'
 export * from './ConditionalWrapper/ConditionalWrapper'
 export * from './GradientSlider/GradientSlider'

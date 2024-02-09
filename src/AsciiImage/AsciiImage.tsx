@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { AnyOther, cn } from '../utils'
-import { characterRamps, clampDimensions, getAscii, getFontDimensions } from './utils'
+import { characterRamps, clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './utils'
 
 export type AsciiImageProps = {
   src: string
@@ -26,13 +26,7 @@ export const AsciiImage = ({
   const [ascii, setAscii] = React.useState('')
   const ref = React.useRef<React.ElementRef<'div'>>(null)
 
-  let _characterRamp =
-    characterRamp === undefined
-      ? characterRamps.short
-      : characterRamp in characterRamps
-        ? characterRamps[characterRamp as keyof typeof characterRamps]
-        : characterRamp
-  if (reverseRamp) _characterRamp = _characterRamp.split('').reverse().join('')
+  const _characterRamp = getCharacterRamp(characterRamp, reverseRamp)
 
   React.useEffect(() => {
     const image = new Image()
@@ -54,7 +48,7 @@ export const AsciiImage = ({
   }, [src, maxHeight, maxWidth, _characterRamp])
 
   return (
-    <div ref={ref} className='grid *:col-span-full *:row-span-full place-items-start'>
+    <div ref={ref} className='grid place-items-start'>
       <pre
         className={cn('bg-cover bg-no-repeat w-fit text-[.4rem]', preClassName)}
         style={{ backgroundImage: showImage ? `url(${src})` : '' }}
