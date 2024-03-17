@@ -7,6 +7,6 @@
     "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
-  },
+    "noEmit": true
+  }
 }
