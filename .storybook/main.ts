@@ -1,7 +1,7 @@
 import { StorybookConfig } from '@storybook/react-vite'
 
 const config: StorybookConfig = {
-  stories: ['../src/index.stories.tsx', '../src/**/*.stories.@(js|jsx|ts|tsx|mdx)'],
+  stories: ['../src/index.stories.tsx', '../src/**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
   addons: [
     {
       name: '@storybook/addon-essentials',
@@ -16,9 +16,6 @@ const config: StorybookConfig = {
   },
   logLevel: 'silent',
   docs: { autodocs: false },
-  async viteFinal(config) {
-    return { ...config, build: { ...config.build, target: 'esnext' } }
-  },
 }
 
 export default config
