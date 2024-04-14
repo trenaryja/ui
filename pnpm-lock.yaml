@@ -70,9 +70,6 @@ devDependencies:
   daisyui:
     specifier: ^4.10.1
     version: 4.10.1(postcss@8.4.38)
-  dotenv-cli:
-    specifier: ^7.4.1
-    version: 7.4.1
   eslint:
     specifier: 8.57.0
     version: 8.57.0
@@ -5221,16 +5218,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       is-obj: 2.0.0
-    dev: true
-
-  /dotenv-cli@7.4.1:
-    resolution: {integrity: sha512-fE1aywjRrWGxV3miaiUr3d2zC/VAiuzEGghi+QzgIA9fEf/M5hLMaRSXb4IxbUAwGmaLi0IozdZddnVU96acag==}
-    hasBin: true
-    dependencies:
-      cross-spawn: 7.0.3
-      dotenv: 16.4.5
-      dotenv-expand: 10.0.0
-      minimist: 1.2.8
     dev: true
 
   /dotenv-expand@10.0.0:
