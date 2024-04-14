@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { GradientSlider, GradientSliderProps } from '..'
 import { ChromaColor } from '../utils'

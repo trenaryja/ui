@@ -14,7 +14,7 @@ export const Nested: Story = {
   render: (args) => {
     return (
       <Hex className='bg-base-200 p-5' {...args}>
-        <Hex className='bg-base-100 w-full' {...args} />
+        <Hex className='bg-base-100 w-full animate-spin duration-1000' {...args} />
       </Hex>
     )
   },

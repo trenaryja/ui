@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { AsciiImageProps } from '..'
 import { getAscii, getCharacterRamp } from '../AsciiImage/utils'

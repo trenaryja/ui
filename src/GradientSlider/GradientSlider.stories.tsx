@@ -53,8 +53,9 @@ export const ColorPicker: Story = {
           <GradientSlider
             thumbColor={thumbColor}
             gradient={[chroma(hue, 0, lightness, 'hsl'), chroma(hue, 1, lightness, 'hsl')]}
-            value={saturation * 100}
-            onChange={(x) => setSaturation(x / 100)}
+            max={255}
+            value={saturation * 255}
+            onChange={(x) => setSaturation(x / 255)}
           />
           <GradientSlider
             thumbColor={thumbColor}
@@ -63,14 +64,16 @@ export const ColorPicker: Story = {
               chroma(hue, saturation, 0.5, 'hsl'),
               chroma(hue, saturation, 1, 'hsl'),
             ]}
-            value={lightness * 100}
-            onChange={(x) => setLightness(x / 100)}
+            max={255}
+            value={lightness * 255}
+            onChange={(x) => setLightness(x / 255)}
           />
           <GradientSlider
             thumbColor={thumbColor}
             gradient={['#0000', thumbColor]}
-            value={alpha * 100}
-            onChange={(x) => setAlpha(x / 100)}
+            max={255}
+            value={alpha * 255}
+            onChange={(x) => setAlpha(x / 255)}
           />
         </div>
         <div className='flex flex-col w-40 items-center'>

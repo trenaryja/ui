@@ -1,3 +1,5 @@
+'use client'
+
 import * as Slider from '@radix-ui/react-slider'
 import chroma, { Color } from 'chroma-js'
 import React from 'react'
@@ -53,7 +55,7 @@ export const GradientSlider = ({
       max={max}
       className='h-4 relative flex items-center select-none touch-none w-full'
     >
-      <Slider.Track style={{ background: trackBackground }} className='bg-red-500 relative grow rounded-full h-2' />
+      <Slider.Track style={{ background: trackBackground }} className='relative grow rounded-full h-2' />
       <Slider.Thumb style={{ background: thumbHex }} className='block w-4 h-4 rounded-full focus:outline-none' />
     </Slider.Root>
   )
