@@ -20,7 +20,7 @@
     "treeshake": "pnpm build && agadoo",
     "storybook": "storybook dev -p 6006 --quiet",
     "build-storybook": "storybook build",
-    "release": "pnpm build && dotenv release-it --"
+    "release": "pnpm build && release-it --"
   },
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -51,7 +51,6 @@
     "clsx": "^2.1.0",
     "concurrently": "8.2.2",
     "daisyui": "^4.10.1",
-    "dotenv-cli": "^7.4.1",
     "eslint": "8.57.0",
     "postcss": "^8.4.38",
     "prettier": "3.2.5",
