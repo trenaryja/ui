@@ -4,9 +4,7 @@ on: [push]
 
 jobs:
   run-ci:
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    name: Run Type Check & Linters
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,14 +16,5 @@ jobs:
           version: latest
       - run: pnpm install
 
-      - name: Check types
-        run: pnpm run type-check
-
-      - name: Check linting
-        run: pnpm run lint
-
-      - name: Build storybook
-        run: pnpm run build-storybook
-
-      - name: Build package
-        run: pnpm run build
+      - name: Run tests
+        run: pnpm test
