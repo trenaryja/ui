@@ -29,16 +29,6 @@ Build package with `tsup` for production.
 pnpm run build
 ```
 
-### Linking/Testing
-
-Often times you want to link the package you're developing to another project locally to test it out to circumvent the need to publish it to NPM.
-
-For this we use `yalc` which is a tool for local package development and simulating the publishing and installation of packages. Make sure it is globally installed, then in a project where you want to consume your package simply run:
-
-```console
-yalc add my-react-package
-```
-
 ### Releasing, tagging & publishing to NPM
 
 Create a semantic version tag and publish to Github Releases. When a new release is detected a Github Action will automatically build the package and publish it to NPM. Additionally, a Storybook will be published to Github pages.
@@ -51,7 +41,6 @@ pnpm run release
 
 - 📦[pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
 - ⚡️[tsup](https://github.com/egoist/tsup) - The simplest and fastest way to bundle your TypeScript libraries. Used to bundle package as ESM and CJS modules.
-- 🔗 [Yalc](https://github.com/wclr/yalc) - Better workflow than npm link for package authors.
 - 📖 [Storybook](https://storybook.js.org/) - Build UI components and pages in isolation. It streamlines UI development, testing, and documentation.
 - 🔼 [Release-it](https://github.com/release-it/release-it/) - A command line tool to automatically generate a new GitHub/NPM Release
 - 🐙 [Github Actions](https://docs.github.com/en/actions) - CI/CD workflows that integrate with Github Releases to automate publishing the package to NPM and Storybook to Github Pages.

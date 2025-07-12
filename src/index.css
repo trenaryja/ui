@@ -1,3 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@plugin "daisyui" {
+	themes: all;
+}
+
+@utility full-bleed-container {
+	@apply grid content-start grid-cols-[1fr_min(80ch,100%)_1fr] [&>*]:col-2;
+}
+
+@utility full-bleed {
+	@apply col-span-full w-full;
+}
+
+@utility debug {
+	@apply !border !border-red-500;
+}
+
+@utility no-scrollbar {
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
