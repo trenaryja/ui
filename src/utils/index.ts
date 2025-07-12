@@ -1,12 +1,10 @@
 import { clsx, type ClassValue } from 'clsx'
+import daisyThemes from 'daisyui/theme/object'
 import { twMerge } from 'tailwind-merge'
+import { OmitIndexSignature } from 'type-fest'
 
-export interface Nothing {}
+export * from './types'
 
-export type AnyOther<T> = T & Nothing
+export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs))
 
-export type ChromaColor = string | number | chroma.Color
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export type DaisyThemeName = keyof OmitIndexSignature<typeof daisyThemes>
