@@ -66,7 +66,7 @@ export const convertToAscii = (grayScales: number[], width: number, characterRam
   }, '')
 }
 
-export const getFontDimensions = (ref: React.RefObject<HTMLDivElement>) => {
+export const getFontDimensions = (ref: React.RefObject<HTMLDivElement | null>) => {
   if (ref.current === null) return { fontWidth: 0, fontHeight: 0 }
   const pre = document.createElement('pre')
   ref.current.append(pre)

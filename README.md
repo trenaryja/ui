@@ -5,7 +5,7 @@ This library is a collection of reusable UI components for my projects. There's 
 [![Storybook](https://img.shields.io/badge/Storybook-gray?&style=badge&logo=storybook&logoColor=white)](https://trenaryja.github.io/ui)
 [![Github](https://img.shields.io/badge/Github-gray?&style=badge&logo=github&logoColor=white)](https://github.com/trenaryja/ui)
 [![npm](https://img.shields.io/npm/v/@trenaryja/ui?&style=badge&logo=npm&logoColor=white&color=black)](https://www.npmjs.com/package/@trenaryja/ui)
-[![Bundlephobia](https://img.shields.io/bundlephobia/minzip/@trenaryja/ui?logoColor=white&style=badge&label=Bundlephobia&logo=webpack&color=black)](https://bundlephobia.com/package/@trenaryja/ui)
+[![Bundlephobia](https://img.shields.io/bundlejs/size/@trenaryja/ui?logoColor=white&style=badge&label=Bundlephobia&logo=webpack&color=black)](https://bundlephobia.com/package/@trenaryja/ui)
 
 ## Getting Started
 

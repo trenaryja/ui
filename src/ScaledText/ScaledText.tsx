@@ -14,7 +14,7 @@ export type ScaledTextProps = {
 }
 
 export const ScaledText = ({ lines, props }: ScaledTextProps) => {
-  const refs = React.useRef<Array<SVGElement | null>>([])
+  const refs = React.useRef<(SVGElement | null)[]>([])
 
   React.useEffect(() => {
     refs.current = refs.current.slice(0, lines.length)
@@ -31,7 +31,11 @@ export const ScaledText = ({ lines, props }: ScaledTextProps) => {
   return (
     <>
       {lines.map((line, i) => (
-        <svg ref={(svg) => (refs.current[i] = svg)}>
+        <svg
+          ref={(svg) => {
+            refs.current[i] = svg
+          }}
+        >
           <text {...props} {...(typeof line === 'string' ? undefined : line.props)}>
             {typeof line === 'string' ? line : line.text}
           </text>

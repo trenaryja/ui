@@ -24,7 +24,7 @@ export const AsciiImage = ({
   preClassName,
 }: AsciiImageProps) => {
   const [ascii, setAscii] = React.useState('')
-  const ref = React.useRef<React.ElementRef<'div'>>(null)
+  const ref = React.useRef<HTMLDivElement>(null)
 
   const _characterRamp = getCharacterRamp(characterRamp, reverseRamp)
 
