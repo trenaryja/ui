@@ -11,7 +11,7 @@ const meta: Meta<typeof AsciiImage> = {
 }
 export default meta
 
-const src = await fetch('https://source.unsplash.com/random/500x500/?face').then((res) => res.url)
+const src = await fetch('https://picsum.photos/500').then((res) => res.url)
 
 export const Default: Story = {
   render: (args) => <AsciiImage {...args} />,

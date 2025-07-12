@@ -32,7 +32,9 @@ export const ReadMe: StoryObj = {
         className='fixed grayscale opacity-5 object-cover inset-0 w-screen h-screen -z-10'
         src={backgrounds[Math.floor(Math.random() * backgrounds.length)]}
       />
-      <ReactMarkdown className='prose dark:prose-invert prose-img:inline-block prose-img:m-0'>{readMe}</ReactMarkdown>
+      <div className='prose dark:prose-invert prose-img:inline-block prose-img:m-0'>
+        <ReactMarkdown>{readMe}</ReactMarkdown>
+      </div>
     </div>
   ),
 }
