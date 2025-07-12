@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import ReactMarkdown from 'react-markdown'
 import readMe from '../README.md?raw'
 

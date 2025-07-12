@@ -1,5 +1,5 @@
-import { addons } from '@storybook/manager-api'
-import { themes } from '@storybook/theming'
+import { addons } from 'storybook/manager-api'
+import { themes } from 'storybook/theming'
 
 // @ts-ignore
 import favicon from './favicon.svg'

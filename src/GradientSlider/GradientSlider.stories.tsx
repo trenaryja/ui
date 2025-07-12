@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import chroma from 'chroma-js'
 import React from 'react'
 import { GradientSlider, GradientSliderProps, HueSlider } from '..'
