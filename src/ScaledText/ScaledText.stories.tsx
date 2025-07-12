@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react'
+import { Meta, StoryObj } from '@storybook/react-vite'
 import { ScaledText } from '..'
 
 type Story = StoryObj<typeof ScaledText>
