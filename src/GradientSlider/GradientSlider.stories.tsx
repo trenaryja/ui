@@ -21,23 +21,6 @@ export const Default: Story = {
 	args: defaultArgs,
 }
 
-export const Controlled: Story = {
-	name: 'Controlled vs Uncontrolled',
-	render: () => {
-		const [hue, setHue] = useState(50)
-		return (
-			<div className='grid gap-10'>
-				<h1>Uncontrolled</h1>
-				<GradientSlider {...defaultArgs} />
-				<h1>Controlled</h1>
-				<GradientSlider {...defaultArgs} value={hue} onChange={(x) => setHue(x)} />
-				<h1>Controlled & Locked</h1>
-				<GradientSlider {...defaultArgs} value={hue} />
-			</div>
-		)
-	},
-}
-
 export const ColorPicker: Story = {
 	render: () => {
 		const [hue, setHue] = useState(0)
@@ -47,7 +30,7 @@ export const ColorPicker: Story = {
 		const color = chroma(hue, saturation, lightness, 'hsl').alpha(alpha)
 		const thumbColor = color.hex('rgb')
 		return (
-			<div className='flex gap-10'>
+			<div className='flex gap-10 w-full'>
 				<div className='flex flex-col gap-5 w-full justify-between'>
 					<HueSlider thumbColor={thumbColor} value={hue} onChange={(x) => setHue(x)} />
 					<GradientSlider

@@ -1,11 +1,3 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
-@plugin "@tailwindcss/typography";
-
-@plugin "daisyui" {
-	themes: all;
-}
-
 @utility full-bleed-container {
 	@apply grid content-start grid-cols-[1fr_min(80ch,100%)_1fr] [&>*]:col-2;
 }

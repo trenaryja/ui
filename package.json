@@ -16,23 +16,21 @@
 		"build": "tsup",
 		"tsc": "tsc",
 		"lint": "eslint . --max-warnings=0",
-		"format": "prettier --write \"**/*.{cjs,css,cts,gql,graphql,handlebars,hbs,htm,html,js,json,jsx,less,markdown,md,mdx,mjs,mts,sass,scss,ts,tsx,vue,yaml,yml,}\" !\"pnpm-lock.yaml\"",
+		"format": "prettier --write . !\"pnpm-lock.yaml\"",
 		"treeshake": "pnpm build && agadoo",
 		"storybook": "storybook dev -p 6006 --quiet",
 		"build-storybook": "storybook build",
 		"release": "pnpm build && release-it --",
-		"get-latest": "pnpm up -L -i -r"
+		"get-latest": "pnpm up -L -i -r",
+		"analyze": "pnpm dlx source-map-explorer dist/index.js"
 	},
+	"main": "./dist/index.js",
 	"module": "./dist/index.js",
+	"browser": "./dist/index.css",
 	"types": "./dist/index.d.ts",
 	"exports": {
-		".": {
-			"require": "./dist/index.cjs",
-			"import": "./dist/index.js"
-		},
-		"./css": {
-			"import": "./dist/index.css"
-		}
+		".": "./dist/index.js",
+		"./css": "./dist/index.css"
 	},
 	"files": [
 		"dist"
@@ -67,10 +65,9 @@
 		"tailwind-merge": "^3.3.1",
 		"tailwindcss": "^4.1.11",
 		"tsup": "^8.5.0",
-		"tw-animate-css": "^1.3.5",
 		"type-fest": "^4.41.0",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.35.1",
+		"typescript-eslint": "^8.37.0",
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
@@ -81,7 +78,8 @@
 	},
 	"peerDependencies": {
 		"react": ">=19",
-		"react-dom": ">=19"
+		"react-dom": ">=19",
+		"tailwindcss": ">=4"
 	},
 	"postcss": {
 		"plugins": {
@@ -108,16 +106,15 @@
 		}
 	},
 	"tsup": {
+		"clean": true,
+		"dts": true,
 		"entry": [
 			"src/index.ts"
 		],
-		"treeshake": true,
-		"sourcemap": true,
+		"format": "esm",
 		"minify": true,
-		"clean": true,
-		"dts": true,
-		"format": [
-			"esm"
-		]
+		"sourcemap": true,
+		"treeshake": true,
+		"onSuccess": "cp src/index.css dist/index.css"
 	}
 }
