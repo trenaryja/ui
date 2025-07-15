@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@plugin "daisyui" {
+	themes: all;
+}
+
+@import '../src/index.css';

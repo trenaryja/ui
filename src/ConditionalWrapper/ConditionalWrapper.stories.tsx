@@ -15,7 +15,7 @@ export const Default: Story = {
 		const [isChecked, setIsChecked] = useState(false)
 
 		return (
-			<div className='grid gap-10'>
+			<div className='grid gap-10 place-items-center'>
 				<div className='flex items-center gap-2'>
 					<input type='checkbox' id='checkbox' checked={isChecked} onChange={() => setIsChecked(!isChecked)} />
 					<label htmlFor='checkbox'>Apply Wrapper</label>

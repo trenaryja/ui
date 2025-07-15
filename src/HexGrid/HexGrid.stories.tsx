@@ -5,6 +5,13 @@ type Story = StoryObj<typeof HexGrid>
 const meta: Meta<typeof HexGrid> = {
 	title: 'components/HexGrid',
 	component: HexGrid,
+	decorators: [
+		(Story) => (
+			<div className='full-bleed'>
+				<Story />
+			</div>
+		),
+	],
 	argTypes: {
 		center: { control: 'radio', options: ['horizontally', 'vertically'] },
 		fill: { control: 'color' },

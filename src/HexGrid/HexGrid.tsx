@@ -22,12 +22,12 @@ export type HexGridProps = {
 
 export const HexGrid = ({
 	center = 'horizontally',
-	fill = '#000',
+	fill = 'none',
 	height = screenHeight,
 	hexScale = 10,
 	orientation = 'pointy',
 	sideLength,
-	stroke = '#fff',
+	stroke = 'currentColor',
 	strokeWidth = 1,
 	styleFn,
 	svgProps,

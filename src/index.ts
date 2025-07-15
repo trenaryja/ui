@@ -1,4 +1,4 @@
-import './index.css'
+export * from './utils'
 
 export * from './AsciiImage/AsciiImage'
 export * from './AsciiVideo/AsciiVideo'
