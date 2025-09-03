@@ -1,5 +1,5 @@
 @utility full-bleed-container {
-	@apply grid content-start grid-cols-[1fr_min(80ch,100%)_1fr] [&>*]:col-2;
+	@apply grid content-start grid-cols-[1fr_min(var(--bleed-width,80ch),100%)_1fr] [&>*]:col-2;
 }
 
 @utility full-bleed {
@@ -15,4 +15,79 @@
 	&::-webkit-scrollbar {
 		display: none;
 	}
+}
+
+@utility neu {
+	--neu-bg: var(--color-base-100);
+	--neu-distance: 5px;
+	--neu-blur: 10px;
+	--neu-intensity: 10%;
+	--neu-angle: 45deg;
+	--neu-curve: 50%;
+
+	--neu-x: calc(cos(var(--neu-angle)) * var(--neu-distance));
+	--neu-y: calc(sin(var(--neu-angle)) * var(--neu-distance));
+	--neu-dark: color-mix(in oklab, var(--neu-bg) calc(100% - var(--neu-intensity)), black var(--neu-intensity));
+	--neu-light: color-mix(in oklab, var(--neu-bg) calc(100% - var(--neu-intensity)), white var(--neu-intensity));
+
+	background-color: var(--neu-bg);
+	box-shadow:
+		var(--neu-x) var(--neu-y) var(--neu-blur) var(--neu-dark),
+		calc(var(--neu-x) * -1) calc(var(--neu-y) * -1) var(--neu-blur) var(--neu-light);
+}
+
+@utility neu-inset {
+	box-shadow:
+		inset var(--neu-x) var(--neu-y) var(--neu-blur) var(--neu-dark),
+		inset calc(var(--neu-x) * -1) calc(var(--neu-y) * -1) var(--neu-blur) var(--neu-light);
+}
+
+@utility neu-convex {
+	background: linear-gradient(
+		calc(var(--neu-angle) + 90deg),
+		color-mix(in oklab, var(--neu-light) var(--neu-curve), transparent),
+		color-mix(in oklab, var(--neu-dark) var(--neu-curve), transparent)
+	);
+}
+
+@utility neu-concave {
+	background: linear-gradient(
+		calc(var(--neu-angle) - 90deg),
+		color-mix(in oklab, var(--neu-light) var(--neu-curve), transparent),
+		color-mix(in oklab, var(--neu-dark) var(--neu-curve), transparent)
+	);
+}
+
+@utility neu-xs {
+	--neu-distance: 3px;
+	--neu-blur: 6px;
+}
+@utility neu-sm {
+	--neu-distance: 4px;
+	--neu-blur: 8px;
+}
+@utility neu-md {
+	--neu-distance: 5px;
+	--neu-blur: 10px;
+}
+@utility neu-lg {
+	--neu-distance: 10px;
+	--neu-blur: 20px;
+}
+@utility neu-xl {
+	--neu-distance: 20px;
+	--neu-blur: 40px;
+}
+
+@utility neu-top-left {
+	--neu-angle: 225deg;
+}
+@utility neu-top-right {
+	--neu-angle: 315deg;
+}
+@utility neu-bottom-left {
+	--neu-angle: 135deg;
+}
+@utility neu-bottom-right {
+	--neu-angle: 45deg;
 }
