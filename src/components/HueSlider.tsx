@@ -1,8 +1,16 @@
 'use client'
 
-import { GradientSlider, GradientSliderProps } from '..'
-import { ChromaColor } from '../utils'
-import { getHue, hueColors } from './utils'
+import chroma from 'chroma-js'
+import { GradientSlider, GradientSliderProps } from '.'
+import { ChromaColor } from '../types'
+
+const hueColors = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f', '#f00']
+
+const getHue = (value: ChromaColor | undefined) => {
+	if (value === undefined) return undefined
+	if (typeof value === 'number') return value
+	return chroma(value).get('hsl.h')
+}
 
 export type HueSliderProps = Omit<GradientSliderProps, 'value' | 'defaultValue' | 'gradient'> & {
 	value?: ChromaColor

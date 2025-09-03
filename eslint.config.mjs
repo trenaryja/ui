@@ -19,6 +19,7 @@ const eslintConfig = [
 		rules: {
 			'react/no-unescaped-entities': 'off',
 			'@typescript-eslint/no-namespace': 'off',
+			'@typescript-eslint/no-empty-object-type': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'error',
 				{

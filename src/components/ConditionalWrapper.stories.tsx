@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { ConditionalWrapper } from '..'
+import { ConditionalWrapper } from '.'
 
 const meta: Meta<typeof ConditionalWrapper> = {
 	title: 'components/ConditionalWrapper',

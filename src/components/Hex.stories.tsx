@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { Hex } from '..'
+import { Hex } from '.'
 
 type Story = StoryObj<typeof Hex>
 const meta: Meta<typeof Hex> = {
