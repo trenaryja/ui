@@ -2,9 +2,9 @@
 	"compilerOptions": {
 		"esModuleInterop": true,
 		"jsx": "preserve",
-		"module": "ESNext",
-		"target": "ESNext",
-		"moduleResolution": "Bundler",
+		"module": "esnext",
+		"target": "esnext",
+		"moduleResolution": "bundler",
 		"skipLibCheck": true,
 		"strict": true,
 		"noEmit": true
