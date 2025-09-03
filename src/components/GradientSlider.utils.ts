@@ -1,5 +1,5 @@
 import chroma from 'chroma-js'
-import { ChromaColor } from '../utils'
+import { ChromaColor } from '../types'
 
 export const sliderGradient = (colors: chroma.Color[]) =>
 	`linear-gradient(to right, ${colors.map((color) => color.hex()).join(', ')})`

@@ -3,8 +3,8 @@
 import * as Slider from '@radix-ui/react-slider'
 import chroma, { Color } from 'chroma-js'
 import { useState } from 'react'
-import { ChromaColor } from '../utils'
-import { getThumbColor, sliderGradient } from './utils'
+import { ChromaColor } from '../types'
+import { getThumbColor, sliderGradient } from './GradientSlider.utils'
 
 export type GradientSliderProps = {
 	min?: number

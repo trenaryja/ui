@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { HexGrid } from '..'
+import { HexGrid } from '.'
 
 type Story = StoryObj<typeof HexGrid>
 const meta: Meta<typeof HexGrid> = {

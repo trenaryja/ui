@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { AsciiImage } from '..'
+import { AsciiImage } from '.'
 
 type Story = StoryObj<typeof AsciiImage>
 const meta: Meta<typeof AsciiImage> = {
@@ -23,6 +23,6 @@ export const BackgroundClip: Story = {
 	args: {
 		...Default.args,
 		showImage: true,
-		preClassName: 'bg-clip-text text-transparent',
+		className: 'bg-clip-text text-transparent',
 	},
 }
