@@ -19,7 +19,7 @@ const preview: Preview = {
 	decorators: [
 		withThemeByDataAttribute({
 			themes: Object.fromEntries(themes.map((x) => [`${x.mode === 'dark' ? '🌑' : '☀️'} ${x.name}`, x.name])),
-			defaultTheme: 'dark',
+			defaultTheme: '🌑 dark',
 			attributeName: 'data-theme',
 		}),
 		(Story) => (
