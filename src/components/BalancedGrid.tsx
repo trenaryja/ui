@@ -1,5 +1,5 @@
+import { cn } from '@/utils'
 import React, { ComponentProps } from 'react'
-import { cn } from '../utils'
 import { balanceGridItems } from './BalancedGrid.utils'
 
 type BalancedGridProps = ComponentProps<'div'> & {

@@ -1,7 +1,7 @@
 'use client'
 
+import { cn } from '@/utils'
 import { useEffect, useRef, useState } from 'react'
-import { cn } from '../utils'
 import { AsciiImageProps } from './AsciiImage'
 import { clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './AsciiImage.utils'
 

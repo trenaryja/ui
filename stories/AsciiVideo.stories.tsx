@@ -1,5 +1,5 @@
+import { AsciiVideo } from '@/components'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { AsciiVideo } from '../components/AsciiVideo'
 
 type Story = StoryObj<typeof AsciiVideo>
 const meta: Meta<typeof AsciiVideo> = {

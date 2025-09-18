@@ -1,8 +1,8 @@
+import { DaisyThemeColor, TailwindBreakpointName, TailwindColor, TailwindColorName, TailwindIndex } from '@/types'
 import chroma from 'chroma-js'
 import daisyThemes from 'daisyui/theme/object'
 import * as R from 'remeda'
 import defaultTheme from 'tailwindcss/defaultTheme'
-import { DaisyThemeColor, TailwindBreakpointName, TailwindColor, TailwindColorName, TailwindIndex } from '../types'
 
 export const daisyThemeColors = Object.keys(daisyThemes.dark)
 	.filter((key) => key.startsWith('--color-'))

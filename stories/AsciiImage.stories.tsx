@@ -1,5 +1,5 @@
+import { AsciiImage } from '@/components'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { AsciiImage } from '../components/AsciiImage'
 
 type Story = StoryObj<typeof AsciiImage>
 const meta: Meta<typeof AsciiImage> = {

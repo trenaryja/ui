@@ -1,5 +1,5 @@
+import { Hex } from '@/components'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { Hex } from '../components/Hex'
 
 type Story = StoryObj<typeof Hex>
 const meta: Meta<typeof Hex> = {

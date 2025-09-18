@@ -1,5 +1,5 @@
+import { HueSlider } from '@/components'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { HueSlider } from '../components/HueSlider'
 
 type Story = StoryObj<typeof HueSlider>
 const meta: Meta<typeof HueSlider> = {
