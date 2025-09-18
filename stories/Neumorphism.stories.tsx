@@ -1,6 +1,6 @@
+import { cn } from '@/utils'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { ComponentProps, CSSProperties, useEffect, useState } from 'react'
-import { cn } from '../utils'
 
 type Story = StoryObj
 const meta: Meta = {

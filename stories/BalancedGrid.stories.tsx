@@ -1,6 +1,6 @@
+import { BalancedGrid } from '@/components'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { BalancedGrid } from '../components/BalancedGrid'
 
 type Story = StoryObj<typeof BalancedGrid>
 const meta: Meta<typeof BalancedGrid> = {

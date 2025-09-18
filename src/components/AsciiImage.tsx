@@ -1,8 +1,8 @@
 'use client'
 
+import { Suggest } from '@/types'
+import { cn } from '@/utils'
 import { useEffect, useRef, useState } from 'react'
-import { Suggest } from '../types'
-import { cn } from '../utils'
 import { characterRamps, clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './AsciiImage.utils'
 
 export type AsciiImageProps = {

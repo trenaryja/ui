@@ -1,7 +1,7 @@
+import { colors, flatPalette } from '@/utils'
 import daisyThemes from 'daisyui/theme/object'
 import defaultTheme from 'tailwindcss/defaultTheme'
 import { OmitIndexSignature } from 'type-fest'
-import { colors, flatPalette } from '../utils'
 
 export type Suggest<T, U> = T | (U & { __?: never })
 

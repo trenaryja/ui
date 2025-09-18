@@ -1,9 +1,9 @@
 'use client'
 
+import { ChromaColor } from '@/types'
 import * as Slider from '@radix-ui/react-slider'
 import chroma, { Color } from 'chroma-js'
 import { useState } from 'react'
-import { ChromaColor } from '../types'
 import { getThumbColor, sliderGradient } from './GradientSlider.utils'
 
 export type GradientSliderProps = {

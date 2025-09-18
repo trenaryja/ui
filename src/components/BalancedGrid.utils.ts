@@ -1,4 +1,4 @@
-import { lcm } from '../utils'
+import { lcm } from '@/utils'
 
 export const balanceGridItems = <T>(items: T[], maxCols: number, pack?: boolean) => {
 	const n = items.length
