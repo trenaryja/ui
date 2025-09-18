@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { ConditionalWrapper } from '.'
+import { ConditionalWrapper } from '../components/ConditionalWrapper'
 
 const meta: Meta<typeof ConditionalWrapper> = {
 	title: 'components/ConditionalWrapper',
@@ -16,8 +16,14 @@ export const Default: Story = {
 
 		return (
 			<div className='grid gap-10 place-items-center'>
-				<div className='flex items-center gap-2'>
-					<input type='checkbox' id='checkbox' checked={isChecked} onChange={() => setIsChecked(!isChecked)} />
+				<div className='flex gap-2'>
+					<input
+						type='checkbox'
+						id='checkbox'
+						className='checkbox'
+						checked={isChecked}
+						onChange={() => setIsChecked(!isChecked)}
+					/>
 					<label htmlFor='checkbox'>Apply Wrapper</label>
 				</div>
 				<ConditionalWrapper

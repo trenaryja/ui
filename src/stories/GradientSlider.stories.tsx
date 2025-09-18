@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import chroma from 'chroma-js'
 import { useState } from 'react'
-import { GradientSlider, GradientSliderProps, HueSlider } from '.'
+import { GradientSlider, GradientSliderProps } from '../components/GradientSlider'
+import { HueSlider } from '../components/HueSlider'
 
 type Story = StoryObj<typeof GradientSlider>
 const meta: Meta<typeof GradientSlider> = {

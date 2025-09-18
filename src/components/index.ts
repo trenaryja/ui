@@ -1,5 +1,6 @@
 export * from './AsciiImage'
 export * from './AsciiVideo'
+export * from './BalancedGrid'
 export * from './ConditionalWrapper'
 export * from './GradientSlider'
 export * from './Hex'

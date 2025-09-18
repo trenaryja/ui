@@ -1,8 +1,17 @@
-@import 'tailwindcss';
-@plugin "@tailwindcss/typography";
+@import '../src/styles/index.css';
 
-@plugin "daisyui" {
+@plugin '@tailwindcss/typography';
+
+@plugin 'daisyui' {
 	themes: all;
 }
 
-@import '../src/index.css';
+body,
+html,
+#storybook-root {
+	@apply size-full;
+}
+
+@utility demo {
+	@apply grid place-items-center content-center gap-10 size-full;
+}

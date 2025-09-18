@@ -1,0 +1,38 @@
+@import 'tailwindcss';
+@import './neu.css';
+@import './daisy.css';
+
+@utility text-2xs {
+	@apply text-[.625rem];
+}
+
+@utility text-3xs {
+	@apply text-[.5rem];
+}
+
+@utility full-bleed-container {
+	@apply grid grid-cols-[1fr_min(var(--bleed-width,80ch),100%)_1fr] [&>*]:col-2;
+}
+
+@utility full-bleed {
+	@apply col-span-full w-full;
+}
+
+@utility debug {
+	@apply [border:1px_solid_red]!;
+}
+
+@utility no-scrollbar {
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+@utility progress-flat {
+	@apply [&::-webkit-progress-value]:rounded-none;
+}
+
+@utility grid-stack {
+	@apply grid *:row-start-1 *:col-start-1;
+}

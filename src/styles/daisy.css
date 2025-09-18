@@ -1,0 +1,9 @@
+@plugin 'daisyui';
+
+@utility frosted-glass {
+	@apply bg-base-100/75 backdrop-blur-xl;
+}
+
+@utility paper {
+	@apply bg-base-200 p-2 rounded-box border border-current/5;
+}
