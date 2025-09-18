@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { AsciiImageProps } from '.'
 import { cn } from '../utils'
+import { AsciiImageProps } from './AsciiImage'
 import { clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './AsciiImage.utils'
 
 type AsciiVideoProps = Omit<AsciiImageProps, 'showImage'>

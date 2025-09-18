@@ -1,8 +1,8 @@
 'use client'
 
 import chroma from 'chroma-js'
-import { GradientSlider, GradientSliderProps } from '.'
 import { ChromaColor } from '../types'
+import { GradientSlider, GradientSliderProps } from './GradientSlider'
 
 const hueColors = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f', '#f00']
 

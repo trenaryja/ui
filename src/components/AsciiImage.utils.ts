@@ -1,4 +1,4 @@
-import { AsciiImageProps } from '.'
+import { AsciiImageProps } from './AsciiImage'
 
 export const characterRamps = {
 	short: ' .:-=+*#%@',

@@ -1,7 +1,6 @@
-import { Grid, Hex, Orientation, defineHex, rectangle } from 'honeycomb-grid'
+'use client'
 
-const screenWidth = window.screen.width * window.devicePixelRatio
-const screenHeight = window.screen.height * window.devicePixelRatio
+import { Grid, Hex, Orientation, defineHex, rectangle } from 'honeycomb-grid'
 
 const longDimensionCount = (px: number, size: number) => Math.ceil((2 * px - size) / (3 * size)) + 1
 const shortDimensionCount = (px: number, size: number) => Math.round(px / (Math.sqrt(3) * size)) + 1
@@ -23,7 +22,7 @@ export type HexGridProps = {
 export const HexGrid = ({
 	center = 'horizontally',
 	fill = 'none',
-	height = screenHeight,
+	height,
 	hexScale = 10,
 	orientation = 'pointy',
 	sideLength,
@@ -31,22 +30,28 @@ export const HexGrid = ({
 	strokeWidth = 1,
 	styleFn,
 	svgProps,
-	width = screenWidth,
+	width,
 }: HexGridProps) => {
+	const screenWidth = typeof window !== 'undefined' ? window.screen.width * window.devicePixelRatio : 800 // fallback for SSR
+	const screenHeight = typeof window !== 'undefined' ? window.screen.height * window.devicePixelRatio : 600 // fallback for SSR
+
+	const finalWidth = width ?? screenWidth
+	const finalHeight = height ?? screenHeight
+
 	const sizeCalculations = {
 		horizontally: {
-			flat: width / hexScale,
-			pointy: width / hexScale / Math.sqrt(3),
+			flat: finalWidth / hexScale,
+			pointy: finalWidth / hexScale / Math.sqrt(3),
 		},
 		vertically: {
-			flat: height / hexScale / Math.sqrt(3),
-			pointy: height / hexScale,
+			flat: finalHeight / hexScale / Math.sqrt(3),
+			pointy: finalHeight / hexScale,
 		},
 	}
 
 	const size = sideLength ?? sizeCalculations[center][orientation]
-	const cols = orientation === 'flat' ? longDimensionCount(width, size) : shortDimensionCount(width, size)
-	const rows = orientation === 'flat' ? shortDimensionCount(height, size) : longDimensionCount(height, size)
+	const cols = orientation === 'flat' ? longDimensionCount(finalWidth, size) : shortDimensionCount(finalWidth, size)
+	const rows = orientation === 'flat' ? shortDimensionCount(finalHeight, size) : longDimensionCount(finalHeight, size)
 
 	const grid = new Grid(
 		defineHex({
@@ -57,7 +62,7 @@ export const HexGrid = ({
 	)
 
 	return (
-		<svg viewBox={`0 0 ${width} ${height}`} {...svgProps}>
+		<svg viewBox={`0 0 ${finalWidth} ${finalHeight}`} {...svgProps}>
 			{grid.reduce<React.ReactNode[]>((result, hex) => {
 				result.push(
 					<polygon

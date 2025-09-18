@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { ScaledText } from '.'
+import { ScaledText } from '../components/ScaledText'
 
 type Story = StoryObj<typeof ScaledText>
 const meta: Meta<typeof ScaledText> = {

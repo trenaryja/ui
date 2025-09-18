@@ -1,5 +1,7 @@
 *.tsbuildinfo
+*.tgz
 node_modules
 dist
 storybook-static
 .env
+_generated
