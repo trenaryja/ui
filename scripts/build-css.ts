@@ -31,6 +31,8 @@ for (const f of fs.readdirSync(srcCssDir).filter((f) => f.endsWith('.css'))) {
 }
 
 const browserCss =
+	`@import 'tailwindcss';\n` +
+	`@plugin 'daisyui' { themes: all; };\n` +
 	`@import '../css/index.css';\n` +
 	`@config './tailwind.config.ts';\n` +
 	[...allUtilities].map((u) => `@source inline('${u}');`).join('\n')
@@ -70,6 +72,7 @@ const proseClasses = [
 
 const proseCss =
 	`@plugin '@tailwindcss/typography';\n` +
+	`@import '../../node_modules/daisyui/utilities/typography.css';\n` +
 	`@config './tailwind.config.ts';\n\n` +
 	proseClasses.map((cls) => `.${cls}{@apply ${cls};}`).join('\n')
 fs.writeFileSync(path.join(generatedDir, 'prose.css'), proseCss, 'utf-8')

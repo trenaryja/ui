@@ -1,10 +1,10 @@
-@import '../src/css/index.css';
-
+@import 'tailwindcss';
 @plugin '@tailwindcss/typography';
-
 @plugin 'daisyui' {
 	themes: all;
 }
+
+@import '../src/css/index.css';
 
 body,
 html,
