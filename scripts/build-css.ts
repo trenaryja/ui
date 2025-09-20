@@ -4,14 +4,7 @@ import fs from 'fs'
 import path from 'path'
 import * as R from 'remeda'
 import type { Config } from 'tailwindcss'
-import { fileURLToPath } from 'url'
-
-const log = (m: string) => console.log(`▶ ${m}`)
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const srcCssDir = path.join(__dirname, '../src/css')
-const distCssDir = path.join(__dirname, '../dist/css')
-const generatedDir = path.join(__dirname, '../src/_generated')
+import { distCssDir, generatedDir, log, srcCssDir } from './utils'
 
 const setup = () => {
 	fs.rmSync(generatedDir, { recursive: true, force: true })
@@ -67,7 +60,7 @@ const generateBrowserCss = () => {
 const compileGeneratedToDist = () => {
 	for (const f of fs.readdirSync(generatedDir).filter((f) => f.endsWith('.css'))) {
 		const input = path.join(generatedDir, f)
-		const dist = path.join(__dirname, '../dist/css', path.parse(f).name + '.css')
+		const dist = path.join(distCssDir, path.parse(f).name + '.css')
 		const cmd = `tailwindcss -i ${input} -o ${dist}`
 		log(cmd)
 		execSync(cmd, { stdio: 'inherit' })

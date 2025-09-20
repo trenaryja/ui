@@ -12,15 +12,16 @@
 	},
 	"scripts": {
 		"dev": "concurrently \"pnpm:build --watch\" \"pnpm:storybook\"",
-		"test": "concurrently -g --timings \"pnpm:lint\" \"pnpm:check-types\" \"pnpm:build\" \"pnpm:build-storybook\"",
+		"test": "concurrently -g --timings \"pnpm:lint\" \"pnpm:check-types\" \"pnpm:build\" \"pnpm:build:storybook\"",
 		"check-types": "tsc",
 		"build": "tsup",
 		"build:css": "tsx scripts/build-css.ts",
-		"postbuild": "pnpm build:css",
+		"build:nf": "tsx scripts/build-nf.ts",
+		"build:sb": "storybook build",
+		"postbuild": "pnpm build:css && pnpm build:nf && pnpm build:sb",
 		"lint": "eslint .",
 		"format": "prettier -w . !\"pnpm-lock.yaml\"",
 		"storybook": "storybook dev -p 6006 --quiet",
-		"build-storybook": "storybook build",
 		"release": "pnpm build && release-it --",
 		"get-latest": "pnpm up -L -i -r",
 		"analyze": "pnpm dlx source-map-explorer dist/index.js"
@@ -40,6 +41,7 @@
 		"dist"
 	],
 	"devDependencies": {
+		"@mantine/hooks": "^8.3.1",
 		"@storybook/addon-themes": "^9.1.7",
 		"@storybook/react-vite": "^9.1.7",
 		"@tailwindcss/cli": "^4.1.13",
@@ -57,6 +59,7 @@
 		"eslint": "^9.36.0",
 		"eslint-plugin-react-hooks": "^5.2.0",
 		"eslint-plugin-storybook": "^9.1.7",
+		"fuse.js": "^7.1.0",
 		"prettier": "^3.6.2",
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",

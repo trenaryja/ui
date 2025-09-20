@@ -15,3 +15,8 @@ html,
 @utility demo {
 	@apply grid place-items-center content-center gap-10 size-full;
 }
+
+@font-face {
+	font-family: 'FiraCode NF';
+	src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@master/patched-fonts/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf');
+}
