@@ -73,8 +73,10 @@ const proseClasses = [
 const proseCss =
 	`@plugin '@tailwindcss/typography';\n` +
 	`@import '../../node_modules/daisyui/utilities/typography.css';\n` +
-	`@config './tailwind.config.ts';\n\n` +
-	proseClasses.map((cls) => `.${cls}{@apply ${cls};}`).join('\n')
+	`@config './tailwind.config.ts';\n` +
+	`@layer utilities {\n` +
+	`${proseClasses.map((cls) => `.${cls}{@apply ${cls};}`).join('\n')}\n` +
+	`}\n`
 fs.writeFileSync(path.join(generatedDir, 'prose.css'), proseCss, 'utf-8')
 log(`Generated ${proseClasses.length} prose classes → prose.css`)
 
