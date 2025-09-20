@@ -1,4 +1,4 @@
-import React from 'react'
+import { RefObject } from 'react'
 import { AsciiImageProps } from './AsciiImage'
 
 export const characterRamps = {
@@ -38,7 +38,7 @@ export const clampDimensions = ({ height, width, maxHeight, maxWidth, fontHeight
 	return { height: newHeight, width: newWidth }
 }
 
-export const getFontDimensions = (ref: React.RefObject<HTMLPreElement | null>) => {
+export const getFontDimensions = (ref: RefObject<HTMLPreElement | null>) => {
 	if (!ref.current) return { fontWidth: 0, fontHeight: 0 }
 	const pre = document.createElement('pre')
 	pre.textContent = ' '

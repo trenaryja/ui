@@ -2,7 +2,6 @@
 
 import { ChromaColor } from '@/types'
 import chroma from 'chroma-js'
-import React from 'react'
 import { GradientSlider, GradientSliderProps } from './GradientSlider'
 
 const hueColors = ['#f00', '#ff0', '#0f0', '#0ff', '#00f', '#f0f', '#f00']
