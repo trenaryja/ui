@@ -1,26 +1,26 @@
 'use client'
 
-import { SVGProps, useEffect, useRef } from 'react'
+import React from 'react'
 
 export type ScaledTextProps = {
 	lines: (
 		| string
 		| {
 				text: string
-				props?: SVGProps<SVGTextElement>
+				props?: React.SVGProps<SVGTextElement>
 		  }
 	)[]
-	props?: SVGProps<SVGTextElement>
+	props?: React.SVGProps<SVGTextElement>
 }
 
 export const ScaledText = ({ lines, props }: ScaledTextProps) => {
-	const refs = useRef<(SVGElement | null)[]>([])
+	const refs = React.useRef<(SVGElement | null)[]>([])
 
-	useEffect(() => {
+	React.useEffect(() => {
 		refs.current = refs.current.slice(0, lines.length)
 	}, [lines])
 
-	useEffect(() => {
+	React.useEffect(() => {
 		refs.current.forEach((svg) => {
 			const text = svg?.querySelector('text')
 			const bbox = text?.getBBox()

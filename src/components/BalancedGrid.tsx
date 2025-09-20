@@ -1,14 +1,14 @@
 import { cn } from '@/utils'
-import { Children, cloneElement, ComponentProps, isValidElement } from 'react'
+import React from 'react'
 import { balanceGridItems } from './BalancedGrid.utils'
 
-type BalancedGridProps = ComponentProps<'div'> & {
+type BalancedGridProps = React.ComponentProps<'div'> & {
 	maxCols: number
 	pack?: boolean
 }
 
 export function BalancedGrid({ maxCols, pack, className, style, children }: BalancedGridProps) {
-	const childArray = Children.toArray(children)
+	const childArray = React.Children.toArray(children)
 	const { leftoverCount, lastRowIndex, style: balancedGridStyles } = balanceGridItems(childArray, maxCols, pack)
 
 	return (
@@ -24,13 +24,13 @@ export function BalancedGrid({ maxCols, pack, className, style, children }: Bala
 			style={{ ...style, ...balancedGridStyles }}
 		>
 			{childArray.map((child, i) => {
-				if (!isValidElement<{ className?: string }>(child)) return child
+				if (!React.isValidElement<{ className?: string }>(child)) return child
 				const isLeftover = leftoverCount > 0 && i >= lastRowIndex
 				const withClass = cn(child.props.className, {
 					'grid-leftover': isLeftover,
 					'grid-first-leftover': isLeftover && i === lastRowIndex,
 				})
-				return cloneElement(child, { className: withClass })
+				return React.cloneElement(child, { className: withClass })
 			})}
 		</div>
 	)
