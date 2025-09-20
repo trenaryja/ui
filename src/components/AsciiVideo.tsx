@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/utils'
-import React from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AsciiImageProps } from './AsciiImage'
 import { clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './AsciiImage.utils'
 
@@ -15,14 +15,14 @@ export const AsciiVideo = ({
 	reverseRamp,
 	className,
 }: AsciiVideoProps) => {
-	const [ascii, setAscii] = React.useState('')
-	const [isPlaying, setIsPlaying] = React.useState(true)
-	const preRef = React.useRef<HTMLPreElement>(null)
-	const videoRef = React.useRef<HTMLVideoElement>(null)
+	const [ascii, setAscii] = useState('')
+	const [isPlaying, setIsPlaying] = useState(true)
+	const preRef = useRef<HTMLPreElement>(null)
+	const videoRef = useRef<HTMLVideoElement>(null)
 
 	const ramp = getCharacterRamp(characterRamp, reverseRamp)
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (!videoRef.current) videoRef.current = document.createElement('video')
 		const video = videoRef.current
 

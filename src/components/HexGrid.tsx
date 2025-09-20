@@ -1,5 +1,5 @@
 import { Grid, Hex, Orientation, defineHex, rectangle } from 'honeycomb-grid'
-import React from 'react'
+import { ReactNode, SVGProps } from 'react'
 
 const longDimensionCount = (px: number, size: number) => Math.ceil((2 * px - size) / (3 * size)) + 1
 const shortDimensionCount = (px: number, size: number) => Math.round(px / (Math.sqrt(3) * size)) + 1
@@ -13,8 +13,8 @@ export type HexGridProps = {
 	sideLength?: number
 	stroke?: string
 	strokeWidth?: string | number
-	styleFn?: (hex: Hex, grid: Grid<Hex>) => React.SVGProps<SVGPolygonElement>
-	svgProps?: React.SVGProps<SVGSVGElement>
+	styleFn?: (hex: Hex, grid: Grid<Hex>) => SVGProps<SVGPolygonElement>
+	svgProps?: SVGProps<SVGSVGElement>
 	width?: number
 }
 
@@ -62,7 +62,7 @@ export const HexGrid = ({
 
 	return (
 		<svg viewBox={`0 0 ${finalWidth} ${finalHeight}`} {...svgProps}>
-			{grid.reduce<React.ReactNode[]>((result, hex) => {
+			{grid.reduce<ReactNode[]>((result, hex) => {
 				result.push(
 					<polygon
 						key={`${hex.x},${hex.y}`}

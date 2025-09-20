@@ -2,7 +2,7 @@
 
 import { Suggest } from '@/types'
 import { cn } from '@/utils'
-import React from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { characterRamps, clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './AsciiImage.utils'
 
 export type AsciiImageProps = {
@@ -24,10 +24,10 @@ export const AsciiImage = ({
 	showImage,
 	className,
 }: AsciiImageProps) => {
-	const [ascii, setAscii] = React.useState('')
-	const ref = React.useRef<HTMLPreElement>(null)
+	const [ascii, setAscii] = useState('')
+	const ref = useRef<HTMLPreElement>(null)
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const image = new Image()
 		image.crossOrigin = 'Anonymous'
 
