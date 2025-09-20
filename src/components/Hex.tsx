@@ -1,6 +1,7 @@
 import { cn } from '@/utils'
+import { ComponentProps } from 'react'
 
-export type HexProps = React.ComponentProps<'div'> & {
+export type HexProps = ComponentProps<'div'> & {
 	flat?: boolean
 }
 
