@@ -1,5 +1,3 @@
-@plugin 'daisyui';
-
 @utility frosted-glass {
 	@apply bg-base-100/75 backdrop-blur-xl;
 }

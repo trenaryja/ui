@@ -18,13 +18,13 @@ export const AsciiVideo = ({
 	const [ascii, setAscii] = React.useState('')
 	const [isPlaying, setIsPlaying] = React.useState(true)
 	const preRef = React.useRef<HTMLPreElement>(null)
-	const videoRef = React.useRef<HTMLVideoElement | null>(document.createElement('video'))
+	const videoRef = React.useRef<HTMLVideoElement>(null)
 
 	const ramp = getCharacterRamp(characterRamp, reverseRamp)
 
 	React.useEffect(() => {
+		if (!videoRef.current) videoRef.current = document.createElement('video')
 		const video = videoRef.current
-		if (!video) return
 
 		let cancelled = false
 

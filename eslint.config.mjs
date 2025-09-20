@@ -1,11 +1,11 @@
 import reactHooks from 'eslint-plugin-react-hooks'
 import storybook from 'eslint-plugin-storybook'
-import tseslint from 'typescript-eslint'
+import tsEslint from 'typescript-eslint'
 
 /** @type {import('eslint').Linter.Config[]} */
 const eslintConfig = [
 	{ ignores: ['dist', 'storybook-static/*'] },
-	...tseslint.configs.recommended,
+	...tsEslint.configs.recommended,
 	...storybook.configs['flat/recommended'],
 	reactHooks.configs['recommended-latest'],
 

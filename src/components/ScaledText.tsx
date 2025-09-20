@@ -32,6 +32,7 @@ export const ScaledText = ({ lines, props }: ScaledTextProps) => {
 		<>
 			{lines.map((line, i) => (
 				<svg
+					key={i}
 					ref={(svg) => {
 						refs.current[i] = svg
 					}}

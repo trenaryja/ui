@@ -1,5 +1,3 @@
-'use client'
-
 import { Grid, Hex, Orientation, defineHex, rectangle } from 'honeycomb-grid'
 import React from 'react'
 
@@ -33,8 +31,8 @@ export const HexGrid = ({
 	svgProps,
 	width,
 }: HexGridProps) => {
-	const screenWidth = typeof window !== 'undefined' ? window.screen.width * window.devicePixelRatio : 800 // fallback for SSR
-	const screenHeight = typeof window !== 'undefined' ? window.screen.height * window.devicePixelRatio : 600 // fallback for SSR
+	const screenWidth = typeof window !== 'undefined' ? window.screen.width * window.devicePixelRatio : 800
+	const screenHeight = typeof window !== 'undefined' ? window.screen.height * window.devicePixelRatio : 600
 
 	const finalWidth = width ?? screenWidth
 	const finalHeight = height ?? screenHeight
