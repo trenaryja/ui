@@ -15,7 +15,7 @@
 		"test": "concurrently -g --timings \"pnpm:lint\" \"pnpm:check-types\" \"pnpm:build\" \"pnpm:build-storybook\"",
 		"check-types": "tsc",
 		"build": "tsup",
-		"build:css": "node scripts/build-css.ts",
+		"build:css": "tsx scripts/build-css.ts",
 		"postbuild": "pnpm build:css",
 		"lint": "eslint .",
 		"format": "prettier -w . !\"pnpm-lock.yaml\"",
@@ -26,6 +26,7 @@
 		"analyze": "pnpm dlx source-map-explorer dist/index.js"
 	},
 	"types": "./dist/index.d.ts",
+	"browser": "./dist/css/browser.css",
 	"exports": {
 		".": {
 			"import": "./dist/index.js",
@@ -66,6 +67,7 @@
 		"tailwind-merge": "^3.3.1",
 		"tailwindcss": "^4.1.13",
 		"tsup": "^8.5.0",
+		"tsx": "^4.20.5",
 		"type-fest": "^5.0.1",
 		"typescript": "^5.9.2",
 		"typescript-eslint": "^8.44.0",
