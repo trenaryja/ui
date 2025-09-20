@@ -10,7 +10,7 @@ export type ScaledTextProps = {
 				props?: SVGProps<SVGTextElement>
 		  }
 	)[]
-	props?: React.SVGProps<SVGTextElement>
+	props?: SVGProps<SVGTextElement>
 }
 
 export const ScaledText = ({ lines, props }: ScaledTextProps) => {

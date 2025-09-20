@@ -9,7 +9,7 @@ const log = (m: string) => console.log(`▶ ${m}`)
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const stylesDir = path.join(__dirname, '../src/styles')
+const srcCssDir = path.join(__dirname, '../src/css')
 const generatedDir = path.join(__dirname, '../src/_generated')
 
 fs.rmSync(generatedDir, { recursive: true, force: true })
@@ -25,13 +25,13 @@ fs.writeFileSync(
 )
 
 const allUtilities = new Set<string>()
-for (const f of fs.readdirSync(stylesDir).filter((f) => f.endsWith('.css'))) {
-	const file = fs.readFileSync(path.join(stylesDir, f), 'utf-8')
+for (const f of fs.readdirSync(srcCssDir).filter((f) => f.endsWith('.css'))) {
+	const file = fs.readFileSync(path.join(srcCssDir, f), 'utf-8')
 	for (const m of file.matchAll(/@utility\s+([\w-]+)/g)) allUtilities.add(m[1])
 }
 
 const browserCss =
-	`@import '../styles/index.css';\n` +
+	`@import '../css/index.css';\n` +
 	`@config './tailwind.config.ts';\n` +
 	[...allUtilities].map((u) => `@source inline('${u}');`).join('\n')
 fs.writeFileSync(path.join(generatedDir, 'browser.css'), browserCss, 'utf-8')
@@ -81,4 +81,10 @@ for (const f of fs.readdirSync(generatedDir).filter((f) => f.endsWith('.css'))) 
 	const cmd = `tailwindcss -i ${input} -o ${dist}`
 	log(cmd)
 	execSync(cmd, { stdio: 'inherit' })
+}
+
+const distCssDir = path.join(__dirname, '../dist/css')
+if (fs.existsSync(srcCssDir)) {
+	fs.cpSync(srcCssDir, distCssDir, { recursive: true })
+	log(`Copied src/css to dist/css`)
 }

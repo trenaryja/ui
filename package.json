@@ -16,7 +16,7 @@
 		"check-types": "tsc",
 		"build": "tsup",
 		"build:css": "node scripts/build-css.ts",
-		"postbuild": "pnpm build:css && cp -r src/styles/ dist/css",
+		"postbuild": "pnpm build:css",
 		"lint": "eslint .",
 		"format": "prettier -w . !\"pnpm-lock.yaml\"",
 		"storybook": "storybook dev -p 6006 --quiet",
@@ -123,7 +123,6 @@
 			"react-dom"
 		],
 		"format": "esm",
-		"minify": true,
 		"sourcemap": true,
 		"treeshake": true
 	}
