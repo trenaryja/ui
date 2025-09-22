@@ -14,7 +14,7 @@ addons.setConfig({
 		...themes.dark,
 		brandUrl: 'https://trenary.dev',
 		brandTitle:
-			'<img src="https://www.trenary.dev/icon.svg" style="width: 100%; object-fit: contain; max-height: 3rem; object-position: center;" title="@trenaryja/ui" />',
+			'<img src="https://trenary.dev/icon.svg" style="width: 100%; object-fit: contain; max-height: 3rem; object-position: center;" title="@trenaryja/ui" />',
 		brandTarget: '_blank',
 	},
 })
