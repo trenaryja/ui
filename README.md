@@ -1,7 +1,7 @@
 <h1 align="center">@trenaryja/ui</h1>
 
 <p align="center">
-  <img src="./.storybook/favicon.svg" alt="logo" width="80" />
+  <img src="https://trenary.dev/icon.svg" alt="logo" width="80" />
 </p>
 
 This library is a collection of reusable UI components for my projects. There's no real system or pattern in place, just a hodge-podge of random components/ideas that I've come up with. If it inspires you, or you somehow find any of it useful, then hell yeah please tell me about it!
