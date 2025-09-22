@@ -2,8 +2,9 @@ export * from './AsciiImage'
 export * from './AsciiVideo'
 export * from './BalancedGrid'
 export * from './ConditionalWrapper'
-export * from './GradientSlider'
-export * from './Hex'
 export * from './HexGrid'
-export * from './HueSlider'
 export * from './ScaledText'
+
+// to be removed?
+export * from './GradientSlider'
+export * from './HueSlider'

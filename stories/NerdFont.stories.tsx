@@ -144,14 +144,14 @@ export const NerdFontGlyphs: StoryObj = {
 								className='btn relative grid h-max p-4 overflow-x-auto'
 								onClick={() => handleClick(glyph)}
 							>
-								<div className='text-5xl'>{glyph.char}</div>
+								<div className='text-5xl font-normal'>{glyph.char}</div>
 								<div className='text-xs truncate font-mono' title={glyph.id}>
 									{glyph.id}
 								</div>
-								<div className='text-[10px] text-base-content/50 font-mono'>U+{glyph.code}</div>
+								<div className='text-[10px] text-base-content/50 font-mono'>{glyph.code}</div>
 								{clipboard.copied && lastCopiedId === glyph.id && (
 									<span className='absolute inset-0 grid place-items-center backdrop-blur-2xl'>
-										<span className={cn({ 'text-5xl': cycle.prev === 'char' })}>{glyph[cycle.prev]}</span>
+										<span className={cn({ 'text-5xl font-normal': cycle.prev === 'char' })}>{glyph[cycle.prev]}</span>
 										<span className='text-sm'>Copied</span>
 									</span>
 								)}

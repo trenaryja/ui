@@ -3,23 +3,11 @@ import { execSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import * as R from 'remeda'
-import type { Config } from 'tailwindcss'
-import { distCssDir, generatedDir, log, srcCssDir } from './utils'
+import { distCssDir, generatedDir, generateTailwindConfig, log, srcCssDir } from './utils'
 
 const setup = () => {
 	fs.rmSync(generatedDir, { recursive: true, force: true })
 	fs.mkdirSync(generatedDir, { recursive: true })
-}
-
-const generateTailwindConfig = () => {
-	const config: Config = { content: { files: ['!../../**/*'] } }
-	const configFile = path.join(generatedDir, 'tailwind.config.ts')
-	fs.writeFileSync(
-		configFile,
-		`import type { Config } from 'tailwindcss'; export default ${JSON.stringify(config, null, 2)} satisfies Config`,
-		'utf-8',
-	)
-	log(`Generated tailwind.config.ts`)
 }
 
 const generateProseCss = () => {
@@ -31,7 +19,7 @@ const generateProseCss = () => {
 	const proseCss =
 		`@plugin '@tailwindcss/typography';\n` +
 		`@import '../../node_modules/daisyui/utilities/typography.css';\n` +
-		`@config './tailwind.config.ts';\n` +
+		`@config './browser.tailwind.config.ts';\n` +
 		`@layer utilities {\n` +
 		`${proseClasses.map((cls) => `.${cls}{@apply ${cls};}`).join('\n')}\n` +
 		`}\n`
@@ -51,10 +39,16 @@ const generateBrowserCss = () => {
 		`@import '../../node_modules/daisyui/daisyui.css';\n` +
 		`@import '../css/index.css';\n` +
 		`@import './prose.css';\n` +
-		`@config './tailwind.config.ts';\n` +
+		`@config './browser.tailwind.config.ts';\n` +
 		[...allUtilities].map((u) => `@source inline('${u}');`).join('\n')
 	fs.writeFileSync(path.join(generatedDir, 'browser.css'), browserCss, 'utf-8')
 	log(`Generated ${allUtilities.size} utils → browser.css`)
+}
+
+const generateComponentCss = () => {
+	const componentCss = `@import 'tailwindcss';\n` + `@config './component.tailwind.config.ts';\n`
+	fs.writeFileSync(path.join(generatedDir, 'component.css'), componentCss, 'utf-8')
+	log(`Generated component.css`)
 }
 
 const compileGeneratedToDist = () => {
@@ -72,10 +66,23 @@ const copySrcToDist = () => {
 	log(`Copied src/css to dist/css`)
 }
 
+const injectFilesIntoIndex = () => {
+	const indexCss = path.join(distCssDir, './index.css')
+	fs.writeFileSync(
+		indexCss,
+		`@import './component.css';\n` + `@import './prose.css';\n` + `${fs.readFileSync(indexCss, 'utf-8')}`,
+		'utf-8',
+	)
+	log(`Injected component.css import into ${indexCss}`)
+}
+
 setup()
-generateTailwindConfig()
+generateTailwindConfig('browser.tailwind.config.ts', { content: { files: ['!../../**/*'] } })
 generateProseCss()
 generateBrowserCss()
+generateTailwindConfig('component.tailwind.config.ts', { content: { files: ['!../../**/*.stories.*'] } })
+generateComponentCss()
 compileGeneratedToDist()
 copySrcToDist()
+injectFilesIntoIndex()
 log('Done!')

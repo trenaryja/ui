@@ -6,14 +6,17 @@
 
 @import '../src/css/index.css';
 
+html {
+	@apply size-full overflow-auto;
+}
+
 body,
-html,
 #storybook-root {
 	@apply size-full;
 }
 
 @utility demo {
-	@apply grid place-items-center content-center gap-10 size-full;
+	@apply grid place-items-center gap-10 size-full;
 }
 
 @font-face {
