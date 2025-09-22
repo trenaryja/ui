@@ -1,4 +1,8 @@
-# @trenary/ui
+<h1 align="center">@trenaryja/ui</h1>
+
+<p align="center">
+  <img src="./.storybook/favicon.svg" alt="logo" width="80" />
+</p>
 
 This library is a collection of reusable UI components for my projects. There's no real system or pattern in place, just a hodge-podge of random components/ideas that I've come up with. If it inspires you, or you somehow find any of it useful, then hell yeah please tell me about it!
 
@@ -9,40 +13,48 @@ This library is a collection of reusable UI components for my projects. There's 
 
 ## Getting Started
 
-```console
-pnpm install @trenary/ui
+### React Application
+
+This library assumes you already have tailwind setup.
+
+1. Install the library
+
+```sh
+pnpm i @trenary/ui
 ```
 
-## Developing
+2. Import the library's css into your app's css
 
-Watch and rebuild code with `tsup` and runs Storybook to preview your UI during development.
-
-```console
-pnpm run dev
+```css
+@import 'trenaryja/ui/css';
 ```
 
-### Building
+### Browser
 
-Build package with `tsup` for production.
+If you'd like to try this out in the browser, like maybe in a [new pen](https://pen.new) on codepen.io, just dump these tags into your html:
 
-```console
-pnpm run build
-```
-
-### Releasing, tagging & publishing to NPM
-
-Create a semantic version tag and publish to Github Releases. When a new release is detected a Github Action will automatically build the package and publish it to NPM. Additionally, a Storybook will be published to Github pages.
-
-```console
-pnpm run release
+```html
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser"></script>
+<link href="https://cdn.jsdelivr.net/npm/@trenaryja/ui" rel="stylesheet" type="text/css" />
 ```
 
 ## What tools are used?
 
-- 📦[pnpm](https://pnpm.io/) - Fast, disk space efficient package manager
-- ⚡️[tsup](https://github.com/egoist/tsup) - The simplest and fastest way to bundle your TypeScript libraries. Used to bundle package as ESM and CJS modules.
-- 📖 [Storybook](https://storybook.js.org/) - Build UI components and pages in isolation. It streamlines UI development, testing, and documentation.
-- 🔼 [Release-it](https://github.com/release-it/release-it/) - A command line tool to automatically generate a new GitHub/NPM Release
-- 🐙 [Github Actions](https://docs.github.com/en/actions) - CI/CD workflows that integrate with Github Releases to automate publishing the package to NPM and Storybook to Github Pages.
-- ☑️ [ESLint](https://eslint.org/) - A linter for JavaScript.
-- 🎨 [Prettier](https://prettier.io/) - An opinionated code formatter.
+### Build Tools
+
+- 📦 [pnpm](https://pnpm.io)
+- ⚡️ [tsup](https://github.com/egoist/tsup)
+- ☑️ [eslint](https://eslint.org)
+- 🎨 [prettier](https://prettier.io)
+
+### Publish Tools
+
+- 📖 [storybook](https://storybook.js.org)
+- 🔼 [release-it](https://github.com/release-it/release-it)
+- 🐙 [github actions](https://docs.github.com/en/actions)
+
+### Peer Dependencies
+
+- ⚛️ [react](https://react.dev)
+- 🌊 [tailwindcss](https://tailwindcss.com/)
+- 🌼 [daisyui](https://daisyui.com/)

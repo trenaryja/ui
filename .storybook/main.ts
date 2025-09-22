@@ -3,15 +3,15 @@ import path from 'path'
 import { mergeConfig } from 'vite'
 
 const config: StorybookConfig = {
-	addons: ['@storybook/addon-themes'],
+	// addons: ['@storybook/addon-themes'],
 	logLevel: 'silent',
-	stories: ['../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
+	stories: ['../stories/README.stories.tsx', '../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
 	framework: {
 		name: '@storybook/react-vite',
 		options: {},
 	},
 	features: {
-		// TODO: remove controls in favor of better playground stories
+		controls: false,
 		actions: false,
 		interactions: false,
 	},
