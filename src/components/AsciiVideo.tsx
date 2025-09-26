@@ -1,9 +1,9 @@
 'use client'
 
 import { cn } from '@/utils'
+import { characterRamps, clampDimensions, getAscii, getFontDimensions } from '@/utils/ascii'
 import { useEffect, useRef, useState } from 'react'
 import { AsciiImageProps } from './AsciiImage'
-import { clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './AsciiImage.utils'
 
 type AsciiVideoProps = Omit<AsciiImageProps, 'showImage'>
 
@@ -11,16 +11,17 @@ export const AsciiVideo = ({
 	src,
 	maxHeight,
 	maxWidth,
-	characterRamp = 'short',
+	characterRamp = characterRamps[0],
 	reverseRamp,
 	className,
+	...props
 }: AsciiVideoProps) => {
 	const [ascii, setAscii] = useState('')
 	const [isPlaying, setIsPlaying] = useState(true)
 	const preRef = useRef<HTMLPreElement>(null)
 	const videoRef = useRef<HTMLVideoElement>(null)
 
-	const ramp = getCharacterRamp(characterRamp, reverseRamp)
+	const ramp = reverseRamp ? characterRamp.split('').reverse().join('') : characterRamp
 
 	useEffect(() => {
 		if (!videoRef.current) videoRef.current = document.createElement('video')
@@ -75,6 +76,7 @@ export const AsciiVideo = ({
 			ref={preRef}
 			onClick={handlePlayPause}
 			className={cn('bg-cover bg-no-repeat w-fit text-[.4rem] cursor-pointer', className)}
+			{...props}
 		>
 			{ascii}
 		</pre>

@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from 'clsx'
 import { cloneElement } from 'react'
 import { twMerge } from 'tailwind-merge'
 
+export * from './ascii'
 export * from './colors'
 
 export const cn = (...inputs: ClassValue[]) => {

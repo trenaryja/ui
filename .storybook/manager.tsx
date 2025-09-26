@@ -10,6 +10,9 @@ link.setAttribute('href', favicon)
 document.head.appendChild(link)
 
 addons.setConfig({
+	bottomPanelHeight: 0,
+	rightPanelWidth: 0,
+	panelPosition: 'bottom',
 	theme: {
 		...themes.dark,
 		brandUrl: 'https://trenary.dev',

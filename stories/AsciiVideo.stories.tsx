@@ -1,20 +1,78 @@
 import { AsciiVideo } from '@/components'
+import { characterRamps } from '@/utils/ascii'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { useState } from 'react'
 
-type Story = StoryObj<typeof AsciiVideo>
-const meta: Meta<typeof AsciiVideo> = {
-	title: 'components/AsciiVideo',
-	component: AsciiVideo,
-	argTypes: {
-		characterRamp: { control: 'text' },
-	},
-}
+const meta: Meta = { title: 'components/AsciiVideo' }
 export default meta
 
-const src = `https://upload.wikimedia.org/wikipedia/commons/transcoded/a/ab/Geometric_--_Free_Vj_Loops.webm/Geometric_--_Free_Vj_Loops.webm.720p.vp9.webm`
+const srcs = [
+	'https://upload.wikimedia.org/wikipedia/commons/transcoded/a/ab/Geometric_--_Free_Vj_Loops.webm/Geometric_--_Free_Vj_Loops.webm.720p.vp9.webm',
+	'https://videos.pexels.com/video-files/6491987/6491987-uhd_2732_1440_25fps.mp4',
+	'https://videos.pexels.com/video-files/5823521/5823521-hd_1080_1920_25fps.mp4',
+	'https://videos.pexels.com/video-files/8259633/8259633-uhd_1440_2732_25fps.mp4',
+	'https://videos.pexels.com/video-files/4727540/4727540-uhd_2560_1440_25fps.mp4',
+	'https://videos.pexels.com/video-files/853889/853889-hd_1920_1080_25fps.mp4',
+	'https://videos.pexels.com/video-files/7565457/7565457-hd_2048_1080_25fps.mp4',
+	'https://videos.pexels.com/video-files/2539559/2539559-hd_1920_1080_24fps.mp4',
+]
 
-export const Default: Story = {
+export const Default: StoryObj = {
 	name: 'AsciiVideo',
-	render: (args) => <AsciiVideo {...args} />,
-	args: { src },
+	render: () => {
+		const [src, setSrc] = useState(srcs[0])
+		const [ramp, setRamp] = useState<string>(characterRamps[0])
+		const [reverseRamp, setReverseRamp] = useState(false)
+		const [maxWidth, setMaxWidth] = useState(200)
+
+		return (
+			<div className='demo pt-10 full-bleed'>
+				<fieldset className='grid gap-4 w-full max-w-md p-4'>
+					<label className='flex flex-col gap-1 w-full'>
+						<span className='text-sm text-center'>Select Video</span>
+						<select className='select select-bordered w-full' value={src} onChange={(e) => setSrc(e.target.value)}>
+							{srcs.map((s, i) => (
+								<option key={i} value={s}>
+									Video {i + 1}
+								</option>
+							))}
+						</select>
+					</label>
+
+					<label className='flex flex-col gap-1 w-full'>
+						<span className='text-sm text-center'>Or enter custom Video URL</span>
+						<input className='input input-bordered w-full' value={src} onChange={(e) => setSrc(e.target.value)} />
+					</label>
+
+					<label className='flex flex-col gap-1 w-full'>
+						<span className='text-sm text-center'>Character ramp</span>
+						<input className='input w-full font-mono' value={ramp} onChange={(e) => setRamp(e.target.value)} />
+					</label>
+
+					<label className='flex items-center gap-2'>
+						<input
+							type='checkbox'
+							className='toggle'
+							checked={reverseRamp}
+							onChange={(e) => setReverseRamp(e.target.checked)}
+						/>
+						<span className='text-sm'>Reverse character ramp</span>
+					</label>
+
+					<label className='flex flex-col gap-1 w-full'>
+						<input
+							type='range'
+							className='range w-full'
+							min={1}
+							max={200}
+							value={maxWidth}
+							onChange={(e) => setMaxWidth(e.target.valueAsNumber)}
+						/>
+					</label>
+				</fieldset>
+
+				<AsciiVideo src={src} characterRamp={ramp} maxWidth={maxWidth} reverseRamp={reverseRamp} />
+			</div>
+		)
+	},
 }

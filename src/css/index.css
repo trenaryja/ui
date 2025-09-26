@@ -14,7 +14,7 @@
 }
 
 @utility full-bleed {
-	@apply col-span-full w-full;
+	@apply col-span-full! w-full;
 }
 
 @utility debug {

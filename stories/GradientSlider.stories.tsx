@@ -30,7 +30,7 @@ export const ColorPicker: Story = {
 		const color = chroma(hue, saturation, lightness, 'hsl').alpha(alpha)
 		const thumbColor = color.hex('rgb')
 		return (
-			<div className='flex gap-10 w-full'>
+			<div className='flex gap-10 w-full size-fit place-self-center'>
 				<div className='flex flex-col gap-5 w-full justify-between'>
 					<HueSlider thumbColor={thumbColor} value={hue} onChange={(x) => setHue(x)} />
 					<GradientSlider

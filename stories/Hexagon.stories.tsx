@@ -8,9 +8,9 @@ export const Default: StoryObj = {
 	name: 'hexagon',
 	render: () => {
 		return (
-			<div className='demo grid-cols-2 prose'>
-				<h1>tall</h1>
-				<h1>wide</h1>
+			<div className='demo grid-cols-2'>
+				<h1 className='text-3xl font-bold'>tall</h1>
+				<h1 className='text-3xl font-bold'>wide</h1>
 
 				<div className='hexagon-tall h-fit p-6 bg-base-200 grid place-items-center'>
 					<span>sized to content</span>

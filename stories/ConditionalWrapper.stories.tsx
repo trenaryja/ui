@@ -15,7 +15,7 @@ export const Default: Story = {
 		const [isChecked, setIsChecked] = useState(false)
 
 		return (
-			<div className='grid gap-10 place-items-center'>
+			<div className='demo'>
 				<div className='flex gap-2'>
 					<input
 						type='checkbox'
