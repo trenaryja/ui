@@ -2,27 +2,28 @@
 
 import { Suggest } from '@/types'
 import { cn } from '@/utils'
-import { useEffect, useRef, useState } from 'react'
-import { characterRamps, clampDimensions, getAscii, getCharacterRamp, getFontDimensions } from './AsciiImage.utils'
+import { characterRamps, clampDimensions, getAscii, getFontDimensions } from '@/utils/ascii'
+import { ComponentProps, useEffect, useRef, useState } from 'react'
 
-export type AsciiImageProps = {
+export type AsciiImageProps = ComponentProps<'pre'> & {
 	src: string
 	maxHeight?: number
 	maxWidth?: number
-	characterRamp?: Suggest<keyof typeof characterRamps, string>
+	characterRamp?: Suggest<(typeof characterRamps)[number], string>
 	reverseRamp?: boolean
 	showImage?: boolean
-	className?: string
 }
 
 export const AsciiImage = ({
 	src,
 	maxHeight,
 	maxWidth,
-	characterRamp = 'short',
+	characterRamp = characterRamps[0],
 	reverseRamp,
 	showImage,
 	className,
+	style,
+	...props
 }: AsciiImageProps) => {
 	const [ascii, setAscii] = useState('')
 	const ref = useRef<HTMLPreElement>(null)
@@ -33,7 +34,7 @@ export const AsciiImage = ({
 
 		image.onload = () => {
 			const { fontHeight, fontWidth } = getFontDimensions(ref)
-			const ramp = getCharacterRamp(characterRamp, reverseRamp)
+			const ramp = reverseRamp ? characterRamp.split('').reverse().join('') : characterRamp
 			const { width, height } = clampDimensions({
 				width: image.width,
 				height: image.height,
@@ -52,7 +53,8 @@ export const AsciiImage = ({
 		<pre
 			ref={ref}
 			className={cn('bg-cover bg-no-repeat w-fit text-[.4rem]', className)}
-			style={{ backgroundImage: showImage ? `url(${src})` : undefined }}
+			style={{ backgroundImage: showImage ? `url(${src})` : undefined, ...style }}
+			{...props}
 		>
 			{ascii}
 		</pre>

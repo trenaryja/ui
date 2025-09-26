@@ -1,10 +1,6 @@
 import { RefObject } from 'react'
-import { AsciiImageProps } from './AsciiImage'
 
-export const characterRamps = {
-	short: ' .:-=+*#%@',
-	standard: '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/|()1{}[]?-_+~<>i!lI;:,"^`\'.',
-} as const
+export const characterRamps = [' .:-=+*#%@'] as const
 
 type Dimensions = {
 	height: number
@@ -79,20 +75,8 @@ export const getAscii = (width: number, height: number, src: CanvasImageSource, 
 	const rampLength = characterRamp.length - 1
 	return grayScales
 		.map((gray, i) => {
-			const char = characterRamp[Math.round((rampLength * gray) / 255)]
+			const char = characterRamp[Math.round((rampLength * gray) / 255)] ?? ' '
 			return (i + 1) % width === 0 ? char + '\n' : char
 		})
 		.join('')
-}
-
-export const getCharacterRamp = (
-	characterRamp: AsciiImageProps['characterRamp'],
-	reverseRamp: AsciiImageProps['reverseRamp'],
-) => {
-	const ramp =
-		characterRamp === undefined
-			? characterRamps.short
-			: (characterRamps[characterRamp as keyof typeof characterRamps] ?? characterRamp)
-
-	return reverseRamp ? ramp.split('').reverse().join('') : ramp
 }

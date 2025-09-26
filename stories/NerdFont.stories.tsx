@@ -44,7 +44,6 @@ const glyphProperties = ['char', 'id', 'code'] as const satisfies (keyof (typeof
 const clipboardTimeout = 1000
 
 export const NerdFontGlyphs: StoryObj = {
-	parameters: { options: { showPanel: false } },
 	render: () => {
 		const [query, setQuery] = useState('')
 		const [debouncedQuery] = useDebouncedValue(query, 200)
@@ -93,7 +92,7 @@ export const NerdFontGlyphs: StoryObj = {
 					<div className='flex items-center justify-between'>
 						<p className='text-sm text-base-content/50'>
 							Showing {results.length}{' '}
-							{debouncedQuery ? 'matches' : 'random glyphs. There are ' + searchableSet.length + ' total.'}
+							{debouncedQuery ? 'matches' : 'glyphs. There are ' + searchableSet.length + ' total.'}
 						</p>
 
 						<div className='dropdown dropdown-end'>
@@ -124,7 +123,7 @@ export const NerdFontGlyphs: StoryObj = {
 											)}
 										>
 											<div className='text-2xl'>{fam.char}</div>
-											<div className='text-[10px] font-mono truncate w-full'>{fam.label}</div>
+											<div className='text-2xs font-mono truncate w-full'>{fam.label}</div>
 										</button>
 									))}
 								</BalancedGrid>
@@ -141,7 +140,7 @@ export const NerdFontGlyphs: StoryObj = {
 						{results.map((glyph) => (
 							<button
 								key={glyph.id}
-								className='btn relative grid h-max p-4 overflow-x-auto'
+								className='btn relative grid place-items-center h-max p-4 overflow-x-auto'
 								onClick={() => handleClick(glyph)}
 							>
 								<div className='text-5xl font-normal'>{glyph.char}</div>

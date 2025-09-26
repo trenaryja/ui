@@ -27,11 +27,6 @@ const preview: Preview = {
 			defaultTheme: `${symbols.dark} dark`,
 			attributeName: 'data-theme',
 		}),
-		(Story) => (
-			<div className='full-bleed-container size-full place-items-center'>
-				<Story />
-			</div>
-		),
 	],
 }
 

@@ -7,16 +7,19 @@
 @import '../src/css/index.css';
 
 html {
-	@apply size-full overflow-auto;
+	@apply scroll-smooth;
 }
 
-body,
+body {
+	@apply p-0!;
+}
+
 #storybook-root {
-	@apply size-full;
+	@apply full-bleed-container min-h-[100dvh] relative p-4!;
 }
 
 @utility demo {
-	@apply grid place-items-center gap-10 size-full;
+	@apply grid content-center place-items-center gap-10 size-full;
 }
 
 @font-face {

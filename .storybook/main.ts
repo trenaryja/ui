@@ -11,6 +11,7 @@ const config: StorybookConfig = {
 		options: {},
 	},
 	features: {
+		controls: false,
 		actions: false,
 		interactions: false,
 	},
