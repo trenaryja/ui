@@ -27,6 +27,7 @@ pnpm i @trenary/ui
 
 ```css
 @import 'trenaryja/ui/css';
+@source '../node_modules/@trenaryja/ui';
 ```
 
 ### Browser
@@ -37,6 +38,14 @@ If you'd like to try this out in the browser, like maybe in a [new pen](https://
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser"></script>
 <link href="https://cdn.jsdelivr.net/npm/@trenaryja/ui" rel="stylesheet" type="text/css" />
 ```
+
+> #### **Browser Templates** ⚛️
+>
+> You can explore the templates directly in the [`docs/`](./docs/readme.md) folder.
+
+#### Codepen Templates
+
+See the folder for templates []
 
 ## What tools are used?
 

@@ -3,11 +3,11 @@ import { cn } from '@/utils'
 import { characterRamps } from '@/utils/ascii'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
+import { picsum } from './story.utils'
 
 const meta: Meta = { title: 'components/AsciiImage' }
 export default meta
 
-const picsum = async (size = 500) => await fetch(`https://picsum.photos/${size}`).then((res) => res.url)
 const first = await picsum()
 
 export const Default: StoryObj = {
