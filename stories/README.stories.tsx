@@ -1,12 +1,12 @@
 import { cn } from '@/utils'
 import { useClipboard } from '@mantine/hooks'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import raw from 'rehype-raw'
 import readMe from '../README.md?raw'
 
-const meta: Meta = { title: 'ReadMe', decorators: [] }
+const meta = { title: 'ReadMe', decorators: [] } satisfies Meta
 export default meta
 
 const backgrounds = [
@@ -35,42 +35,42 @@ export const ReadMe: StoryObj = {
 		const [lastCopied, setLastCopied] = useState<string | null>(null)
 
 		return (
-			<div className='grid justify-center'>
+			<div className='prose prose-img:inline-block prose-img:m-0 max-w-full overflow-auto'>
 				<img
+					alt=''
 					className='fixed grayscale opacity-5 object-cover inset-0 size-full -z-10'
 					src={backgrounds[Math.floor(Math.random() * backgrounds.length)]}
 				/>
-				<div className='prose prose-img:inline-block prose-img:m-0'>
-					<ReactMarkdown
-						components={{
-							pre: ({ node: _node, ...props }) => (
-								<div className='relative group'>
-									<pre {...props} />
-								</div>
-							),
-							code: ({ node: _node, children, className, ...props }) => {
-								const toCopy = children?.toString().trim() || ''
-								return (
-									<code {...props} className={cn(className, 'size-full overflow-auto')}>
-										{children}
-										<button
-											className='absolute top-2 right-2 btn btn-sm group-hover:visible invisible'
-											onClick={() => {
-												setLastCopied(toCopy)
-												clipboard.copy(toCopy)
-											}}
-										>
-											{clipboard.copied && lastCopied === toCopy ? 'Copied!' : 'Copy'}
-										</button>
-									</code>
-								)
-							},
-						}}
-						rehypePlugins={[raw]}
-					>
-						{readMe}
-					</ReactMarkdown>
-				</div>
+				<ReactMarkdown
+					rehypePlugins={[raw]}
+					components={{
+						pre: ({ node: _node, ...props }) => (
+							<div className='relative group'>
+								<pre {...props} />
+							</div>
+						),
+						code: ({ node: _node, children, className, ...props }) => {
+							const toCopy = children?.toString().trim() || ''
+							return (
+								<code {...props} className={cn(className, 'size-full overflow-auto')}>
+									{children}
+									<button
+										className='absolute top-2 right-2 btn btn-sm group-hover:visible invisible'
+										type='button'
+										onClick={() => {
+											setLastCopied(toCopy)
+											clipboard.copy(toCopy)
+										}}
+									>
+										{clipboard.copied && lastCopied === toCopy ? 'Copied!' : 'Copy'}
+									</button>
+								</code>
+							)
+						},
+					}}
+				>
+					{readMe}
+				</ReactMarkdown>
 			</div>
 		)
 	},

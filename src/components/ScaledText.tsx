@@ -1,6 +1,7 @@
 'use client'
 
-import { SVGProps, useEffect, useRef } from 'react'
+import type { SVGProps } from 'react'
+import { useEffect, useRef } from 'react'
 
 export type ScaledTextProps = {
 	lines: (
@@ -30,18 +31,22 @@ export const ScaledText = ({ lines, props }: ScaledTextProps) => {
 
 	return (
 		<>
-			{lines.map((line, i) => (
-				<svg
-					key={i}
-					ref={(svg) => {
-						refs.current[i] = svg
-					}}
-				>
-					<text {...props} {...(typeof line === 'string' ? undefined : line.props)}>
-						{typeof line === 'string' ? line : line.text}
-					</text>
-				</svg>
-			))}
+			{lines.map((line, i) => {
+				const text = typeof line === 'string' ? line : line.text
+				const key = typeof line === 'string' ? `s:${text}:${i}` : `o:${text}:${line.props?.id ?? ''}`
+				return (
+					<svg
+						key={key}
+						ref={(svg) => {
+							refs.current[i] = svg
+						}}
+					>
+						<text {...props} {...(typeof line === 'string' ? undefined : line.props)}>
+							{typeof line === 'string' ? line : line.text}
+						</text>
+					</svg>
+				)
+			})}
 		</>
 	)
 }

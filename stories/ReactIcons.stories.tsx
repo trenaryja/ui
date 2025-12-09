@@ -2,10 +2,10 @@ import { BalancedGrid } from '@/components'
 import { useDebouncedCycle } from '@/hooks'
 import { cn } from '@/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
-import { IconType } from 'react-icons/lib'
+import type { IconType } from 'react-icons/lib'
 import * as R from 'remeda'
 
 import * as AiIcons from 'react-icons/ai'
@@ -40,7 +40,7 @@ import * as TiIcons from 'react-icons/ti'
 import * as VscIcons from 'react-icons/vsc'
 import * as WiIcons from 'react-icons/wi'
 
-const meta: Meta = { title: 'Search/React Icons' }
+const meta = { title: 'Search/React Icons' } satisfies Meta
 export default meta
 
 const iconFamilies = {
@@ -83,7 +83,7 @@ const flattenPack = (family: Prefix, pack: Record<string, IconType>) =>
 	Object.entries(pack).map(([id, Icon]) => ({
 		id,
 		label: id
-			.replace(/^[A-Z][a-z]?[a-z]?/, '')
+			.replace(/^[A-Z][a-z]{0,2}/, '')
 			.replace(/([a-z])([A-Z])/g, '$1 $2')
 			.toLowerCase(),
 		family,
@@ -133,43 +133,44 @@ export const ReactIcons: StoryObj = {
 		}
 
 		return (
-			<div className='full-bleed grid grid-rows-[auto_auto_1fr] gap-4 p-4 size-full max-h-[90vh]'>
+			<div className='full-bleed grid content-start gap-4 p-4'>
 				<input
+					className='input w-full '
 					type='text'
 					value={query}
 					onChange={(e) => setQuery(e.target.value)}
 					placeholder='Search React Icons...'
-					className='input w-full '
 				/>
 
 				<div className='flex items-center justify-between'>
 					<p className='text-sm text-base-content/50'>
-						Showing {results.length} {debouncedQuery ? 'matches' : 'icons. Total ' + searchableSet.length + '.'}
+						Showing {results.length} {debouncedQuery ? 'matches' : `icons. Total ${searchableSet.length}.`}
 					</p>
 
 					<div className='dropdown dropdown-end'>
-						<label tabIndex={0} className='btn btn-ghost btn-square btn-sm relative'>
+						<button className='btn btn-ghost btn-square btn-sm relative' tabIndex={0} type='button'>
 							<FaIcons.FaCog />
 							<span
 								className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
 									visible: activeFamilies.length,
 								})}
 							/>
-						</label>
+						</button>
 
 						<div
-							tabIndex={0}
 							className='dropdown-content w-screen p-4 grid gap-4 shadow bg-base-300/90 backdrop-blur border border-current/5 rounded-box max-w-[calc(100vw-4rem)]'
+							tabIndex={0}
 						>
-							<button onClick={clearPrefixes} className='btn btn-outline'>
+							<button className='btn btn-outline' type='button' onClick={clearPrefixes}>
 								Clear
 							</button>
-							<BalancedGrid maxCols={3} pack className='gap-2'>
+							<BalancedGrid pack className='gap-2' maxCols={3}>
 								{R.entries(iconFamilies).map(([prefix, { label, pack }]) => {
-									const Sample = Object.values(pack)[0]
+									const [Sample] = Object.values(pack)
 									return (
 										<button
 											key={prefix}
+											type='button'
 											onClick={() => togglePrefix(prefix as Prefix)}
 											className={cn(
 												'btn btn-sm flex flex-col items-center gap-1 h-auto py-2',
@@ -186,16 +187,12 @@ export const ReactIcons: StoryObj = {
 					</div>
 				</div>
 
-				<div
-					className={cn(
-						'grid gap-4 overflow-y-auto',
-						'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6',
-					)}
-				>
-					{results.map((icon, i) => (
+				<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6')}>
+					{results.map((icon) => (
 						<button
-							key={i}
 							className='btn relative grid place-items-center h-max p-4 overflow-hidden'
+							key={icon.id}
+							type='button'
 							onClick={() => handleClick(icon)}
 						>
 							<icon.Icon className='text-5xl' />

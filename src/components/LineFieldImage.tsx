@@ -1,15 +1,16 @@
 'use client'
 
 import { cn } from '@/utils'
-import { ComponentProps, useEffect, useState } from 'react'
+import type { ComponentProps } from 'react'
+import { useEffect, useState } from 'react'
 
-export type LineFieldImageProps = {
+export type LineFieldImageProps = ComponentProps<'svg'> & {
 	src: string
 	cellSize?: number
 	strokeWidth?: number
 	matchStrokeWidth?: boolean
 	showImage?: boolean
-} & ComponentProps<'svg'>
+}
 
 type ImgData = { width: number; height: number; lines: string }
 
@@ -23,7 +24,7 @@ export const LineFieldImage = ({
 	style,
 	...props
 }: LineFieldImageProps) => {
-	const [data, setData] = useState<ImgData | null>(null)
+	const [imgData, setImgData] = useState<ImgData | null>(null)
 
 	useEffect(() => {
 		const img = new Image()
@@ -54,12 +55,12 @@ export const LineFieldImage = ({
 					lines += `<line x1="${cx - dx}" y1="${cy - dy}" x2="${cx + dx}" y2="${cy + dy}" />\n`
 				}
 			}
-			setData({ width: w, height: h, lines })
+			setImgData({ width: w, height: h, lines })
 		}
 		img.src = src
 	}, [src, cellSize])
 
-	if (!data) return null
+	if (!imgData) return null
 
 	const effectiveStroke = matchStrokeWidth ? cellSize / 3 : strokeWidth
 
@@ -70,11 +71,11 @@ export const LineFieldImage = ({
 		>
 			<svg
 				className={cn('stroke-base-content size-full', className)}
-				viewBox={`0 0 ${data.width} ${data.height}`}
-				strokeWidth={effectiveStroke}
+				dangerouslySetInnerHTML={{ __html: `<g>${imgData.lines}</g>` }}
 				preserveAspectRatio='xMidYMid meet'
 				strokeLinecap='square'
-				dangerouslySetInnerHTML={{ __html: `<g>${data.lines}</g>` }}
+				strokeWidth={effectiveStroke}
+				viewBox={`0 0 ${imgData.width} ${imgData.height}`}
 				{...props}
 			/>
 		</div>

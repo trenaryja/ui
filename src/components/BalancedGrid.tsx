@@ -1,5 +1,6 @@
 import { cn } from '@/utils'
-import { Children, cloneElement, ComponentProps, isValidElement } from 'react'
+import type { ComponentProps } from 'react'
+import { Children, cloneElement, isValidElement } from 'react'
 import { balanceGridItems } from './BalancedGrid.utils'
 
 type BalancedGridProps = ComponentProps<'div'> & {
@@ -13,15 +14,15 @@ export function BalancedGrid({ maxCols, pack, className, style, children }: Bala
 
 	return (
 		<div
+			style={{ ...style, ...balancedGridStyles }}
 			className={cn(
 				'grid w-full',
 				'grid-cols-[repeat(var(--grid-cols),minmax(0,1fr))]',
-				'*:col-span-[var(--grid-normal-span)]',
-				'[&_.grid-leftover]:col-span-[var(--grid-last-row-span)]',
-				'[&_.grid-first-leftover]:col-start-[var(--grid-last-row-col-start)]!',
+				'*:col-span-(--grid-normal-span)',
+				'[&_.grid-leftover]:col-span-(--grid-last-row-span)',
+				'[&_.grid-first-leftover]:col-start-(--grid-last-row-col-start)!',
 				className,
 			)}
-			style={{ ...style, ...balancedGridStyles }}
 		>
 			{childArray.map((child, i) => {
 				if (!isValidElement<{ className?: string }>(child)) return child

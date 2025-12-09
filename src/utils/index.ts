@@ -1,5 +1,7 @@
-import { clsx, type ClassValue } from 'clsx'
-import { cloneElement } from 'react'
+import type { ClassValue } from 'clsx'
+import { clsx } from 'clsx'
+import type { JSXElementConstructor, ReactElement, ReactNode } from 'react'
+import React from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export * from './ascii'
@@ -27,7 +29,11 @@ export const formatUSD = (value?: number, showCents = false, options?: Intl.Numb
 export const gcd = (a: number, b: number): number => (b === 0 ? a : gcd(b, a % b))
 export const lcm = (a: number, b: number): number => (a * b) / gcd(a, b)
 
-export const nest = (count: number, element: React.ReactElement) => {
-	if (count <= 1) return element
-	return [...Array(count - 1).keys()].reduce((acc, _, i) => cloneElement(element, { key: i }, acc), element)
+export const nest = <P>(n: number, el: ReactElement<P>): ReactElement<P> => {
+	if (n <= 1) return el
+	const { type, props } = el
+	let c: ReactNode = (props as { children?: ReactNode }).children
+	const T = type as JSXElementConstructor<P>
+	for (let d = 0; d < n; d++) c = React.createElement(T, props, c)
+	return c as ReactElement<P>
 }

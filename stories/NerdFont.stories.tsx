@@ -2,13 +2,13 @@ import { BalancedGrid } from '@/components'
 import { useDebouncedCycle } from '@/hooks'
 import { cn } from '@/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import * as R from 'remeda'
 import glyphs from '../src/data/glyphnames.json'
 
-const meta: Meta = { title: 'Search/Nerd Font Glyphs' }
+const meta = { title: 'Search/Nerd Font Glyphs' } satisfies Meta
 export default meta
 
 export type GlyphFamily = {
@@ -76,89 +76,80 @@ export const NerdFontGlyphs: StoryObj = {
 		}
 
 		return (
-			<>
-				<div
-					className='full-bleed grid grid-rows-[auto_auto_1fr] gap-4 p-4 size-full max-h-[90vh]'
-					style={{ fontFamily: 'FiraCode NF' }}
-				>
-					<input
-						type='text'
-						value={query}
-						onChange={(e) => setQuery(e.target.value)}
-						placeholder='Search Nerd Font glyphs...'
-						className='input w-full '
-					/>
+			<div className='full-bleed grid content-start gap-4 p-4' style={{ fontFamily: 'FiraCode NF' }}>
+				<input
+					className='input w-full '
+					type='text'
+					value={query}
+					onChange={(e) => setQuery(e.target.value)}
+					placeholder='Search Nerd Font glyphs...'
+				/>
 
-					<div className='flex items-center justify-between'>
-						<p className='text-sm text-base-content/50'>
-							Showing {results.length}{' '}
-							{debouncedQuery ? 'matches' : 'glyphs. There are ' + searchableSet.length + ' total.'}
-						</p>
+				<div className='flex items-center justify-between'>
+					<p className='text-sm text-base-content/50'>
+						Showing {results.length} {debouncedQuery ? 'matches' : `glyphs. There are ${searchableSet.length} total.`}
+					</p>
 
-						<div className='dropdown dropdown-end'>
-							<label tabIndex={0} className='btn btn-ghost btn-square btn-sm relative'>
-								<span className='text-lg'></span>
-								<p
-									className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
-										visible: activeFamilies.length,
-									})}
-								/>
-							</label>
+					<div className='dropdown dropdown-end'>
+						<button className='btn btn-ghost btn-square btn-sm relative' tabIndex={0} type='button'>
+							<span className='text-lg'></span>
+							<p
+								className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
+									visible: activeFamilies.length,
+								})}
+							/>
+						</button>
 
-							<div
-								tabIndex={0}
-								className='dropdown-content w-screen p-4 grid gap-4 shadow bg-base-300/90 backdrop-blur border border-current/5 rounded-box max-w-[calc(100vw-4rem)]  '
-							>
-								<button onClick={clearPrefixes} className='btn btn-outline'>
-									Clear
-								</button>
-								<BalancedGrid maxCols={3} pack className='gap-2'>
-									{R.entries(glyphFamilies).map(([prefix, fam]) => (
-										<button
-											key={prefix}
-											onClick={() => togglePrefix(prefix)}
-											className={cn(
-												'btn btn-sm flex flex-col items-center gap-1 h-auto py-2',
-												activeFamilies.includes(prefix) ? 'btn-primary' : 'btn-outline',
-											)}
-										>
-											<div className='text-2xl'>{fam.char}</div>
-											<div className='text-2xs font-mono truncate w-full'>{fam.label}</div>
-										</button>
-									))}
-								</BalancedGrid>
-							</div>
+						<div
+							className='dropdown-content w-screen p-4 grid gap-4 shadow bg-base-300/90 backdrop-blur border border-current/5 rounded-box max-w-[calc(100vw-4rem)]  '
+							tabIndex={0}
+						>
+							<button className='btn btn-outline' type='button' onClick={clearPrefixes}>
+								Clear
+							</button>
+							<BalancedGrid pack className='gap-2' maxCols={3}>
+								{R.entries(glyphFamilies).map(([prefix, fam]) => (
+									<button
+										key={prefix}
+										type='button'
+										onClick={() => togglePrefix(prefix)}
+										className={cn(
+											'btn btn-sm flex flex-col items-center gap-1 h-auto py-2',
+											activeFamilies.includes(prefix) ? 'btn-primary' : 'btn-outline',
+										)}
+									>
+										<div className='text-2xl'>{fam.char}</div>
+										<div className='text-2xs font-mono truncate w-full'>{fam.label}</div>
+									</button>
+								))}
+							</BalancedGrid>
 						</div>
 					</div>
-
-					<div
-						className={cn(
-							'grid gap-4 overflow-y-auto',
-							'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 ',
-						)}
-					>
-						{results.map((glyph) => (
-							<button
-								key={glyph.id}
-								className='btn relative grid place-items-center h-max p-4 overflow-x-auto'
-								onClick={() => handleClick(glyph)}
-							>
-								<div className='text-5xl font-normal'>{glyph.char}</div>
-								<div className='text-xs truncate font-mono' title={glyph.id}>
-									{glyph.id}
-								</div>
-								<div className='text-[10px] text-base-content/50 font-mono'>{glyph.code}</div>
-								{clipboard.copied && lastCopiedId === glyph.id && (
-									<span className='absolute inset-0 grid place-items-center backdrop-blur-2xl'>
-										<span className={cn({ 'text-5xl font-normal': cycle.prev === 'char' })}>{glyph[cycle.prev]}</span>
-										<span className='text-sm'>Copied</span>
-									</span>
-								)}
-							</button>
-						))}
-					</div>
 				</div>
-			</>
+
+				<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 ')}>
+					{results.map((glyph) => (
+						<button
+							className='btn relative grid place-items-center h-max p-4 overflow-x-auto'
+							key={glyph.id}
+							type='button'
+							onClick={() => handleClick(glyph)}
+						>
+							<div className='text-5xl font-normal'>{glyph.char}</div>
+							<div className='text-xs truncate font-mono' title={glyph.id}>
+								{glyph.id}
+							</div>
+							<div className='text-2xs text-base-content/50 font-mono'>{glyph.code}</div>
+							{clipboard.copied && lastCopiedId === glyph.id && (
+								<span className='absolute inset-0 grid place-items-center backdrop-blur-2xl'>
+									<span className={cn({ 'text-5xl font-normal': cycle.prev === 'char' })}>{glyph[cycle.prev]}</span>
+									<span className='text-sm'>Copied</span>
+								</span>
+							)}
+						</button>
+					))}
+				</div>
+			</div>
 		)
 	},
 }

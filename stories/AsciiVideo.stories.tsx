@@ -1,9 +1,9 @@
 import { AsciiVideo } from '@/components'
 import { characterRamps } from '@/utils/ascii'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-const meta: Meta = { title: 'components/AsciiVideo' }
+const meta = { title: 'components/AsciiVideo' } satisfies Meta
 export default meta
 
 const srcs = [
@@ -32,7 +32,7 @@ export const Default: StoryObj = {
 						<span className='text-sm text-center'>Select Video</span>
 						<select className='select select-bordered w-full' value={src} onChange={(e) => setSrc(e.target.value)}>
 							{srcs.map((s, i) => (
-								<option key={i} value={s}>
+								<option key={s} value={s}>
 									Video {i + 1}
 								</option>
 							))}
@@ -51,27 +51,27 @@ export const Default: StoryObj = {
 
 					<label className='flex items-center gap-2'>
 						<input
-							type='checkbox'
-							className='toggle'
 							checked={reverseRamp}
+							className='toggle'
+							type='checkbox'
 							onChange={(e) => setReverseRamp(e.target.checked)}
 						/>
 						<span className='text-sm'>Reverse character ramp</span>
 					</label>
 
-					<label className='flex flex-col gap-1 w-full'>
+					<div className='flex flex-col gap-1 w-full'>
 						<input
-							type='range'
 							className='range w-full'
-							min={1}
 							max={200}
+							min={1}
+							type='range'
 							value={maxWidth}
 							onChange={(e) => setMaxWidth(e.target.valueAsNumber)}
 						/>
-					</label>
+					</div>
 				</fieldset>
 
-				<AsciiVideo src={src} characterRamp={ramp} maxWidth={maxWidth} reverseRamp={reverseRamp} />
+				<AsciiVideo characterRamp={ramp} maxWidth={maxWidth} reverseRamp={reverseRamp} src={src} />
 			</div>
 		)
 	},

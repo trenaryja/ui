@@ -29,9 +29,9 @@ const generateProseCss = () => {
 
 const generateBrowserCss = () => {
 	const allUtilities = new Set<string>()
-	for (const f of fs.readdirSync(srcCssDir).filter((f) => f.endsWith('.css'))) {
-		const file = fs.readFileSync(path.join(srcCssDir, f), 'utf-8')
-		for (const m of file.matchAll(/@utility\s+([\w-]+)/g)) allUtilities.add(m[1])
+	for (const file of fs.readdirSync(srcCssDir).filter((f) => f.endsWith('.css'))) {
+		const contents = fs.readFileSync(path.join(srcCssDir, file), 'utf-8')
+		for (const m of contents.matchAll(/@utility\s+([\w-]+)/g)) allUtilities.add(m[1])
 	}
 	const browserCss =
 		`@import 'tailwindcss';\n` +
@@ -39,22 +39,21 @@ const generateBrowserCss = () => {
 		`@import '../../node_modules/daisyui/daisyui.css';\n` +
 		`@import '../css/index.css';\n` +
 		`@import './prose.css';\n` +
-		`@config './browser.tailwind.config.ts';\n` +
-		[...allUtilities].map((u) => `@source inline('${u}');`).join('\n')
+		`@config './browser.tailwind.config.ts';\n${[...allUtilities].map((u) => `@source inline('${u}');`).join('\n')}`
 	fs.writeFileSync(path.join(generatedDir, 'browser.css'), browserCss, 'utf-8')
 	log(`Generated ${allUtilities.size} utils → browser.css`)
 }
 
 const generateComponentCss = () => {
-	const componentCss = `@import 'tailwindcss';\n` + `@config './component.tailwind.config.ts';\n`
+	const componentCss = `@import 'tailwindcss';\n@config './component.tailwind.config.ts';\n`
 	fs.writeFileSync(path.join(generatedDir, 'component.css'), componentCss, 'utf-8')
 	log(`Generated component.css`)
 }
 
 const compileGeneratedToDist = () => {
-	for (const f of fs.readdirSync(generatedDir).filter((f) => f.endsWith('.css'))) {
-		const input = path.join(generatedDir, f)
-		const dist = path.join(distCssDir, path.parse(f).name + '.css')
+	for (const file of fs.readdirSync(generatedDir).filter((f) => f.endsWith('.css'))) {
+		const input = path.join(generatedDir, file)
+		const dist = path.join(distCssDir, `${path.parse(file).name}.css`)
 		const cmd = `tailwindcss -i ${input} -o ${dist}`
 		log(cmd)
 		execSync(cmd, { stdio: 'inherit' })
@@ -70,7 +69,7 @@ const injectFilesIntoIndex = () => {
 	const indexCss = path.join(distCssDir, './index.css')
 	fs.writeFileSync(
 		indexCss,
-		`@import './component.css';\n` + `@import './prose.css';\n` + `${fs.readFileSync(indexCss, 'utf-8')}`,
+		`@import './component.css';\n@import './prose.css';\n${fs.readFileSync(indexCss, 'utf-8')}`,
 		'utf-8',
 	)
 	log(`Injected component.css import into ${indexCss}`)

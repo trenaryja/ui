@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss'
 import { fileURLToPath } from 'url'
 
 export const scriptDir = path.dirname(fileURLToPath(import.meta.url))
