@@ -1,4 +1,4 @@
-import type { colors, flatPalette } from '@/utils'
+import type { colors, palette } from '@/utils'
 import daisyThemes from 'daisyui/theme/object'
 import type defaultTheme from 'tailwindcss/defaultTheme'
 import type { OmitIndexSignature } from 'type-fest'
@@ -17,4 +17,4 @@ export type TailwindColorName = keyof typeof colors
 export type TailwindShadeDictionary = (typeof colors)[TailwindColorName]
 export type TailwindIndex = keyof TailwindShadeDictionary
 export type TailwindColor = `${TailwindColorName}-${TailwindIndex}`
-export type TailwindColorMeta = (typeof flatPalette)[number]
+export type TailwindColorMeta = (typeof palette)[number]
