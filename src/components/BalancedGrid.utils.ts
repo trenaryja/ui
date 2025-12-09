@@ -1,5 +1,5 @@
 import { lcm } from '@/utils'
-import { CSSProperties } from 'react'
+import type { CSSProperties } from 'react'
 
 export const balanceGridItems = <T>(items: T[], maxCols: number, pack?: boolean) => {
 	const n = items.length
@@ -12,7 +12,7 @@ export const balanceGridItems = <T>(items: T[], maxCols: number, pack?: boolean)
 		candidates.push({ cols, rows, emptyCells })
 	}
 
-	const cols = candidates.sort((a, b) => (a.rows !== b.rows ? a.rows - b.rows : a.emptyCells - b.emptyCells))[0]!.cols
+	const [{ cols }] = candidates.sort((a, b) => (a.rows !== b.rows ? a.rows - b.rows : a.emptyCells - b.emptyCells))
 	const leftoverCount = n % cols
 	const lastRowIndex = n - (leftoverCount === 0 ? cols : leftoverCount)
 

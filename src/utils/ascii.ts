@@ -1,4 +1,4 @@
-import { RefObject } from 'react'
+import type { RefObject } from 'react'
 
 export const characterRamps = [' .:-=+*#%@'] as const
 
@@ -56,7 +56,14 @@ export const getFontDimensions = (ref: RefObject<HTMLPreElement | null>) => {
 	return { fontWidth: width, fontHeight: height }
 }
 
-export const getAscii = (width: number, height: number, src: CanvasImageSource, characterRamp: string) => {
+export type GetAsciiOptions = {
+	width: number
+	height: number
+	src: CanvasImageSource
+	characterRamp?: string
+}
+
+export const getAscii = ({ width, height, src, characterRamp = ' .:-=+*#%@' }: GetAsciiOptions) => {
 	const canvas = document.createElement('canvas')
 	canvas.width = width
 	canvas.height = height
@@ -76,7 +83,7 @@ export const getAscii = (width: number, height: number, src: CanvasImageSource, 
 	return grayScales
 		.map((gray, i) => {
 			const char = characterRamp[Math.round((rampLength * gray) / 255)] ?? ' '
-			return (i + 1) % width === 0 ? char + '\n' : char
+			return (i + 1) % width === 0 ? `${char}\n` : char
 		})
 		.join('')
 }

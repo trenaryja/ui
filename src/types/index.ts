@@ -1,12 +1,11 @@
-import { colors, flatPalette } from '@/utils'
+import type { colors, flatPalette } from '@/utils'
 import daisyThemes from 'daisyui/theme/object'
-import defaultTheme from 'tailwindcss/defaultTheme'
-import { OmitIndexSignature } from 'type-fest'
+import type defaultTheme from 'tailwindcss/defaultTheme'
+import type { OmitIndexSignature } from 'type-fest'
 
-export type Suggest<T, U> = T | (U & { __?: never })
+export type Suggest<T, U> = (U & { __?: never }) | T
 
-export type ChromaColor = string | number | chroma.Color
-
+export { daisyThemes }
 export type DaisyThemeName = keyof OmitIndexSignature<typeof daisyThemes>
 export type DaisyTheme = (typeof daisyThemes)[DaisyThemeName]
 export type DaisyThemeColor = {

@@ -1,11 +1,11 @@
 import { AsciiImage } from '@/components'
 import { cn } from '@/utils'
 import { characterRamps } from '@/utils/ascii'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { picsum } from './story.utils'
 
-const meta: Meta = { title: 'components/AsciiImage' }
+const meta = { title: 'components/AsciiImage' } satisfies Meta
 export default meta
 
 const first = await picsum()
@@ -44,9 +44,9 @@ export const Default: StoryObj = {
 
 					<label className='flex items-center gap-2'>
 						<input
-							type='checkbox'
-							className='toggle'
 							checked={reverseRamp}
+							className='toggle'
+							type='checkbox'
 							onChange={(e) => setReverseRamp(e.target.checked)}
 						/>
 						<span className='text-sm'>Reverse character ramp</span>
@@ -54,9 +54,9 @@ export const Default: StoryObj = {
 
 					<label className='flex items-center gap-2'>
 						<input
-							type='checkbox'
-							className='toggle'
 							checked={showImage}
+							className='toggle'
+							type='checkbox'
 							onChange={(e) => setShowImage(e.target.checked)}
 						/>
 						<span className='text-sm'>Show image</span>
@@ -64,9 +64,9 @@ export const Default: StoryObj = {
 
 					<label className='flex items-center gap-2'>
 						<input
-							type='checkbox'
-							className='toggle'
 							checked={clipText}
+							className='toggle'
+							type='checkbox'
 							onChange={(e) => setClipText(e.target.checked)}
 						/>
 						<span className='text-sm'>Clip text (requires show image)</span>
@@ -74,40 +74,38 @@ export const Default: StoryObj = {
 
 					<label className='flex items-center gap-2'>
 						<input
-							type='checkbox'
-							className='toggle'
 							checked={maxWidthEnabled}
+							className='toggle'
+							type='checkbox'
 							onChange={(e) => setMaxWidthEnabled(e.target.checked)}
 						/>
 						<span className='text-sm'>Limit max width{maxWidthEnabled ? ` (${maxWidth} characters)` : ''}</span>
 					</label>
 
 					{maxWidthEnabled && (
-						<label className='flex flex-col gap-1 w-full'>
-							<input
-								type='range'
-								className='range w-full'
-								disabled={!maxWidthEnabled}
-								min={1}
-								max={200}
-								value={maxWidth}
-								onChange={(e) => setMaxWidth(e.target.valueAsNumber)}
-							/>
-						</label>
+						<input
+							className='range w-full'
+							disabled={!maxWidthEnabled}
+							max={200}
+							min={1}
+							type='range'
+							value={maxWidth}
+							onChange={(e) => setMaxWidth(e.target.valueAsNumber)}
+						/>
 					)}
 
-					<button className='btn' onClick={fetchRandom}>
+					<button className='btn' type='button' onClick={fetchRandom}>
 						{loading ? 'Loading...' : 'New Random Image'}
 					</button>
 				</fieldset>
 
 				<AsciiImage
-					src={src}
 					characterRamp={ramp}
-					showImage={showImage}
+					className={cn({ 'text-transparent bg-clip-text': clipText })}
 					maxWidth={maxWidthEnabled ? maxWidth : undefined}
 					reverseRamp={reverseRamp}
-					className={cn({ 'text-transparent bg-clip-text': clipText })}
+					src={src}
+					showImage={showImage}
 				/>
 			</div>
 		)

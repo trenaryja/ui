@@ -1,12 +1,26 @@
 import { cn } from '@/utils'
-import { Meta, StoryObj } from '@storybook/react-vite'
-import { ComponentProps, CSSProperties, useEffect, useState } from 'react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { ComponentProps, CSSProperties } from 'react'
+import { useEffect, useState } from 'react'
 
 type Story = StoryObj
-const meta: Meta = {
+const meta = {
 	title: 'classes/neu',
-}
+} satisfies Meta
 export default meta
+
+const Range = ({
+	onValueChange,
+	className,
+	...props
+}: ComponentProps<'input'> & { onValueChange?: (value: number) => void }) => (
+	<input
+		className={cn('range', className)}
+		type='range'
+		onChange={(e) => onValueChange?.(Number(e.target.value))}
+		{...props}
+	/>
+)
 
 export const Default: Story = {
 	name: 'neu',
@@ -81,31 +95,31 @@ export const Default: Story = {
 
 				<section className='grid grid-cols-[auto_1fr] *:not-last:w-full gap-4 '>
 					<span>Border Radius: {radius}%</span>
-					<Range min={0} max={50} value={radius} onValueChange={(x) => setRadius(x)} />
+					<Range max={50} min={0} value={radius} onValueChange={(x) => setRadius(x)} />
 
 					<span>Size: {size}px</span>
-					<Range min={50} max={300} value={size} onValueChange={(x) => setSize(x)} />
+					<Range max={300} min={50} value={size} onValueChange={(x) => setSize(x)} />
 
 					<span>Distance: {distance}px</span>
-					<Range min={0} max={50} value={distance} onValueChange={(x) => setDistance(x)} />
+					<Range max={50} min={0} value={distance} onValueChange={(x) => setDistance(x)} />
 
 					<span>Blur: {blur}px</span>
-					<Range min={0} max={100} value={blur} onValueChange={(x) => setBlur(x)} />
+					<Range max={100} min={0} value={blur} onValueChange={(x) => setBlur(x)} />
 
 					<span>Intensity: {intensity}%</span>
-					<Range min={0} max={100} value={intensity} onValueChange={(x) => setIntensity(x)} />
+					<Range max={100} min={0} value={intensity} onValueChange={(x) => setIntensity(x)} />
 
 					<span>Curve: {curve}%</span>
-					<Range min={0} max={100} value={curve} onValueChange={(x) => setCurve(x)} />
+					<Range max={100} min={0} value={curve} onValueChange={(x) => setCurve(x)} />
 
 					<span>Angle: {angle}°</span>
-					<Range min={0} max={360} value={angle} onValueChange={(x) => setAngle(x)} disabled={spinning} />
+					<Range disabled={spinning} max={360} min={0} value={angle} onValueChange={(x) => setAngle(x)} />
 
 					<span>Spin</span>
 					<input
-						type='checkbox'
-						className='toggle'
 						checked={spinning}
+						className='toggle'
+						type='checkbox'
 						onChange={(e) => setSpinning(e.target.checked)}
 					/>
 				</section>
@@ -113,16 +127,3 @@ export const Default: Story = {
 		)
 	},
 }
-
-const Range = ({
-	onValueChange,
-	className,
-	...props
-}: ComponentProps<'input'> & { onValueChange?: (value: number) => void }) => (
-	<input
-		type='range'
-		className={cn('range', className)}
-		onChange={(e) => onValueChange?.(Number(e.target.value))}
-		{...props}
-	/>
-)

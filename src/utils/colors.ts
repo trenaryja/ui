@@ -1,10 +1,10 @@
-import { DaisyThemeColor, TailwindBreakpointName, TailwindColor, TailwindColorName, TailwindIndex } from '@/types'
+import type { DaisyThemeColor, TailwindBreakpointName, TailwindColor, TailwindColorName, TailwindIndex } from '@/types'
+import { daisyThemes } from '@/types'
 import chroma from 'chroma-js'
-import daisyThemes from 'daisyui/theme/object'
 import * as R from 'remeda'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
-export const daisyThemeColors = Object.keys(daisyThemes.dark)
+export const daisyThemeColors = R.keys(daisyThemes.dark)
 	.filter((key) => key.startsWith('--color-'))
 	.map((key) => key.replace('--color-', '')) as DaisyThemeColor[]
 
@@ -20,14 +20,7 @@ export const breakpoints = R.pipe(
 	),
 )
 
-export const {
-	inherit: _inherit,
-	current: _current,
-	transparent: _transparent,
-	black: _black,
-	white: _white,
-	...colors
-} = defaultTheme.colors()
+export const colors = R.omit(defaultTheme.colors(), ['inherit', 'current', 'transparent', 'black', 'white'])
 
 export const palette = R.pipe(
 	colors,
@@ -50,20 +43,15 @@ export const palette = R.pipe(
 
 export const flatPalette = palette.flatMap((color) => color.shades.map((shade) => ({ baseName: color.name, ...shade })))
 
-export const getTailwindOklch = (color: TailwindColor | 'random', index?: TailwindIndex): string | undefined => {
+export const getTailwindOklch = (color: 'random' | TailwindColor, index?: TailwindIndex): string | undefined => {
 	if (color === 'random') {
 		const randomColor = flatPalette[Math.floor(Math.random() * flatPalette.length)]!
 		if (index === undefined) return randomColor.oklch
 		return getTailwindOklch(`${randomColor.baseName}-${index}`)
 	}
 
-	try {
-		const [name, index] = color.split('-') as [TailwindColorName, TailwindIndex]
-		return colors[name][index]
-	} catch (e) {
-		console.error('The color provided is not a valid Tailwind color')
-		throw e
-	}
+	const [name, i] = color.split('-') as [TailwindColorName, TailwindIndex]
+	return colors[name][i]
 }
 
 export const addOpacityToOklch = (oklch: string | undefined, opacity: number) =>

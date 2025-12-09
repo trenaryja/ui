@@ -1,12 +1,12 @@
 import { BalancedGrid } from '@/components'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
 type Story = StoryObj<typeof BalancedGrid>
-const meta: Meta<typeof BalancedGrid> = {
+const meta = {
 	title: 'components/BalancedGrid',
 	component: BalancedGrid,
-}
+} satisfies Meta<typeof BalancedGrid>
 export default meta
 
 export const Default: Story = {
@@ -20,29 +20,29 @@ export const Default: Story = {
 			<main className='demo'>
 				<fieldset className='fieldset size-full place-items-center'>
 					<p className='label'>Pack last row</p>
-					<input type='checkbox' className='toggle' checked={pack} onChange={(e) => setPack(e.target.checked)} />
+					<input checked={pack} className='toggle' type='checkbox' onChange={(e) => setPack(e.target.checked)} />
 					<p className='label'>Item count: {itemCount}</p>
 					<input
-						type='range'
 						className='range'
-						value={itemCount}
-						min={1}
 						max={25}
+						min={1}
+						type='range'
+						value={itemCount}
 						onChange={(e) => setItemCount(e.target.valueAsNumber)}
 					/>
 					<p className='label'>Max # of columns: {maxCols}</p>
 					<input
-						type='range'
 						className='range'
-						value={maxCols}
-						min={1}
 						max={10}
+						min={1}
+						type='range'
+						value={maxCols}
 						onChange={(e) => setMaxCols(e.target.valueAsNumber)}
 					/>
 				</fieldset>
-				<BalancedGrid className='gap-2 place-items-center w-full' maxCols={maxCols} pack={pack}>
+				<BalancedGrid className='gap-2 place-items-center w-full' pack={pack} maxCols={maxCols}>
 					{[...Array(itemCount).keys()].map((i) => (
-						<div key={i} className='paper grid place-items-center h-20 w-full'>
+						<div className='paper grid place-items-center h-20 w-full' key={i}>
 							{i + 1}
 						</div>
 					))}

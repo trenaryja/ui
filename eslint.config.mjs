@@ -1,33 +1,20 @@
-import reactHooks from 'eslint-plugin-react-hooks'
-import tsEslint from 'typescript-eslint'
+import { defineConfig } from '@fullstacksjs/eslint-config'
 
 /** @type {import('eslint').Linter.Config[]} */
-const eslintConfig = [
-	{ ignores: ['dist', 'storybook-static/*'] },
-	...tsEslint.configs.recommended,
-	reactHooks.configs['recommended-latest'],
-
-	{
-		files: ['**/*.stories.@(ts|tsx)'],
+const config = [
+	...defineConfig({
+		files: ['**/*.ts', '**/*.tsx'],
 		rules: {
-			'react-hooks/rules-of-hooks': 'off',
+			radix: 'off',
+			'perfectionist/sort-imports': 'off',
+			'@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+			'storybook/csf-component': 'off',
+			'jsx-a11y/no-noninteractive-element-interactions': 'off',
+			'jsx-a11y/click-events-have-key-events': 'off',
+			'@eslint-react/no-children-to-array': 'off',
+			'@eslint-react/no-clone-element': 'off',
 		},
-	},
-	{
-		rules: {
-			'react/no-unescaped-entities': 'off',
-			'@typescript-eslint/no-namespace': 'off',
-			'@typescript-eslint/no-empty-object-type': 'off',
-			'@typescript-eslint/no-unused-vars': [
-				'error',
-				{
-					argsIgnorePattern: '^_',
-					varsIgnorePattern: '^_',
-					caughtErrorsIgnorePattern: '^_',
-				},
-			],
-		},
-	},
+	}),
 ]
 
-export default eslintConfig
+export default config

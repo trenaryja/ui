@@ -1,8 +1,8 @@
 import { ScaledText } from '@/components'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-const meta: Meta = { title: 'components/ScaledText' }
+const meta = { title: 'components/ScaledText' } satisfies Meta
 export default meta
 
 export const Default: StoryObj = {

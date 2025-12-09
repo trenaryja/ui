@@ -1,9 +1,9 @@
 import { LineFieldImage } from '@/components'
-import { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { picsum } from './story.utils'
 
-const meta: Meta = { title: 'components/LineFieldImage' }
+const meta = { title: 'components/LineFieldImage' } satisfies Meta
 export default meta
 
 const first = await picsum()
@@ -36,11 +36,11 @@ export const Default: StoryObj = {
 					<label className='flex flex-col gap-1 w-full'>
 						<span className='text-sm text-center'>Cell Size ({cellSize}px)</span>
 						<input
-							type='range'
 							className='range w-full'
-							min={3}
 							max={50}
+							min={3}
 							step={1}
+							type='range'
 							value={cellSize}
 							onChange={(e) => setCellSize(e.target.valueAsNumber)}
 						/>
@@ -48,9 +48,9 @@ export const Default: StoryObj = {
 
 					<label className='flex items-center gap-2'>
 						<input
-							type='checkbox'
-							className='toggle'
 							checked={showImage}
+							className='toggle'
+							type='checkbox'
 							onChange={(e) => setShowImage(e.target.checked)}
 						/>
 						<span className='text-sm'>Show background image</span>
@@ -58,40 +58,40 @@ export const Default: StoryObj = {
 
 					<label className='flex items-center gap-2'>
 						<input
-							type='checkbox'
-							className='toggle'
 							checked={matchStrokeWidth}
+							className='toggle'
+							type='checkbox'
 							onChange={(e) => setMatchStrokeWidth(e.target.checked)}
 						/>
 						<span className='text-sm'>Match stroke width to cell size</span>
 					</label>
 
 					{!matchStrokeWidth && (
-						<label className='flex flex-col gap-1 w-full'>
+						<div className='flex flex-col gap-1 w-full'>
 							<input
-								type='range'
 								className='range w-full'
-								min={0.5}
 								max={10}
+								min={0.5}
 								step={0.1}
+								type='range'
 								value={strokeWidth}
 								onChange={(e) => setStrokeWidth(e.target.valueAsNumber)}
 							/>
-						</label>
+						</div>
 					)}
 
-					<button className='btn' onClick={fetchRandom}>
+					<button className='btn' type='button' onClick={fetchRandom}>
 						{loading ? 'Loading...' : 'New Random Image'}
 					</button>
 				</fieldset>
 
 				<LineFieldImage
-					src={src}
 					cellSize={cellSize}
-					strokeWidth={strokeWidth}
+					className='max-w-full h-auto'
+					src={src}
 					matchStrokeWidth={matchStrokeWidth}
 					showImage={showImage}
-					className='max-w-full h-auto'
+					strokeWidth={strokeWidth}
 				/>
 			</div>
 		)

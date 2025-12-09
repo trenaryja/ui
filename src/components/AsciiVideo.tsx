@@ -3,7 +3,7 @@
 import { cn } from '@/utils'
 import { characterRamps, clampDimensions, getAscii, getFontDimensions } from '@/utils/ascii'
 import { useEffect, useRef, useState } from 'react'
-import { AsciiImageProps } from './AsciiImage'
+import type { AsciiImageProps } from './AsciiImage'
 
 type AsciiVideoProps = Omit<AsciiImageProps, 'showImage'>
 
@@ -46,7 +46,7 @@ export const AsciiVideo = ({
 				fontWidth,
 			})
 
-			setAscii(getAscii(width, height, video, ramp))
+			setAscii(getAscii({ width, height, src: video, characterRamp: ramp }))
 			video.requestVideoFrameCallback(update)
 		}
 
@@ -73,9 +73,10 @@ export const AsciiVideo = ({
 
 	return (
 		<pre
-			ref={preRef}
-			onClick={handlePlayPause}
 			className={cn('bg-cover bg-no-repeat w-fit text-[.4rem] cursor-pointer', className)}
+			ref={preRef}
+			tabIndex={0}
+			onClick={handlePlayPause}
 			{...props}
 		>
 			{ascii}

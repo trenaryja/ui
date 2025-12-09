@@ -1,8 +1,8 @@
 import { withThemeByDataAttribute } from '@storybook/addon-themes'
 import type { Preview } from '@storybook/react-vite'
-import daisyThemes from 'daisyui/theme/object'
 import * as R from 'remeda'
-import { DaisyThemeName } from '../src'
+import type { DaisyThemeName } from '../src'
+import { daisyThemes } from '../src'
 import './storybook.css'
 
 export const themes = R.pipe(
