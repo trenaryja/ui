@@ -42,3 +42,16 @@ export const palette = R.flatMap(R.entries(colors), ([baseName, shades]) =>
 		isDark: isDark(oklch),
 	})),
 )
+
+export const getClosestTailwindColor = (input: any) => {
+	let [closest] = palette
+	let smallestDifference = Infinity
+	for (const color of palette) {
+		const distance = chroma.deltaE(input, color.oklch)
+		if (distance < smallestDifference) {
+			closest = color
+			smallestDifference = distance
+		}
+	}
+	return closest
+}
