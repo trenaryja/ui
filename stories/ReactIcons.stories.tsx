@@ -1,5 +1,5 @@
 import { BalancedGrid } from '@/components'
-import { useDebouncedCycle } from '@/hooks'
+import { useCycle } from '@/hooks'
 import { cn } from '@/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
 import type { Meta, StoryObj } from '@storybook/react-vite'
@@ -97,7 +97,7 @@ export const ReactIcons: StoryObj = {
 	render: () => {
 		const [query, setQuery] = useState('')
 		const [debouncedQuery] = useDebouncedValue(query, 250)
-		const cycle = useDebouncedCycle(['jsx', 'name'], clipboardTimeout + 50)
+		const cycle = useCycle(['jsx', 'name'], { idleResetMs: clipboardTimeout + 50 })
 		const clipboard = useClipboard({ timeout: clipboardTimeout })
 		const [lastCopiedId, setLastCopiedId] = useState<string | null>(null)
 		const [activeFamilies, setActiveFamilies] = useState<Prefix[]>([])
