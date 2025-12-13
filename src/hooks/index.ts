@@ -1,1 +1,1 @@
-export * from './use-debounced-cycle'
+export * from './use-cycle'
