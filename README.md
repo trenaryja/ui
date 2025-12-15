@@ -26,7 +26,7 @@ pnpm i @trenary/ui
 2. Import the library's css into your app's css
 
 ```css
-@import 'trenaryja/ui/css';
+@import '@trenaryja/ui/css';
 @source '../node_modules/@trenaryja/ui';
 ```
 

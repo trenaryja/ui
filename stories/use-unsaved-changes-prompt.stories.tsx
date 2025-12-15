@@ -25,7 +25,7 @@ export const UseBeforeUnload: StoryObj = {
 						<span className='text-sm'>pretend there are unsaved changes</span>
 					</label>
 
-					<div className='alert'>Try refreshing the page, closing the tab, or navigating away</div>
+					<div className='alert alert-soft'>Try refreshing the page, closing the tab, or navigating away</div>
 				</fieldset>
 			</div>
 		)

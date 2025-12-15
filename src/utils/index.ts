@@ -37,3 +37,27 @@ export const nest = <P>(n: number, el: ReactElement<P>): ReactElement<P> => {
 	for (let d = 0; d < n; d++) c = React.createElement(T, props, c)
 	return c as ReactElement<P>
 }
+
+export const tryIgnore = (fn: () => void) => {
+	try {
+		fn()
+	} catch {
+		// ignore
+	}
+}
+
+export const tryOr = <T>(fn: () => T, fallback: T) => {
+	try {
+		return fn()
+	} catch {
+		return fallback
+	}
+}
+
+export const tryElse = <T>(fn: () => T, fallback: (error: unknown) => T) => {
+	try {
+		return fn()
+	} catch (error: unknown) {
+		return fallback(error)
+	}
+}
