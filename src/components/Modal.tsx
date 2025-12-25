@@ -1,8 +1,7 @@
 'use client'
 
-import { tryIgnore } from '@/utils'
+import { cn, tryIgnore } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
-import { cn } from '@trenaryja/ui'
 import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
 import { cloneElement, useCallback, useEffect, useId, useMemo, useRef } from 'react'
 import { LuX } from 'react-icons/lu'
@@ -174,24 +173,26 @@ export const Modal = ({
 				onCancel={onCancel}
 				onClose={onClose}
 				className={cn(
-					'modal modal-bottom sm:modal-middle',
+					'modal modal-bottom sm:modal-middle overflow-visible',
 					{ 'bg-transparent': backdropTransparent },
 					classNames?.dialog,
 				)}
 			>
 				<div className={cn('modal-box', className, classNames?.box)}>
-					{typeof children === 'function' ? children(api) : children}
-
 					{dismissList.includes('closeButton') && (
-						<button
-							aria-label='Close'
-							className={cn('absolute right-0 top-0 btn btn-circle btn-ghost btn-sm', classNames?.closeButton)}
-							type='button'
-							onClick={closeNative}
-						>
-							<LuX className={cn(classNames?.closeIcon)} />
-						</button>
+						<div className='sticky top-0'>
+							<button
+								aria-label='Close'
+								className={cn('absolute -top-6 -right-6 btn btn-circle btn-ghost btn-sm', classNames?.closeButton)}
+								type='button'
+								onClick={closeNative}
+							>
+								<LuX className={cn(classNames?.closeIcon)} />
+							</button>
+						</div>
 					)}
+
+					{typeof children === 'function' ? children(api) : children}
 				</div>
 
 				{dismissList.includes('outsideClick') && (

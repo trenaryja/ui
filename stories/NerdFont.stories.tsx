@@ -1,4 +1,4 @@
-import { BalancedGrid } from '@/components'
+import { BalancedGrid, Modal } from '@/components'
 import { useCycle } from '@/hooks'
 import { cn } from '@/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
@@ -62,11 +62,8 @@ export const NerdFontGlyphs: StoryObj = {
 			? fuse.search(debouncedQuery).map((r) => r.item)
 			: [...searchableSet].slice(0, 300)
 
-		const togglePrefix = (prefix: Prefix) => {
+		const togglePrefix = (prefix: Prefix) =>
 			setActiveFamilies((prev) => (prev.includes(prefix) ? prev.filter((p) => p !== prefix) : [...prev, prefix]))
-		}
-
-		const clearPrefixes = () => setActiveFamilies([])
 
 		const handleClick = (glyph: (typeof flatGlyphs)[number]) => {
 			const key = cycle.value
@@ -78,7 +75,7 @@ export const NerdFontGlyphs: StoryObj = {
 		return (
 			<div className='full-bleed grid content-start gap-4 p-4' style={{ fontFamily: 'FiraCode NF' }}>
 				<input
-					className='input w-full '
+					className='input w-full'
 					type='text'
 					value={query}
 					onChange={(e) => setQuery(e.target.value)}
@@ -90,41 +87,34 @@ export const NerdFontGlyphs: StoryObj = {
 						Showing {results.length} {debouncedQuery ? 'matches' : `glyphs. There are ${searchableSet.length} total.`}
 					</p>
 
-					<div className='dropdown dropdown-end'>
-						<button className='btn btn-ghost btn-square btn-sm relative' tabIndex={0} type='button'>
-							<span className='text-lg'></span>
-							<p
-								className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
-									visible: activeFamilies.length,
-								})}
-							/>
-						</button>
-
-						<div
-							className='dropdown-content w-screen p-4 grid gap-4 shadow bg-base-300/90 backdrop-blur border border-current/5 rounded-box max-w-[calc(100vw-4rem)]  '
-							tabIndex={0}
-						>
-							<button className='btn btn-outline' type='button' onClick={clearPrefixes}>
-								Clear
+					<Modal
+						trigger={
+							<button className='btn btn-ghost btn-square btn-sm relative' type='button'>
+								<span className='text-lg'></span>
+								<span
+									className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
+										visible: activeFamilies.length,
+									})}
+								/>
 							</button>
-							<BalancedGrid pack className='gap-2' maxCols={3}>
-								{R.entries(glyphFamilies).map(([prefix, fam]) => (
-									<button
-										key={prefix}
-										type='button'
-										onClick={() => togglePrefix(prefix)}
-										className={cn(
-											'btn btn-sm flex flex-col items-center gap-1 h-auto py-2',
-											activeFamilies.includes(prefix) ? 'btn-primary' : 'btn-outline',
-										)}
-									>
-										<div className='text-2xl'>{fam.char}</div>
-										<div className='text-2xs font-mono truncate w-full'>{fam.label}</div>
-									</button>
-								))}
-							</BalancedGrid>
-						</div>
-					</div>
+						}
+					>
+						<BalancedGrid pack className='gap-2' maxCols={3}>
+							{R.entries(glyphFamilies).map(([prefix, fam]) => (
+								<button
+									key={prefix}
+									type='button'
+									onClick={() => togglePrefix(prefix)}
+									className={cn('btn btn-sm flex-col gap-2 h-auto py-2', {
+										'btn-primary': activeFamilies.includes(prefix),
+									})}
+								>
+									<div className='text-2xl'>{fam.char}</div>
+									<div className='text-2xs font-mono truncate w-full'>{fam.label}</div>
+								</button>
+							))}
+						</BalancedGrid>
+					</Modal>
 				</div>
 
 				<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 ')}>
