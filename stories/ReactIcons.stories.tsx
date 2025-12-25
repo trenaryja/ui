@@ -1,4 +1,4 @@
-import { BalancedGrid } from '@/components'
+import { BalancedGrid, Modal } from '@/components'
 import { useCycle } from '@/hooks'
 import { cn } from '@/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
@@ -44,37 +44,37 @@ const meta = { title: 'Search/React Icons' } satisfies Meta
 export default meta
 
 const iconFamilies = {
-	ai: { label: 'Ant Design', pack: AiIcons },
-	bi: { label: 'BoxIcons', pack: BiIcons },
-	bs: { label: 'Bootstrap Icons', pack: BsIcons },
-	cg: { label: 'css.gg', pack: CgIcons },
-	ci: { label: 'Circum Icons', pack: CiIcons },
-	di: { label: 'Devicons', pack: DiIcons },
-	fa: { label: 'Font Awesome 5', pack: FaIcons },
-	fa6: { label: 'Font Awesome 6', pack: Fa6Icons },
-	fc: { label: 'Flat Color Icons', pack: FcIcons },
-	fi: { label: 'Feather', pack: FiIcons },
-	gi: { label: 'Game Icons', pack: GiIcons },
-	go: { label: 'Github Octicons', pack: GoIcons },
-	gr: { label: 'Grommet', pack: GrIcons },
-	hi: { label: 'Heroicons v1', pack: HiIcons },
-	hi2: { label: 'Heroicons v2', pack: Hi2Icons },
-	im: { label: 'IcoMoon Free', pack: ImIcons },
-	io: { label: 'Ionicons 4', pack: IoIcons },
-	io5: { label: 'Ionicons 5', pack: Io5Icons },
-	lia: { label: 'Line Awesome', pack: LiaIcons },
-	lu: { label: 'Lucide', pack: LuIcons },
-	md: { label: 'Material Design', pack: MdIcons },
-	pi: { label: 'Phosphor', pack: PiIcons },
-	ri: { label: 'Remix', pack: RiIcons },
-	rx: { label: 'Radix Icons', pack: RxIcons },
-	si: { label: 'Simple Icons', pack: SiIcons },
-	sl: { label: 'Simple Line', pack: SlIcons },
-	tb: { label: 'Tabler', pack: TbIcons },
-	tfi: { label: 'Themify', pack: TfiIcons },
-	ti: { label: 'Typicons', pack: TiIcons },
-	vsc: { label: 'VSCode Codicons', pack: VscIcons },
-	wi: { label: 'Weather Icons', pack: WiIcons },
+	ai: { label: 'Ant Design', pack: AiIcons, sample: AiIcons.AiOutlineSearch },
+	bi: { label: 'BoxIcons', pack: BiIcons, sample: BiIcons.BiSearch },
+	bs: { label: 'Bootstrap Icons', pack: BsIcons, sample: BsIcons.BsSearch },
+	cg: { label: 'css.gg', pack: CgIcons, sample: CgIcons.CgSearch },
+	ci: { label: 'Circum Icons', pack: CiIcons, sample: CiIcons.CiSearch },
+	di: { label: 'Devicons', pack: DiIcons, sample: DiIcons.DiReact },
+	fa: { label: 'Font Awesome 5', pack: FaIcons, sample: FaIcons.FaSearch },
+	fa6: { label: 'Font Awesome 6', pack: Fa6Icons, sample: Fa6Icons.FaMagnifyingGlass },
+	fc: { label: 'Flat Color Icons', pack: FcIcons, sample: FcIcons.FcSearch },
+	fi: { label: 'Feather', pack: FiIcons, sample: FiIcons.FiSearch },
+	gi: { label: 'Game Icons', pack: GiIcons, sample: GiIcons.GiMagnifyingGlass },
+	go: { label: 'Github Octicons', pack: GoIcons, sample: GoIcons.GoSearch },
+	gr: { label: 'Grommet', pack: GrIcons, sample: GrIcons.GrSearch },
+	hi: { label: 'Heroicons v1', pack: HiIcons, sample: HiIcons.HiSearch },
+	hi2: { label: 'Heroicons v2', pack: Hi2Icons, sample: Hi2Icons.HiMagnifyingGlass },
+	im: { label: 'IcoMoon Free', pack: ImIcons, sample: ImIcons.ImSearch },
+	io: { label: 'Ionicons 4', pack: IoIcons, sample: IoIcons.IoIosSearch },
+	io5: { label: 'Ionicons 5', pack: Io5Icons, sample: Io5Icons.IoSearch },
+	lia: { label: 'Line Awesome', pack: LiaIcons, sample: LiaIcons.LiaSearchSolid },
+	lu: { label: 'Lucide', pack: LuIcons, sample: LuIcons.LuSearch },
+	md: { label: 'Material Design', pack: MdIcons, sample: MdIcons.MdSearch },
+	pi: { label: 'Phosphor', pack: PiIcons, sample: PiIcons.PiMagnifyingGlass },
+	ri: { label: 'Remix', pack: RiIcons, sample: RiIcons.RiSearch2Fill },
+	rx: { label: 'Radix Icons', pack: RxIcons, sample: RxIcons.RxMagnifyingGlass },
+	si: { label: 'Simple Icons', pack: SiIcons, sample: SiIcons.SiReact },
+	sl: { label: 'Simple Line', pack: SlIcons, sample: SlIcons.SlMagnifier },
+	tb: { label: 'Tabler', pack: TbIcons, sample: TbIcons.TbSearch },
+	tfi: { label: 'Themify', pack: TfiIcons, sample: TfiIcons.TfiSearch },
+	ti: { label: 'Typicons', pack: TiIcons, sample: TiIcons.TiCogOutline },
+	vsc: { label: 'VSCode Codicons', pack: VscIcons, sample: VscIcons.VscSearch },
+	wi: { label: 'Weather Icons', pack: WiIcons, sample: WiIcons.WiAlien },
 } as const
 
 type Prefix = keyof typeof iconFamilies
@@ -123,8 +123,6 @@ export const ReactIcons: StoryObj = {
 		const togglePrefix = (prefix: Prefix) =>
 			setActiveFamilies((prev) => (prev.includes(prefix) ? prev.filter((p) => p !== prefix) : [...prev, prefix]))
 
-		const clearPrefixes = () => setActiveFamilies([])
-
 		const handleClick = (icon: (typeof flatIcons)[number]) => {
 			const str = cycle.value === 'jsx' ? `<${icon.id} />` : icon.id
 			clipboard.copy(str)
@@ -135,7 +133,7 @@ export const ReactIcons: StoryObj = {
 		return (
 			<div className='full-bleed grid content-start gap-4 p-4'>
 				<input
-					className='input w-full '
+					className='input w-full'
 					type='text'
 					value={query}
 					onChange={(e) => setQuery(e.target.value)}
@@ -147,44 +145,36 @@ export const ReactIcons: StoryObj = {
 						Showing {results.length} {debouncedQuery ? 'matches' : `icons. Total ${searchableSet.length}.`}
 					</p>
 
-					<div className='dropdown dropdown-end'>
-						<button className='btn btn-ghost btn-square btn-sm relative' tabIndex={0} type='button'>
-							<FaIcons.FaCog />
-							<span
-								className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
-									visible: activeFamilies.length,
-								})}
-							/>
-						</button>
-
-						<div
-							className='dropdown-content w-screen p-4 grid gap-4 shadow bg-base-300/90 backdrop-blur border border-current/5 rounded-box max-w-[calc(100vw-4rem)]'
-							tabIndex={0}
-						>
-							<button className='btn btn-outline' type='button' onClick={clearPrefixes}>
-								Clear
+					<Modal
+						trigger={
+							<button className='btn btn-ghost btn-square btn-sm relative' type='button'>
+								<FaIcons.FaCog />
+								<span
+									className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
+										visible: activeFamilies.length,
+									})}
+								/>
 							</button>
-							<BalancedGrid pack className='gap-2' maxCols={3}>
-								{R.entries(iconFamilies).map(([prefix, { label, pack }]) => {
-									const [Sample] = Object.values(pack)
-									return (
-										<button
-											key={prefix}
-											type='button'
-											onClick={() => togglePrefix(prefix as Prefix)}
-											className={cn(
-												'btn btn-sm flex flex-col items-center gap-1 h-auto py-2',
-												activeFamilies.includes(prefix as Prefix) ? 'btn-primary' : 'btn-outline',
-											)}
-										>
-											<Sample className='text-2xl' />
-											<div className='text-2xs font-mono truncate w-full'>{label}</div>
-										</button>
-									)
-								})}
-							</BalancedGrid>
-						</div>
-					</div>
+						}
+					>
+						<BalancedGrid pack className='gap-2' maxCols={3}>
+							{R.entries(iconFamilies).map(([prefix, family]) => {
+								return (
+									<button
+										key={prefix}
+										type='button'
+										onClick={() => togglePrefix(prefix)}
+										className={cn('btn btn-sm flex-col gap-2 h-auto py-1', {
+											'btn-primary': activeFamilies.includes(prefix),
+										})}
+									>
+										<family.sample className='text-2xl' />
+										<div className='font-mono truncate w-full'>{family.label}</div>
+									</button>
+								)
+							})}
+						</BalancedGrid>
+					</Modal>
 				</div>
 
 				<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6')}>

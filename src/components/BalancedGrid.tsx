@@ -8,7 +8,7 @@ type BalancedGridProps = ComponentProps<'div'> & {
 	pack?: boolean
 }
 
-export function BalancedGrid({ maxCols, pack, className, style, children }: BalancedGridProps) {
+export const BalancedGrid = ({ maxCols, pack, className, style, children }: BalancedGridProps) => {
 	const childArray = Children.toArray(children)
 	const { leftoverCount, lastRowIndex, style: balancedGridStyles } = balanceGridItems(childArray, maxCols, pack)
 

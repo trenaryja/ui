@@ -1,9 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
-import { useMemo, useState } from 'react'
-
 import type { ModalDismissOption } from '@/components/Modal'
 import { Modal, MODAL_DISMISS_OPTIONS } from '@/components/Modal'
 import { cn } from '@/utils'
+import type { Meta, StoryObj } from '@storybook/react-vite'
+import { useMemo, useState } from 'react'
 
 const meta = { title: 'components/Modal', component: Modal } satisfies Meta<typeof Modal>
 export default meta
