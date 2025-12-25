@@ -1,4 +1,4 @@
-import type { DaisyThemeColor, TailwindBreakpointName, TailwindColor } from '@/types'
+import type { DaisyThemeColor, TailwindColor } from '@/types'
 import { daisyThemes } from '@/types'
 import chroma from 'chroma-js'
 import * as R from 'remeda'
@@ -18,18 +18,6 @@ export const isDark = (color: string) => {
 export const daisyThemeColors = R.keys(daisyThemes.dark)
 	.filter((key) => key.startsWith('--color-'))
 	.map((key) => key.replace('--color-', '')) as DaisyThemeColor[]
-
-export const breakpoints = R.pipe(
-	defaultTheme.screens,
-	R.entries(),
-	R.reduce(
-		(result, [key, value]) => {
-			result[key] = parseInt(value) * 16
-			return result
-		},
-		{} as Record<TailwindBreakpointName, number>,
-	),
-)
 
 export const colors = R.omit(defaultTheme.colors(), ['inherit', 'current', 'transparent', 'black', 'white'])
 
