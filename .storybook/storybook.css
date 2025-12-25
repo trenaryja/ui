@@ -15,7 +15,7 @@ body {
 }
 
 #storybook-root {
-	@apply full-bleed-container min-h-[100dvh] relative p-4!;
+	@apply full-bleed-container min-h-dvh relative p-4!;
 }
 
 @utility demo {
