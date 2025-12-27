@@ -1,5 +1,5 @@
 import { AsciiVideo } from '@/components'
-import { characterRamps } from '@/utils/ascii'
+import { characterRamps } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 

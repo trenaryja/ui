@@ -1,6 +1,5 @@
 import { AsciiImage } from '@/components'
-import { cn } from '@/utils'
-import { characterRamps } from '@/utils/ascii'
+import { characterRamps, cn } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { picsum } from './story.utils'
