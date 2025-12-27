@@ -11,6 +11,7 @@ const downloadGlyphs = async () => {
 	if (!res.ok) throw new Error(`Failed to fetch glyphnames.json: ${res.status}`)
 	const json = JSON.parse(await res.text())
 	delete json.METADATA
+	fs.mkdirSync(path.dirname(glyphsFile), { recursive: true })
 	fs.writeFileSync(glyphsFile, JSON.stringify(json, null, 2), 'utf-8')
 	log('Saved glyphnames.json')
 }

@@ -1,9 +1,9 @@
 'use client'
 
 import type { Suggest } from '@/types'
-import { characterRamps, clampDimensions, cn, getAscii, getFontDimensions } from '@/utils'
+import { characterRamps, cn, useAscii } from '@/utils'
 import type { ComponentProps } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect } from 'react'
 
 export type AsciiImageProps = ComponentProps<'pre'> & {
 	src: string
@@ -25,34 +25,23 @@ export const AsciiImage = ({
 	style,
 	...props
 }: AsciiImageProps) => {
-	const [ascii, setAscii] = useState('')
-	const ref = useRef<HTMLPreElement>(null)
+	const { preRef, ascii, setAscii, processSource } = useAscii({ characterRamp, reverseRamp, maxHeight, maxWidth })
 
 	useEffect(() => {
 		const image = new Image()
 		image.crossOrigin = 'Anonymous'
 
 		image.onload = () => {
-			const { fontHeight, fontWidth } = getFontDimensions(ref)
-			const ramp = reverseRamp ? characterRamp.split('').reverse().join('') : characterRamp
-			const { width, height } = clampDimensions({
-				width: image.width,
-				height: image.height,
-				maxHeight,
-				maxWidth,
-				fontHeight,
-				fontWidth,
-			})
-			setAscii(getAscii({ width, height, src: image, characterRamp: ramp }))
+			setAscii(processSource(image))
 		}
 
 		image.src = src
-	}, [src, maxHeight, maxWidth, characterRamp, reverseRamp])
+	}, [src, processSource, setAscii])
 
 	return (
 		<pre
 			className={cn('bg-cover bg-no-repeat w-fit text-[.4rem]', className)}
-			ref={ref}
+			ref={preRef}
 			style={{ backgroundImage: showImage ? `url(${src})` : undefined, ...style }}
 			{...props}
 		>

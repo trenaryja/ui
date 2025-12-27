@@ -8,7 +8,7 @@ const rootDir = dirname(fileURLToPath(import.meta.url))
 const config: StorybookConfig = {
 	addons: ['@storybook/addon-themes'],
 	logLevel: 'silent',
-	stories: ['../stories/README.stories.tsx', '../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
+	stories: ['../**/*.@(mdx|stories.@(js|jsx|ts|tsx))'],
 	framework: { name: '@storybook/react-vite', options: {} },
 	features: { controls: false, actions: false, interactions: false },
 	viteFinal: async (inlineConfig) =>
