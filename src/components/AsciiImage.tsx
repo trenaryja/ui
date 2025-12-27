@@ -1,8 +1,7 @@
 'use client'
 
 import type { Suggest } from '@/types'
-import { cn } from '@/utils'
-import { characterRamps, clampDimensions, getAscii, getFontDimensions } from '@/utils/ascii'
+import { characterRamps, clampDimensions, cn, getAscii, getFontDimensions } from '@/utils'
 import type { ComponentProps } from 'react'
 import { useEffect, useRef, useState } from 'react'
 
