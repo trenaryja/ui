@@ -1,4 +1,5 @@
 import { BalancedGrid, Modal } from '@/components'
+import glyphs from '@/data/glyphnames.json'
 import { useCycle } from '@/hooks'
 import { cn } from '@/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
@@ -6,7 +7,6 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import * as R from 'remeda'
-import glyphs from '../src/data/glyphnames.json'
 
 const meta = { title: 'Search/Nerd Font Glyphs' } satisfies Meta
 export default meta
@@ -89,7 +89,7 @@ export const NerdFontGlyphs: StoryObj = {
 
 					<Modal
 						trigger={
-							<button className='btn btn-ghost btn-square btn-sm relative' type='button'>
+							<button className='btn btn-ghost btn-square relative' type='button'>
 								<span className='text-lg'></span>
 								<span
 									className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
@@ -105,7 +105,7 @@ export const NerdFontGlyphs: StoryObj = {
 									key={prefix}
 									type='button'
 									onClick={() => togglePrefix(prefix)}
-									className={cn('btn btn-sm flex-col gap-2 h-auto py-2', {
+									className={cn('btn flex-col gap-2 h-auto py-2', {
 										'btn-primary': activeFamilies.includes(prefix),
 									})}
 								>

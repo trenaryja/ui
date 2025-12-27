@@ -1,9 +1,9 @@
 import { useDuration } from '@/hooks'
+import { CountdownBox } from '@/stories/utils'
 import type { DurationUnit } from '@/utils'
 import { durationUnitMap, durationUnits, randomDate, toDateTimeLocal } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Fragment, useState } from 'react'
-import { CountdownBox } from './story.utils'
 
 const meta = { title: 'hooks/useDuration' } satisfies Meta
 export default meta
@@ -22,8 +22,7 @@ export const UseDuration: StoryObj = {
 			setSelectedUnits((prev) => (prev.includes(unit) ? prev.filter((u) => u !== unit) : [...prev, unit]))
 
 		const adjustByUnit = (unit: DurationUnit, amount: number) => {
-			const { add } = durationUnitMap[unit as keyof typeof durationUnitMap]
-			setTargetDate((d) => add(d, amount))
+			setTargetDate((d) => durationUnitMap[unit].add(d, amount))
 		}
 
 		return (
@@ -47,10 +46,10 @@ export const UseDuration: StoryObj = {
 							setTargetDate(new Date(e.target.value))
 						}}
 					/>
-					<button className='btn btn-sm' type='button' onClick={() => setTargetDate(new Date())}>
+					<button className='btn' type='button' onClick={() => setTargetDate(new Date())}>
 						Now
 					</button>
-					<button className='btn btn-sm' type='button' onClick={() => setTargetDate(randomDate())}>
+					<button className='btn' type='button' onClick={() => setTargetDate(randomDate())}>
 						Random
 					</button>
 				</div>
@@ -64,7 +63,7 @@ export const UseDuration: StoryObj = {
 							<label className='label flex-col cursor-pointer gap-2'>
 								<input
 									checked={selectedUnits.includes(unit)}
-									className='checkbox checkbox-xs'
+									className='checkbox'
 									type='checkbox'
 									onChange={() => toggleUnit(unit)}
 								/>

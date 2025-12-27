@@ -11,7 +11,7 @@ type BreakpointName<T extends Breakpoints | undefined> =
 
 type NormalizedBreakpoints<T extends Breakpoints | undefined> = Record<BreakpointName<T>, string>
 
-export function useBreakpoint<const T extends Breakpoints = DefaultBreakpoints>(breakpoints?: T) {
+export const useBreakpoint = <const T extends Breakpoints = DefaultBreakpoints>(breakpoints?: T) => {
 	const [currentBreakpoint, setCurrentBreakpoint] = useState<BreakpointName<T>>('base')
 
 	const normalized = useMemo(

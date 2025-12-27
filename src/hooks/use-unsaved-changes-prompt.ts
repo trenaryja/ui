@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
  * - Triggers on refresh/close/navigate away (full page unload), not SPA routing.
  * - Most browsers ignore custom text; this uses the generic prompt behavior.
  */
-export function useUnsavedChangesPrompt(isDirty: boolean): void {
+export const useUnsavedChangesPrompt = (isDirty: boolean) => {
 	const isDirtyRef = useRef(isDirty)
 	useEffect(() => {
 		isDirtyRef.current = isDirty

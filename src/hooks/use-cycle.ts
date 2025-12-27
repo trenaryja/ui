@@ -44,10 +44,10 @@ type UseCycleResult<V> = {
  * - `prev` is derived from the current index (after `increment()`, `prev` becomes
  *   the value you just had).
  */
-export function useCycle<const T extends readonly unknown[]>(
+export const useCycle = <const T extends readonly unknown[]>(
 	values: T,
 	options: UseCycleOptions = {},
-): UseCycleResult<T[number]> {
+): UseCycleResult<T[number]> => {
 	const { idleResetMs = null, initialIndex = 0, wrap = true } = options
 
 	const { length } = values

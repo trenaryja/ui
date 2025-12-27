@@ -1,7 +1,7 @@
 import { LineFieldImage } from '@/components'
+import { picsum } from '@/stories/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { picsum } from './story.utils'
 
 const meta = { title: 'components/LineFieldImage' } satisfies Meta
 export default meta

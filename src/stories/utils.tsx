@@ -46,7 +46,7 @@ export const Countdown = ({ value, digits = 1, transitionMs = 1000, className }:
 
 export type CountdownBoxProps = CountdownProps & { label: string }
 export const CountdownBox = ({ label, className, ...props }: CountdownBoxProps) => (
-	<div className={cn('flex flex-col p-2 bg-base-300 rounded-box', className)}>
+	<div className={cn('alert', className)}>
 		<Countdown className='text-5xl' {...props} />
 		<span className='text-center'>{label}</span>
 	</div>

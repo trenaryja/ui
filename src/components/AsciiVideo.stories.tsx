@@ -30,7 +30,7 @@ export const Default: StoryObj = {
 				<fieldset className='grid gap-4 w-full max-w-md p-4'>
 					<label className='flex flex-col gap-1 w-full'>
 						<span className='text-sm text-center'>Select Video</span>
-						<select className='select select-bordered w-full' value={src} onChange={(e) => setSrc(e.target.value)}>
+						<select className='select w-full' value={src} onChange={(e) => setSrc(e.target.value)}>
 							{srcs.map((s, i) => (
 								<option key={s} value={s}>
 									Video {i + 1}
@@ -41,7 +41,7 @@ export const Default: StoryObj = {
 
 					<label className='flex flex-col gap-1 w-full'>
 						<span className='text-sm text-center'>Or enter custom Video URL</span>
-						<input className='input input-bordered w-full' value={src} onChange={(e) => setSrc(e.target.value)} />
+						<input className='input w-full' value={src} onChange={(e) => setSrc(e.target.value)} />
 					</label>
 
 					<label className='flex flex-col gap-1 w-full'>

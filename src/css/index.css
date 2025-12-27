@@ -1,4 +1,5 @@
 @import './neu.css';
+@import './hexagon.css';
 @import './daisy.css';
 
 @utility text-2xs {
@@ -10,7 +11,7 @@
 }
 
 @utility full-bleed-container {
-	@apply grid grid-cols-[1fr_min(var(--bleed-width,80ch),100%)_1fr] [&>*]:col-2;
+	@apply grid grid-cols-[1fr_min(var(--bleed-width,80ch),100%)_1fr] *:col-2;
 }
 
 @utility full-bleed {
@@ -34,11 +35,4 @@
 
 @utility grid-stack {
 	@apply grid *:row-start-1 *:col-start-1;
-}
-
-@utility hexagon-tall {
-	@apply overflow-clip [clip-path:polygon(50%_0%,100%_25%,100%_75%,50%_100%,0%_75%,0%_25%)] aspect-[sqrt(3)/2] h-full max-w-full max-h-full;
-}
-@utility hexagon-wide {
-	@apply overflow-clip [clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] aspect-[2/sqrt(3)] w-full max-w-full max-h-full;
 }
