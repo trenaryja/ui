@@ -1,5 +1,5 @@
-import { nest } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
+import { nest } from './utils'
 
 const meta = { title: 'classes/hexagon' } satisfies Meta
 export default meta

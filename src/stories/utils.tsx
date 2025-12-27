@@ -1,7 +1,17 @@
 import { cn } from '@/utils'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, JSXElementConstructor, ReactElement, ReactNode } from 'react'
+import { createElement } from 'react'
 
 export const picsum = async (size = 500) => await fetch(`https://picsum.photos/${size}`).then((res) => res.url)
+
+export const nest = <P,>(n: number, el: ReactElement<P>): ReactElement<P> => {
+	if (n <= 1) return el
+	const { type, props } = el
+	let c: ReactNode = (props as { children?: ReactNode }).children
+	const T = type as JSXElementConstructor<P>
+	for (let d = 0; d < n; d++) c = createElement(T, props, c)
+	return c as ReactElement<P>
+}
 
 export type CountdownProps = { value: number; digits?: number; transitionMs?: number; className?: string }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { characterRamps, clampDimensions, cn, getAscii, getFontDimensions } from '@/utils'
+import { characterRamps, cn, useAscii } from '@/utils'
 import { useEffect, useRef, useState } from 'react'
 import type { AsciiImageProps } from './AsciiImage'
 
@@ -15,12 +15,9 @@ export const AsciiVideo = ({
 	className,
 	...props
 }: AsciiVideoProps) => {
-	const [ascii, setAscii] = useState('')
 	const [isPlaying, setIsPlaying] = useState(true)
-	const preRef = useRef<HTMLPreElement>(null)
 	const videoRef = useRef<HTMLVideoElement>(null)
-
-	const ramp = reverseRamp ? characterRamp.split('').reverse().join('') : characterRamp
+	const { preRef, ascii, setAscii, processSource } = useAscii({ characterRamp, reverseRamp, maxHeight, maxWidth })
 
 	useEffect(() => {
 		if (!videoRef.current) videoRef.current = document.createElement('video')
@@ -35,17 +32,7 @@ export const AsciiVideo = ({
 				return
 			}
 
-			const { fontHeight, fontWidth } = getFontDimensions(preRef)
-			const { width, height } = clampDimensions({
-				width: video.videoWidth,
-				height: video.videoHeight,
-				maxHeight,
-				maxWidth,
-				fontHeight,
-				fontWidth,
-			})
-
-			setAscii(getAscii({ width, height, src: video, characterRamp: ramp }))
+			setAscii(processSource(video))
 			video.requestVideoFrameCallback(update)
 		}
 
@@ -62,7 +49,7 @@ export const AsciiVideo = ({
 			cancelled = true
 			video.pause()
 		}
-	}, [src, maxHeight, maxWidth, ramp])
+	}, [src, processSource, setAscii])
 
 	const handlePlayPause = () => {
 		if (isPlaying) videoRef.current?.pause()

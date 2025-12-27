@@ -31,7 +31,7 @@ export const palette = R.flatMap(R.entries(colors), ([baseName, shades]) =>
 	})),
 )
 
-export const getClosestTailwindColor = (input: any) => {
+export const getClosestTailwindColor = (input: chroma.ChromaInput) => {
 	let [closest] = palette
 	let smallestDifference = Infinity
 	for (const color of palette) {

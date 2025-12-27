@@ -1,41 +1,10 @@
-import type { RefObject } from 'react'
+/* eslint-disable no-plusplus */
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const characterRamps = [' .:-=+*#%@'] as const
 
-type Dimensions = {
-	height: number
-	width: number
-	maxHeight?: number
-	maxWidth?: number
-	fontHeight: number
-	fontWidth: number
-}
-export const clampDimensions = ({ height, width, maxHeight, maxWidth, fontHeight, fontWidth }: Dimensions) => {
-	if (maxHeight === undefined && maxWidth === undefined) {
-		const naturalWidth = Math.floor(width / fontWidth)
-		const naturalHeight = Math.floor(height / fontHeight)
-		return { width: naturalWidth, height: naturalHeight }
-	}
-
-	const adjustedWidth = Math.floor((fontHeight / fontWidth) * width)
-	let newWidth = adjustedWidth
-	let newHeight = height
-
-	if (maxHeight !== undefined && newHeight > maxHeight) {
-		newWidth = Math.floor((newWidth * maxHeight) / newHeight)
-		newHeight = maxHeight
-	}
-
-	if (maxWidth !== undefined && newWidth > maxWidth) {
-		newHeight = Math.floor((newHeight * maxWidth) / newWidth)
-		newWidth = maxWidth
-	}
-
-	return { height: newHeight, width: newWidth }
-}
-
-export const getFontDimensions = (ref: RefObject<HTMLPreElement | null>) => {
-	if (!ref.current) return { fontWidth: 0, fontHeight: 0 }
+const getFontDimensions = (ref: HTMLPreElement | null) => {
+	if (!ref) return { fontWidth: 0, fontHeight: 0 }
 	const pre = document.createElement('pre')
 	pre.textContent = ' '
 	pre.style.position = 'absolute'
@@ -44,7 +13,7 @@ export const getFontDimensions = (ref: RefObject<HTMLPreElement | null>) => {
 	pre.style.margin = '0'
 	pre.style.padding = '0'
 
-	const computed = getComputedStyle(ref.current)
+	const computed = getComputedStyle(ref)
 	pre.style.font = computed.font
 	pre.style.letterSpacing = computed.letterSpacing
 	pre.style.lineHeight = computed.lineHeight
@@ -56,34 +25,141 @@ export const getFontDimensions = (ref: RefObject<HTMLPreElement | null>) => {
 	return { fontWidth: width, fontHeight: height }
 }
 
-export type GetAsciiOptions = {
-	width: number
-	height: number
-	src: CanvasImageSource
-	characterRamp?: string
+const createLookupTable = (characterRamp: string): string[] => {
+	const table = new Array<string>(256)
+	const rampLength = characterRamp.length - 1
+	for (let i = 0; i < 256; i++) {
+		table[i] = characterRamp[Math.floor((rampLength * i) / 255) % (characterRamp.length - 1)] ?? ' '
+	}
+	return table
 }
 
-export const getAscii = ({ width, height, src, characterRamp = ' .:-=+*#%@' }: GetAsciiOptions) => {
-	const canvas = document.createElement('canvas')
-	canvas.width = width
-	canvas.height = height
-	const context = canvas.getContext('2d')!
-	context.drawImage(src, 0, 0, width, height)
-	const { data } = context.getImageData(0, 0, width, height)
-	const grayScales = new Array(width * height)
-
-	for (let i = 0, j = 0; i < data?.length; i += 4, j++) {
-		const r = data[i]
-		const g = data[i + 1]
-		const b = data[i + 2]
-		grayScales[j] = 0.21 * r + 0.72 * g + 0.07 * b
+const clampDimensions = ({
+	sourceWidth,
+	sourceHeight,
+	fontHeight,
+	fontWidth,
+	maxHeight,
+	maxWidth,
+}: {
+	sourceWidth: number
+	sourceHeight: number
+	fontHeight: number
+	fontWidth: number
+	maxHeight?: number
+	maxWidth?: number
+}) => {
+	if (maxHeight === undefined && maxWidth === undefined) {
+		return { width: Math.floor(sourceWidth / fontWidth), height: Math.floor(sourceHeight / fontHeight) }
 	}
 
-	const rampLength = characterRamp.length - 1
-	return grayScales
-		.map((gray, i) => {
-			const char = characterRamp[Math.round((rampLength * gray) / 255)] ?? ' '
-			return (i + 1) % width === 0 ? `${char}\n` : char
+	let width = Math.floor((fontHeight / fontWidth) * sourceWidth)
+	let height = sourceHeight
+
+	if (maxHeight !== undefined && height > maxHeight) {
+		width = Math.floor((width * maxHeight) / height)
+		height = maxHeight
+	}
+
+	if (maxWidth !== undefined && width > maxWidth) {
+		height = Math.floor((height * maxWidth) / width)
+		width = maxWidth
+	}
+
+	return { width, height }
+}
+
+const processPixels = ({
+	width,
+	height,
+	data,
+	lookupTable,
+}: {
+	width: number
+	height: number
+	data: Uint8ClampedArray
+	lookupTable: string[]
+}) => {
+	const chars = new Array<string>(width * height + height)
+	let charIndex = 0
+	let dataIndex = 0
+
+	for (let y = 0; y < height; y++) {
+		for (let x = 0; x < width; x++) {
+			const gray = (21 * data[dataIndex] + 72 * data[dataIndex + 1] + 7 * data[dataIndex + 2]) >> 8 // eslint-disable-line no-bitwise
+			chars[charIndex++] = lookupTable[gray]
+			dataIndex += 4
+		}
+		chars[charIndex++] = '\n'
+	}
+
+	return chars.join('')
+}
+
+type AsciiProcessOptions = {
+	characterRamp?: string
+	reverseRamp?: boolean
+	maxHeight?: number
+	maxWidth?: number
+}
+
+export const useAscii = (options: AsciiProcessOptions) => {
+	const { characterRamp = ' .:-=+*#%@', reverseRamp, maxHeight, maxWidth } = options
+
+	const preRef = useRef<HTMLPreElement>(null)
+	const configRef = useRef({
+		fontHeight: 0,
+		fontWidth: 0,
+		maxHeight,
+		maxWidth,
+		lookupTable: null as string[] | null,
+	})
+
+	const [ascii, setAscii] = useState('')
+	const [dims, setDims] = useState(() => getFontDimensions(null))
+
+	const processSource = useCallback((source: CanvasImageSource) => {
+		const { fontHeight, fontWidth, maxHeight: cfgMaxHeight, maxWidth: cfgMaxWidth, lookupTable } = configRef.current
+
+		const { width: sourceWidth, height: sourceHeight } =
+			source instanceof HTMLVideoElement
+				? { width: source.videoWidth, height: source.videoHeight }
+				: { width: (source as { width: number }).width, height: (source as { height: number }).height }
+
+		const { width, height } = clampDimensions({
+			sourceWidth,
+			sourceHeight,
+			fontHeight,
+			fontWidth,
+			maxHeight: cfgMaxHeight,
+			maxWidth: cfgMaxWidth,
 		})
-		.join('')
+
+		const canvas = document.createElement('canvas')
+		canvas.width = width
+		canvas.height = height
+		const context = canvas.getContext('2d', { willReadFrequently: true })!
+		context.drawImage(source, 0, 0, width, height)
+		const { data } = context.getImageData(0, 0, width, height)
+
+		return processPixels({ width, height, data, lookupTable: lookupTable ?? createLookupTable(' .:-=+*#@') })
+	}, [])
+
+	useEffect(() => {
+		const observer = new ResizeObserver(() => {
+			setDims(getFontDimensions(preRef.current))
+		})
+		if (preRef.current) observer.observe(preRef.current)
+		return () => observer.disconnect()
+	}, [preRef])
+
+	useEffect(() => {
+		const { fontHeight, fontWidth } = dims
+		const ramp = reverseRamp ? characterRamp.split('').reverse().join('') : characterRamp
+		const lookupTable = createLookupTable(ramp)
+
+		configRef.current = { fontHeight, fontWidth, maxHeight, maxWidth, lookupTable }
+	}, [characterRamp, reverseRamp, maxHeight, maxWidth, dims])
+
+	return { preRef, ascii, setAscii, processSource }
 }
