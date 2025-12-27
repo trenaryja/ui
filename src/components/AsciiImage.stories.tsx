@@ -1,8 +1,8 @@
 import { AsciiImage } from '@/components'
+import { picsum } from '@/stories/utils'
 import { characterRamps, cn } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { picsum } from './story.utils'
 
 const meta = { title: 'components/AsciiImage' } satisfies Meta
 export default meta

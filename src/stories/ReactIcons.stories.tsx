@@ -147,7 +147,7 @@ export const ReactIcons: StoryObj = {
 
 					<Modal
 						trigger={
-							<button className='btn btn-ghost btn-square btn-sm relative' type='button'>
+							<button className='btn btn-ghost btn-square relative' type='button'>
 								<FaIcons.FaCog />
 								<span
 									className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {

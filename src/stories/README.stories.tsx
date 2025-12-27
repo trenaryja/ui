@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import raw from 'rehype-raw'
-import readMe from '../README.md?raw'
+import readMe from '../../README.md?raw'
 
 const meta = { title: 'ReadMe', decorators: [] } satisfies Meta
 export default meta
