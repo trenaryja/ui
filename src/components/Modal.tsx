@@ -1,6 +1,6 @@
 'use client'
 
-import { cn, tryIgnore } from '@/utils'
+import { attempt, cn } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
 import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
 import { cloneElement, useCallback, useEffect, useId, useMemo, useRef } from 'react'
@@ -69,7 +69,7 @@ const useNativeDialog = ({
 	const openNative = useCallback(() => {
 		const el = getDialog()
 		if (!el || el.open) return
-		tryIgnore(() => el.showModal())
+		attempt(() => el.showModal())
 	}, [getDialog])
 
 	const closeNative = useCallback(() => {
@@ -81,7 +81,7 @@ const useNativeDialog = ({
 	useEffect(() => {
 		const el = getDialog()
 		if (!el) return
-		if (open && !el.open) return tryIgnore(() => el.showModal())
+		if (open && !el.open) return attempt(() => el.showModal())
 		if (!open && el.open) el.close()
 	}, [getDialog, open])
 

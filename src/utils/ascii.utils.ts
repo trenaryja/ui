@@ -104,7 +104,7 @@ type AsciiProcessOptions = {
 }
 
 export const useAscii = (options: AsciiProcessOptions) => {
-	const { characterRamp = ' .:-=+*#%@', reverseRamp, maxHeight, maxWidth } = options
+	const { characterRamp = characterRamps[0], reverseRamp, maxHeight, maxWidth } = options
 
 	const preRef = useRef<HTMLPreElement>(null)
 	const configRef = useRef({
@@ -116,7 +116,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 	})
 
 	const [ascii, setAscii] = useState('')
-	const [dims, setDims] = useState(() => getFontDimensions(null))
+	const [fontDimensions, setFontDimensions] = useState(() => getFontDimensions(null))
 
 	const processSource = useCallback((source: CanvasImageSource) => {
 		const { fontHeight, fontWidth, maxHeight: cfgMaxHeight, maxWidth: cfgMaxWidth, lookupTable } = configRef.current
@@ -147,19 +147,19 @@ export const useAscii = (options: AsciiProcessOptions) => {
 
 	useEffect(() => {
 		const observer = new ResizeObserver(() => {
-			setDims(getFontDimensions(preRef.current))
+			setFontDimensions(getFontDimensions(preRef.current))
 		})
 		if (preRef.current) observer.observe(preRef.current)
 		return () => observer.disconnect()
 	}, [preRef])
 
 	useEffect(() => {
-		const { fontHeight, fontWidth } = dims
+		const { fontHeight, fontWidth } = fontDimensions
 		const ramp = reverseRamp ? characterRamp.split('').reverse().join('') : characterRamp
 		const lookupTable = createLookupTable(ramp)
 
 		configRef.current = { fontHeight, fontWidth, maxHeight, maxWidth, lookupTable }
-	}, [characterRamp, reverseRamp, maxHeight, maxWidth, dims])
+	}, [characterRamp, reverseRamp, maxHeight, maxWidth, fontDimensions])
 
 	return { preRef, ascii, setAscii, processSource }
 }

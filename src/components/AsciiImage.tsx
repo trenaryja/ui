@@ -1,15 +1,15 @@
 'use client'
 
-import type { Suggest } from '@/types'
 import { characterRamps, cn, useAscii } from '@/utils'
 import type { ComponentProps } from 'react'
 import { useEffect } from 'react'
+import type { LiteralUnion } from 'type-fest'
 
 export type AsciiImageProps = ComponentProps<'pre'> & {
 	src: string
 	maxHeight?: number
 	maxWidth?: number
-	characterRamp?: Suggest<(typeof characterRamps)[number], string>
+	characterRamp?: LiteralUnion<(typeof characterRamps)[number], string>
 	reverseRamp?: boolean
 	showImage?: boolean
 }
