@@ -18,10 +18,6 @@ export const ScaledText = ({ lines, props }: ScaledTextProps) => {
 	const refs = useRef<(SVGElement | null)[]>([])
 
 	useEffect(() => {
-		refs.current = refs.current.slice(0, lines.length)
-	}, [lines])
-
-	useEffect(() => {
 		refs.current.forEach((svg) => {
 			const text = svg?.querySelector('text')
 			const bbox = text?.getBBox()
@@ -36,6 +32,7 @@ export const ScaledText = ({ lines, props }: ScaledTextProps) => {
 				const key = typeof line === 'string' ? `s:${text}:${i}` : `o:${text}:${line.props?.id ?? ''}`
 				return (
 					<svg
+						className='fill-current'
 						key={key}
 						ref={(svg) => {
 							refs.current[i] = svg

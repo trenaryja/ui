@@ -16,7 +16,7 @@ export type GlyphFamily = {
 	char: string
 }
 
-const glyphFamilies: Record<string, GlyphFamily> = {
+const glyphFamilies = {
 	'cod-': { label: 'Codicons (VS Code)', char: '' },
 	'custom-': { label: 'Custom Icons', char: '' },
 	'dev-': { label: 'Devicons', char: '' },
@@ -34,7 +34,7 @@ const glyphFamilies: Record<string, GlyphFamily> = {
 	'pom-': { label: 'Pomicons', char: '' },
 	'seti-': { label: 'Seti UI', char: '' },
 	'weather-': { label: 'Weather', char: '' },
-} as const
+} as const satisfies Record<string, GlyphFamily>
 
 type Prefix = keyof typeof glyphFamilies
 
