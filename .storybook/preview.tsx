@@ -10,6 +10,17 @@ const symbols = {
 
 const preview: Preview = {
 	decorators: [
+		// (Story) => (
+		// 	<ThemeProvider
+		// 		enableSystem
+		// 		attribute='data-theme'
+		// 		defaultTheme='dark'
+		// 		themes={daisyThemes.map((x) => x.name)}
+		// 		enableColorScheme
+		// 	>
+		// 		<Story />
+		// 	</ThemeProvider>
+		// ),
 		withThemeByDataAttribute({
 			themes: Object.fromEntries(daisyThemes.map((x) => [`${symbols[x.colorScheme]} ${x.name}`, x.name])),
 			defaultTheme: `${symbols.dark} dark`,

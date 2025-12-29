@@ -2,6 +2,7 @@ import chroma from 'chroma-js'
 import * as R from 'remeda'
 import defaultTheme from 'tailwindcss/defaultTheme'
 import { isDark } from './theme.utils'
+import { makeTypeGuard } from './type.utils'
 
 export type TailwindColorName = keyof typeof tailwindColors
 export type TailwindShadeDictionary = (typeof tailwindColors)[TailwindColorName]
@@ -20,6 +21,9 @@ export const tailwindPalette = R.flatMap(R.entries(tailwindColors), ([baseName, 
 		isDark: isDark(oklch),
 	})),
 )
+export const isTailwindColor = makeTypeGuard(tailwindPalette.map((x) => x.fullName))
+
+export const tailwindPaletteMap = new Map(tailwindPalette.map((x) => [x.fullName, x]))
 
 export const getClosestTailwindColor = (input: chroma.ChromaInput) => {
 	let [closest] = tailwindPalette
