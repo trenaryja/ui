@@ -16,16 +16,14 @@ export const Default: StoryObj = {
 			.filter(Boolean)
 
 		return (
-			<div className='demo *:w-full *:max-w-md'>
+			<div className='demo *:max-w-xs'>
 				<textarea
-					className='textarea text-center field-sizing-content'
+					className='textarea text-center field-sizing-content max-h-60 min-h-fit'
 					value={text}
 					onChange={(e) => setText(e.target.value)}
 				/>
 
-				<div className='w-60 overflow-auto rounded-box p-4 fill-current'>
-					<ScaledText lines={lines} />
-				</div>
+				<ScaledText lines={lines} />
 			</div>
 		)
 	},
