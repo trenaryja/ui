@@ -1,7 +1,10 @@
 export * from './AsciiImage'
 export * from './AsciiVideo'
 export * from './BalancedGrid'
+export * from './ColorButton'
 export * from './ConditionalWrapper'
 export * from './LineFieldImage'
 export * from './Modal'
 export * from './ScaledText'
+
+export { ThemeProvider } from 'next-themes'
