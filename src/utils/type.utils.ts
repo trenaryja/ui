@@ -76,3 +76,16 @@ export function attempt<T>(fn: () => T, options?: { fallback?: T; onError?: (err
 		return options?.fallback
 	}
 }
+
+/**
+ * Checks if a value exists in an array using `Array.prototype.includes`.
+ *
+ * @example
+ * ```ts
+ * type RGB = 'red' | 'green' | 'blue'
+ * let color: RGB | undefined
+ * isIn(color, ['green', 'blue']) // ✅ array elements autocomplete
+ * isIn(color, ['invalid']) // ❌ Type error
+ * ```
+ */
+export const isIn = <T, U extends T>(x: T, array: U[]) => array.includes(x as U)

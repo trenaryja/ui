@@ -18,6 +18,7 @@ export const daisyThemes = R.pipe(
 	R.map(([name, theme]) => ({
 		name: name as DaisyThemeName,
 		colorScheme: theme['color-scheme'] as 'dark' | 'light',
+		theme,
 	})),
 	R.sortBy((x) => x.name !== 'light' && x.name !== 'dark', R.prop('colorScheme'), R.prop('name')),
 )

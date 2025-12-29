@@ -10,6 +10,10 @@ export const cn = (...inputs: ClassValue[]) => {
 	return result.join(' ')
 }
 
+export const cnFn = <T>(className: FunctionalClassName<T>, value: T) =>
+	typeof className === 'string' ? className : className?.(value)
+export type FunctionalClassName<T> = ((val: T) => string | undefined) | string | undefined
+
 export const addOpacityToOklch = (oklch: string | undefined, opacity: number) =>
 	`${oklch?.split(')')[0]} / ${opacity / 100})`
 
