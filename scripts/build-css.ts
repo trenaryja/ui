@@ -1,4 +1,4 @@
-import { colors } from '@/utils'
+import { tailwindColors } from '@/utils'
 import { execSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
@@ -14,7 +14,7 @@ const generateProseCss = () => {
 	const proseClasses = [
 		'prose',
 		...['invert', 'sm', 'lg', 'xl', '2xl'].map((x) => `prose-${x}`),
-		...R.keys(colors).map((c) => `prose-${c}`),
+		...R.keys(tailwindColors).map((c) => `prose-${c}`),
 	]
 	const proseCss =
 		`@plugin '@tailwindcss/typography';\n` +
