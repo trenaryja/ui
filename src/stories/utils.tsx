@@ -13,6 +13,7 @@ export const nest = <P,>(n: number, el: ReactElement<P>): ReactElement<P> => {
 	return c as ReactElement<P>
 }
 
+// TODO: move to real component
 export type CountdownProps = { value: number; digits?: number; transitionMs?: number; className?: string }
 
 export const Countdown = ({ value, digits = 1, transitionMs = 1000, className }: CountdownProps) => {

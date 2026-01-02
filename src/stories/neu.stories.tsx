@@ -4,6 +4,7 @@ import type { ComponentProps, CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 
 type Story = StoryObj
+
 const meta = {
 	title: 'classes/neu',
 } satisfies Meta
@@ -37,10 +38,12 @@ export const Default: Story = {
 		useEffect(() => {
 			if (!spinning) return
 			let frame: number
+
 			const animate = () => {
 				setAngle((prev) => (prev + 1) % 360)
 				frame = requestAnimationFrame(animate)
 			}
+
 			frame = requestAnimationFrame(animate)
 			return () => cancelAnimationFrame(frame)
 		}, [spinning])

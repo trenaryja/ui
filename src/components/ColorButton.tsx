@@ -20,9 +20,13 @@ export type ColorButtonProps = React.ComponentProps<'button'> & {
 }
 
 type BaseButtonProps = Omit<React.ComponentProps<'button'>, 'color'>
+
 type TailwindColorButtonProps = BaseButtonProps & { color: TailwindColor }
+
 type DaisyColorButtonProps = BaseButtonProps & { color: DaisyThemeColor }
+
 type DaisyButtonColor = Exclude<DaisyThemeColor, `${string}content` | `base${string}`>
+
 const isDaisyButtonColor = makeTypeGuard(
 	daisyThemeColors.filter((c): c is DaisyButtonColor => !c.includes('base') && !c.endsWith('content')),
 )

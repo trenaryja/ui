@@ -41,6 +41,7 @@ function balanceGridItems<T>(items: T[], maxCols: number, pack?: boolean) {
 	if (n <= 1 || maxCols < 2) return { leftoverCount: 0, lastRowIndex: n, style: { '--grid-cols': 1 } as CSSProperties }
 
 	const candidates = []
+
 	for (let cols = 1; cols <= maxCols; cols++) {
 		const rows = Math.ceil(n / cols)
 		const emptyCells = rows * cols - n
