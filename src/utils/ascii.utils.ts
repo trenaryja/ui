@@ -28,9 +28,11 @@ const getFontDimensions = (ref: HTMLPreElement | null) => {
 const createLookupTable = (characterRamp: string): string[] => {
 	const table = new Array<string>(256)
 	const rampLength = characterRamp.length - 1
+
 	for (let i = 0; i < 256; i++) {
 		table[i] = characterRamp[Math.floor((rampLength * i) / 255) % (characterRamp.length - 1)] ?? ' '
 	}
+
 	return table
 }
 
@@ -90,6 +92,7 @@ const processPixels = ({
 			chars[charIndex++] = lookupTable[gray]
 			dataIndex += 4
 		}
+
 		chars[charIndex++] = '\n'
 	}
 
@@ -107,6 +110,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 	const { characterRamp = characterRamps[0], reverseRamp, maxHeight, maxWidth } = options
 
 	const preRef = useRef<HTMLPreElement>(null)
+	const sourceRef = useRef<CanvasImageSource | null>(null)
 	const configRef = useRef({
 		fontHeight: 0,
 		fontWidth: 0,
@@ -119,6 +123,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 	const [fontDimensions, setFontDimensions] = useState(() => getFontDimensions(null))
 
 	const processSource = useCallback((source: CanvasImageSource) => {
+		sourceRef.current = source
 		const { fontHeight, fontWidth, maxHeight: cfgMaxHeight, maxWidth: cfgMaxWidth, lookupTable } = configRef.current
 
 		const { width: sourceWidth, height: sourceHeight } =
@@ -151,15 +156,15 @@ export const useAscii = (options: AsciiProcessOptions) => {
 		})
 		if (preRef.current) observer.observe(preRef.current)
 		return () => observer.disconnect()
-	}, [preRef])
+	}, [])
 
 	useEffect(() => {
 		const { fontHeight, fontWidth } = fontDimensions
 		const ramp = reverseRamp ? characterRamp.split('').reverse().join('') : characterRamp
 		const lookupTable = createLookupTable(ramp)
-
 		configRef.current = { fontHeight, fontWidth, maxHeight, maxWidth, lookupTable }
-	}, [characterRamp, reverseRamp, maxHeight, maxWidth, fontDimensions])
+		if (sourceRef.current) setAscii(processSource(sourceRef.current))
+	}, [characterRamp, reverseRamp, maxHeight, maxWidth, fontDimensions, processSource])
 
 	return { preRef, ascii, setAscii, processSource }
 }
