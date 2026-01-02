@@ -68,6 +68,7 @@ export const makeDiscriminatedGuard = <T extends string, const Allowed extends r
  */
 export function attempt<T>(fn: () => T, options: { fallback: T; onError?: (error: unknown) => void }): T
 export function attempt<T>(fn: () => T, options?: { fallback?: T; onError?: (error: unknown) => void }): T | undefined
+
 export function attempt<T>(fn: () => T, options?: { fallback?: T; onError?: (error: unknown) => void }): T | undefined {
 	try {
 		return fn()

@@ -3,6 +3,7 @@ import * as R from 'remeda'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
 type Breakpoints = Readonly<Record<string, string>>
+
 type DefaultBreakpoints = typeof defaultTheme.screens
 
 type BreakpointName<T extends Breakpoints | undefined> =
@@ -36,13 +37,16 @@ export const useBreakpoint = <const T extends Breakpoints = DefaultBreakpoints>(
 	useEffect(() => {
 		if (typeof window === 'undefined') return
 		const queries = sorted.map(([, min]) => window.matchMedia(`(min-width: ${min})`))
+
 		const read = () => {
 			const i = queries.findLastIndex((q) => q.matches)
 			const next = (i === -1 ? 'base' : sorted[i][0]) as BreakpointName<T>
 			setCurrentBreakpoint((prev) => (prev === next ? prev : next))
 		}
+
 		for (const q of queries) q.addEventListener('change', read)
 		read()
+
 		return () => {
 			for (const q of queries) q.removeEventListener('change', read)
 		}

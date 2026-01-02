@@ -29,6 +29,7 @@ export const LineFieldImage = ({
 	useEffect(() => {
 		const img = new Image()
 		img.crossOrigin = 'Anonymous'
+
 		img.onload = () => {
 			const { width: w, height: h } = img
 			const nx = Math.ceil(w / cellSize)
@@ -41,6 +42,7 @@ export const LineFieldImage = ({
 			const { data } = ctx.getImageData(0, 0, nx, ny)
 
 			let lines = ''
+
 			for (let y = 0; y < ny; y++) {
 				for (let x = 0; x < nx; x++) {
 					const i = (y * nx + x) * 4
@@ -55,8 +57,10 @@ export const LineFieldImage = ({
 					lines += `<line x1="${cx - dx}" y1="${cy - dy}" x2="${cx + dx}" y2="${cy + dy}" />\n`
 				}
 			}
+
 			setImgData({ width: w, height: h, lines })
 		}
+
 		img.src = src
 	}, [src, cellSize])
 

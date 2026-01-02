@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
 type Story = StoryObj<typeof BalancedGrid>
+
 const meta = {
 	title: 'components/BalancedGrid',
 	component: BalancedGrid,

@@ -29,10 +29,12 @@ const generateProseCss = () => {
 
 const generateBrowserCss = () => {
 	const allUtilities = new Set<string>()
+
 	for (const file of fs.readdirSync(srcCssDir).filter((f) => f.endsWith('.css'))) {
 		const contents = fs.readFileSync(path.join(srcCssDir, file), 'utf-8')
 		for (const m of contents.matchAll(/@utility\s+([\w-]+)/g)) allUtilities.add(m[1])
 	}
+
 	const browserCss =
 		`@import 'tailwindcss';\n` +
 		`@plugin 'daisyui' { themes: all; };\n` +

@@ -67,6 +67,7 @@ export const getDuration = <T extends readonly DurationUnit[]>(opts: {
 	}
 
 	let cursor = from
+
 	for (const unit of sortBy(unique(units), (x) => durationUnits.indexOf(x))) {
 		const { diff, add } = durationUnitMap[unit]
 		out[unit] = diff(to, cursor)

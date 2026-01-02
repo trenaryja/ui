@@ -28,12 +28,15 @@ export const tailwindPaletteMap = new Map(tailwindPalette.map((x) => [x.fullName
 export const getClosestTailwindColor = (input: chroma.ChromaInput) => {
 	let [closest] = tailwindPalette
 	let smallestDifference = Infinity
+
 	for (const color of tailwindPalette) {
 		const distance = chroma.deltaE(input, color.oklch)
+
 		if (distance < smallestDifference) {
 			closest = color
 			smallestDifference = distance
 		}
 	}
+
 	return closest
 }
