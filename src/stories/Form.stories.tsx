@@ -103,3 +103,4 @@ export const Default: StoryObj = {
 // TODO: use utils for rendering all controls
 // TODO: global options, per-field options
 // TODO: get rid of eslint-disable line
+// TODO: show subgrid capability to align labels

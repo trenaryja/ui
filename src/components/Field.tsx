@@ -1,18 +1,11 @@
-import { cn, joinTyped } from '@/utils'
+import type { DirectionPlacement, FlexPlacement, Placement } from '@/utils'
+import { cn, flexPlacements } from '@/utils'
 import type { CSSProperties, ReactNode } from 'react'
-import { Fieldset, FieldsetProps } from './Fieldset'
+import type { FieldsetProps } from './Fieldset'
+import { Fieldset } from './Fieldset'
 
 export const fieldSlots = ['label', 'hint', 'error'] as const
 type FieldSlot = (typeof fieldSlots)[number]
-
-export const flexPlacements = ['start', 'center', 'end'] as const
-export type FlexPlacement = (typeof flexPlacements)[number]
-
-export const directionPlacements = ['top', 'bottom', 'left', 'right'] as const
-export type DirectionPlacement = (typeof directionPlacements)[number]
-
-export const placementOptions = joinTyped(directionPlacements, flexPlacements, '-')
-export type Placement = (typeof placementOptions)[number]
 
 const placementToArea = (p: Placement) => p.replace('-', '_')
 
