@@ -1,4 +1,4 @@
-import { ColorButton } from '@/components'
+import { Button, ColorButton } from '@/components'
 import type { ButtonStyle } from '@/stories/utils'
 import { buttonStyles } from '@/stories/utils'
 import { cn, daisyThemeColors, tailwindPalette } from '@/utils'
@@ -41,23 +41,22 @@ export const Default: StoryObj = {
 
 				<div className='flex flex-wrap gap-2'>
 					{buttonStyles.map((style) => (
-						<button
-							className={cn('btn', { 'btn-primary': styles.includes(style) })}
+						<Button
+							className={cn({ 'btn-primary': styles.includes(style) })}
 							key={style}
-							type='button'
 							onClick={() => toggleStyle(style)}
 						>
 							{style}
-						</button>
+						</Button>
 					))}
 				</div>
 
 				<hr className='w-full opacity-25' />
 
 				<div className='flex gap-4'>
-					<button className={cn('btn', classNames)} disabled={disabled} type='button'>
+					<Button className={cn(classNames)} disabled={disabled} type='button'>
 						Default btn Button
-					</button>
+					</Button>
 					<ColorButton className={cn(classNames)} disabled={disabled}>
 						Default ColorButton
 					</ColorButton>

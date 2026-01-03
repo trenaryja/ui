@@ -13,6 +13,7 @@ import {
 } from '@/utils'
 import { useMounted } from '@mantine/hooks'
 import * as React from 'react'
+import { Button } from './Button'
 
 export type ColorButtonProps = React.ComponentProps<'button'> & {
 	color?: DaisyThemeColor | TailwindColor
@@ -43,14 +44,7 @@ const daisyButtonColorMap: Record<DaisyButtonColor, `btn-${DaisyButtonColor}`> =
 
 const DaisyColorButton = ({ color, className, disabled, ...props }: DaisyColorButtonProps) => {
 	if (isDaisyButtonColor(color))
-		return (
-			<button
-				className={cn('btn', daisyButtonColorMap[color], className)}
-				disabled={disabled}
-				type='button'
-				{...props}
-			/>
-		)
+		return <Button className={cn(daisyButtonColorMap[color], className)} disabled={disabled} {...props} />
 
 	const isBaseContent = color === 'base-content'
 	const isContentColor = color.endsWith('-content')
@@ -61,11 +55,10 @@ const DaisyColorButton = ({ color, className, disabled, ...props }: DaisyColorBu
 		? 'var(--color-base-300)'
 		: `var(--color-${isContentColor ? baseName : `${baseName}-content`})`
 	return (
-		<button
-			className={cn('btn', className)}
+		<Button
+			className={cn(className)}
 			disabled={disabled}
 			style={{ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg } as React.CSSProperties}
-			type='button'
 			{...props}
 		/>
 	)
@@ -78,11 +71,10 @@ const TailwindColorButton = ({ color, className, disabled, ...props }: TailwindC
 		? daisyThemeMap.get('dark')?.theme['--color-base-content']
 		: daisyThemeMap.get('light')?.theme['--color-base-content']
 	return (
-		<button
-			className={cn('btn', className)}
+		<Button
+			className={cn(className)}
 			disabled={disabled}
 			style={{ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg } as React.CSSProperties}
-			type='button'
 			{...props}
 		/>
 	)

@@ -1,4 +1,6 @@
+import type { ToastPosition } from '@/components'
 import { Checkbox, Input, RadioGroup, Range, Select, Textarea, Toggle } from '@/components'
+import type { Arrow } from '@/utils'
 import { cn, durationUnits, joinTyped } from '@/utils'
 import type { CSSProperties, JSXElementConstructor, ReactElement, ReactNode } from 'react'
 import { createElement } from 'react'
@@ -93,3 +95,12 @@ export const playingCardSuits = ['♠', '♥', '♦', '♣'] as const
 export const playingCards = joinTyped(playingCardRanks, playingCardSuits, '')
 
 export const durationUnitsWithoutMs = durationUnits.filter((x) => x !== 'milliseconds')
+
+export const toastPositionIcons = {
+	'top-left': '↖',
+	'top-center': '↑',
+	'top-right': '↗',
+	'bottom-left': '↙',
+	'bottom-center': '↓',
+	'bottom-right': '↘',
+} as const satisfies Record<ToastPosition, Arrow>

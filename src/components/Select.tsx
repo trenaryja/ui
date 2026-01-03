@@ -16,3 +16,5 @@ export const Select = ({
 
 // TODO: add stories file
 // TODO: options prop for simplification of children (make mutually exclusive of children, or no?)
+// TODO: allowDeselect
+// TODO: allowSearch
