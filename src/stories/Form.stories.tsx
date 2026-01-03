@@ -1,4 +1,4 @@
-import { Checkbox, Field, Fieldset, Input, RadioGroup, Range, Select, Textarea, Toggle } from '@/components'
+import { Checkbox, Field, Fieldset, Input, RadioGroup, Range, Select, TextArea, Toggle } from '@/components'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
@@ -49,7 +49,7 @@ export const Default: StoryObj = {
 							hint={showHints ? 'Longer text input' : undefined}
 							error={showErrors ? 'Please provide more details' : undefined}
 						>
-							<Textarea placeholder='Enter multiple lines...' readOnly={readOnlyAll} />
+							<TextArea placeholder='Enter multiple lines...' readOnly={readOnlyAll} />
 						</Field>
 						<Field
 							label={showLabels ? 'Select' : undefined}

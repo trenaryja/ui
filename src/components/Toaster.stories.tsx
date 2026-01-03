@@ -8,7 +8,7 @@ import {
 	Radio,
 	Range,
 	Select,
-	Textarea,
+	TextArea,
 	toast,
 	Toaster,
 	toastPositions,
@@ -94,7 +94,7 @@ const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: React
 		</Field>
 		{state.hasDescription && (
 			<Field label='Description'>
-				<Textarea value={state.description} onChange={(e) => dispatch({ description: e.target.value })} />
+				<TextArea value={state.description} onChange={(e) => dispatch({ description: e.target.value })} />
 			</Field>
 		)}
 		<Field label='Close Button'>
