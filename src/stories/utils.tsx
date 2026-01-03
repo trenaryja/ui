@@ -1,3 +1,4 @@
+import { Checkbox, Input, RadioGroup, Range, Select, Textarea, Toggle } from '@/components'
 import { cn } from '@/utils'
 import type { CSSProperties, JSXElementConstructor, ReactElement, ReactNode } from 'react'
 import { createElement } from 'react'
@@ -62,3 +63,24 @@ export const CountdownBox = ({ label, className, ...props }: CountdownBoxProps) 
 		<span className='text-center'>{label}</span>
 	</div>
 )
+
+export const controlMeta = {
+	input: <Input placeholder='Enter Text...' />,
+	textarea: <Textarea placeholder='Enter multiple lines...' />,
+	radioGroup: <RadioGroup options={['First', 'Second', 'Third']} />,
+	toggle: <Toggle />,
+	checkbox: <Checkbox />,
+	range: <Range />,
+	select: (
+		<Select>
+			<option value='' disabled>
+				Select an option...
+			</option>
+			<option value='option1'>Option 1</option>
+			<option value='option2'>Option 2</option>
+			<option value='option3'>Option 3</option>
+		</Select>
+	),
+} satisfies Record<string, ReactNode>
+
+export type ControlName = keyof typeof controlMeta
