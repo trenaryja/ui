@@ -8,7 +8,7 @@ import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import * as R from 'remeda'
 
-const meta = { title: 'Search/Nerd Font Glyphs' } satisfies Meta
+const meta = { title: 'search/Nerd Font Glyphs' } satisfies Meta
 export default meta
 
 export type GlyphFamily = {
@@ -43,7 +43,8 @@ const flatGlyphs = Object.entries(raw).map(([id, { char, code }]) => ({ char, id
 const glyphProperties = ['char', 'id', 'code'] as const satisfies (keyof (typeof flatGlyphs)[number])[]
 const clipboardTimeout = 1000
 
-export const NerdFontGlyphs: StoryObj = {
+export const Default: StoryObj = {
+	name: 'Nerd Font Glyphs',
 	render: () => {
 		const [query, setQuery] = useState('')
 		const [debouncedQuery] = useDebouncedValue(query, 200)

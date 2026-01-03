@@ -4,12 +4,10 @@ import { cn } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useMemo, useState } from 'react'
 
-const meta = { title: 'components/Modal', component: Modal } satisfies Meta<typeof Modal>
+const meta = { title: 'components/Modal' } satisfies Meta
 export default meta
 
-type Story = StoryObj<typeof Modal>
-
-export const Default: Story = {
+export const Default: StoryObj = {
 	name: 'Modal',
 	render: () => {
 		const [isControlled, setIsControlled] = useState(true)

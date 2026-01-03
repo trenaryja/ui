@@ -2,14 +2,10 @@ import { ConditionalWrapper } from '@/components'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-const meta = {
-	title: 'components/ConditionalWrapper',
-	component: ConditionalWrapper,
-} satisfies Meta<typeof ConditionalWrapper>
+const meta = { title: 'components/ConditionalWrapper' } satisfies Meta
 export default meta
-type Story = StoryObj<typeof ConditionalWrapper>
 
-export const Default: Story = {
+export const Default: StoryObj = {
 	name: 'ConditionalWrapper',
 	render: () => {
 		const [isChecked, setIsChecked] = useState(false)

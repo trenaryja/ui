@@ -1,20 +1,14 @@
 import { ColorButton } from '@/components'
+import type { ButtonStyle } from '@/stories/utils'
+import { buttonStyles } from '@/stories/utils'
 import { cn, daisyThemeColors, tailwindPalette } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-const meta = {
-	title: 'components/ColorButton',
-	component: ColorButton,
-} satisfies Meta<typeof ColorButton>
+const meta = { title: 'components/ColorButton' } satisfies Meta
 export default meta
 
-type Story = StoryObj<typeof ColorButton>
-
-const buttonStyles = ['btn-outline!', 'btn-dash!', 'btn-soft!', 'btn-ghost!', 'btn-link!'] as const
-type ButtonStyle = (typeof buttonStyles)[number]
-
-export const Default: Story = {
+export const Default: StoryObj = {
 	name: 'ColorButton',
 	render: () => {
 		const [disabled, setDisabled] = useState(false)

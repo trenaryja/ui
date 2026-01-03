@@ -2,15 +2,10 @@ import { BalancedGrid } from '@/components'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
-type Story = StoryObj<typeof BalancedGrid>
-
-const meta = {
-	title: 'components/BalancedGrid',
-	component: BalancedGrid,
-} satisfies Meta<typeof BalancedGrid>
+const meta = { title: 'components/BalancedGrid' } satisfies Meta
 export default meta
 
-export const Default: Story = {
+export const Default: StoryObj = {
 	name: 'BalancedGrid',
 	render: () => {
 		const [itemCount, setItemCount] = useState(7)

@@ -1,5 +1,5 @@
 import { Checkbox, Input, RadioGroup, Range, Select, Textarea, Toggle } from '@/components'
-import { cn } from '@/utils'
+import { cn, durationUnits, joinTyped } from '@/utils'
 import type { CSSProperties, JSXElementConstructor, ReactElement, ReactNode } from 'react'
 import { createElement } from 'react'
 
@@ -84,3 +84,12 @@ export const controlMeta = {
 } satisfies Record<string, ReactNode>
 
 export type ControlName = keyof typeof controlMeta
+
+export const buttonStyles = ['btn-outline!', 'btn-dash!', 'btn-soft!', 'btn-ghost!', 'btn-link!'] as const
+export type ButtonStyle = (typeof buttonStyles)[number]
+
+export const playingCardRanks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'] as const
+export const playingCardSuits = ['♠', '♥', '♦', '♣'] as const
+export const playingCards = joinTyped(playingCardRanks, playingCardSuits, '')
+
+export const durationUnitsWithoutMs = durationUnits.filter((x) => x !== 'milliseconds')

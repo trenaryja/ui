@@ -1,5 +1,6 @@
 import { BalancedGrid } from '@/components'
 import { useCycle as useCycleHook } from '@/hooks'
+import { playingCards } from '@/stories/utils'
 import { cn } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useMemo, useState } from 'react'
@@ -7,16 +8,11 @@ import { useMemo, useState } from 'react'
 const meta = { title: 'hooks/useCycle' } satisfies Meta
 export default meta
 
-const CARD_RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'] as const
-const CARD_SUITS = ['♠', '♥', '♦', '♣'] as const
-const CARD_DECK = CARD_RANKS.flatMap((r) => CARD_SUITS.map((s) => `${s}${r}` as const))
-const MAX_ITEMS = CARD_DECK.length
-
-export const UseCycle: StoryObj = {
+export const Default: StoryObj = {
 	name: 'useCycle',
 	render: () => {
 		const [count, setCount] = useState(16)
-		const items = useMemo(() => CARD_DECK.slice(0, Math.min(MAX_ITEMS, count)), [count])
+		const items = useMemo(() => playingCards.slice(0, Math.min(playingCards.length, count)), [count])
 
 		const [wrap, setWrap] = useState(true)
 		const [idleResetEnabled, setIdleResetEnabled] = useState(true)
@@ -33,7 +29,7 @@ export const UseCycle: StoryObj = {
 					<span className='text-sm text-center'>Item Count: {items.length}</span>
 					<input
 						className='range'
-						max={MAX_ITEMS}
+						max={playingCards.length}
 						min={0}
 						type='range'
 						value={count}

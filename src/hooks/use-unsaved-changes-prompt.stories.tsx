@@ -5,7 +5,7 @@ import { useState } from 'react'
 const meta = { title: 'hooks/useUnsavedChangesPrompt' } satisfies Meta
 export default meta
 
-export const UseBeforeUnload: StoryObj = {
+export const Default: StoryObj = {
 	name: 'useUnsavedChangesPrompt',
 	render: () => {
 		const [isDirty, setIsDirty] = useState(true)
