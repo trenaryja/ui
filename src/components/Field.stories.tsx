@@ -1,7 +1,7 @@
-import type { Placement } from '@/components'
 import { Field, PlacementPicker, Select } from '@/components'
 import type { ControlName } from '@/stories/utils'
 import { controlMeta } from '@/stories/utils'
+import type { Placement } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import * as R from 'remeda'
