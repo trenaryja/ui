@@ -1,5 +1,5 @@
 import type { ToastPosition } from '@/components'
-import { Checkbox, Input, RadioGroup, Range, Select, Textarea, Toggle } from '@/components'
+import { Checkbox, Input, RadioGroup, Range, Select, TextArea, Toggle } from '@/components'
 import type { Arrow } from '@/utils'
 import { cn, durationUnits, joinTyped } from '@/utils'
 import type { CSSProperties, JSXElementConstructor, ReactElement, ReactNode } from 'react'
@@ -68,7 +68,7 @@ export const CountdownBox = ({ label, className, ...props }: CountdownBoxProps) 
 
 export const controlMeta = {
 	input: <Input placeholder='Enter Text...' />,
-	textarea: <Textarea placeholder='Enter multiple lines...' />,
+	textarea: <TextArea placeholder='Enter multiple lines...' />,
 	radioGroup: <RadioGroup options={['First', 'Second', 'Third']} />,
 	toggle: <Toggle />,
 	checkbox: <Checkbox />,

@@ -13,7 +13,7 @@ export * from './PlacementPicker'
 export * from './RadioGroup'
 export * from './ScaledText'
 export * from './Select'
-export * from './Textarea'
+export * from './TextArea'
 export * from './Toaster'
 
 export { ThemeProvider } from 'next-themes'
