@@ -40,7 +40,7 @@ import * as TiIcons from 'react-icons/ti'
 import * as VscIcons from 'react-icons/vsc'
 import * as WiIcons from 'react-icons/wi'
 
-const meta = { title: 'Search/React Icons' } satisfies Meta
+const meta = { title: 'search/React Icons' } satisfies Meta
 export default meta
 
 const iconFamilies = {
@@ -93,7 +93,8 @@ const flattenPack = (family: Prefix, pack: Record<string, IconType>) =>
 const flatIcons = R.flatMap(R.entries(iconFamilies), ([family, { pack }]) => flattenPack(family, pack))
 const clipboardTimeout = 1000
 
-export const ReactIcons: StoryObj = {
+export const Default: StoryObj = {
+	name: 'React Icons',
 	render: () => {
 		const [query, setQuery] = useState('')
 		const [debouncedQuery] = useDebouncedValue(query, 250)

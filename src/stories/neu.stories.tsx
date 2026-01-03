@@ -1,29 +1,13 @@
+import { Range } from '@/components'
 import { cn } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import type { ComponentProps, CSSProperties } from 'react'
+import type { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 
-type Story = StoryObj
-
-const meta = {
-	title: 'classes/neu',
-} satisfies Meta
+const meta = { title: 'classes/neu' } satisfies Meta
 export default meta
 
-const Range = ({
-	onValueChange,
-	className,
-	...props
-}: ComponentProps<'input'> & { onValueChange?: (value: number) => void }) => (
-	<input
-		className={cn('range', className)}
-		type='range'
-		onChange={(e) => onValueChange?.(Number(e.target.value))}
-		{...props}
-	/>
-)
-
-export const Default: Story = {
+export const Default: StoryObj = {
 	name: 'neu',
 	render: () => {
 		const [distance, setDistance] = useState(5)
@@ -98,25 +82,31 @@ export const Default: Story = {
 
 				<section className='grid grid-cols-[auto_1fr] *:not-last:w-full gap-4 '>
 					<span>Border Radius: {radius}%</span>
-					<Range max={50} min={0} value={radius} onValueChange={(x) => setRadius(x)} />
+					<Range max={50} min={0} value={radius} onChange={(e) => setRadius(e.target.valueAsNumber)} />
 
 					<span>Size: {size}px</span>
-					<Range max={300} min={50} value={size} onValueChange={(x) => setSize(x)} />
+					<Range max={300} min={50} value={size} onChange={(e) => setSize(e.target.valueAsNumber)} />
 
 					<span>Distance: {distance}px</span>
-					<Range max={50} min={0} value={distance} onValueChange={(x) => setDistance(x)} />
+					<Range max={50} min={0} value={distance} onChange={(e) => setDistance(e.target.valueAsNumber)} />
 
 					<span>Blur: {blur}px</span>
-					<Range max={100} min={0} value={blur} onValueChange={(x) => setBlur(x)} />
+					<Range max={100} min={0} value={blur} onChange={(e) => setBlur(e.target.valueAsNumber)} />
 
 					<span>Intensity: {intensity}%</span>
-					<Range max={100} min={0} value={intensity} onValueChange={(x) => setIntensity(x)} />
+					<Range max={100} min={0} value={intensity} onChange={(e) => setIntensity(e.target.valueAsNumber)} />
 
 					<span>Curve: {curve}%</span>
-					<Range max={100} min={0} value={curve} onValueChange={(x) => setCurve(x)} />
+					<Range max={100} min={0} value={curve} onChange={(e) => setCurve(e.target.valueAsNumber)} />
 
 					<span>Angle: {angle}°</span>
-					<Range disabled={spinning} max={360} min={0} value={angle} onValueChange={(x) => setAngle(x)} />
+					<Range
+						disabled={spinning}
+						max={360}
+						min={0}
+						value={angle}
+						onChange={(e) => setAngle(e.target.valueAsNumber)}
+					/>
 
 					<span>Spin</span>
 					<input

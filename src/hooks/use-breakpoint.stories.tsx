@@ -6,7 +6,7 @@ import * as R from 'remeda'
 const meta = { title: 'hooks/useBreakpoint' } satisfies Meta
 export default meta
 
-export const UseBreakpoint: StoryObj = {
+export const Default: StoryObj = {
 	name: 'useBreakpoint',
 	render: () => {
 		const [customEnabled, setCustomEnabled] = useState(false)

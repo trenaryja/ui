@@ -1,16 +1,14 @@
 import { useDuration } from '@/hooks'
-import { CountdownBox } from '@/stories/utils'
+import { CountdownBox, durationUnitsWithoutMs } from '@/stories/utils'
 import type { DurationUnit } from '@/utils'
-import { durationUnitMap, durationUnits, randomDate, toDateTimeLocal } from '@/utils'
+import { durationUnitMap, randomDate, toDateTimeLocal } from '@/utils'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { Fragment, useState } from 'react'
 
 const meta = { title: 'hooks/useDuration' } satisfies Meta
 export default meta
 
-const durationUnitsSubset = durationUnits.filter((x) => x !== 'milliseconds')
-
-export const UseDuration: StoryObj = {
+export const Default: StoryObj = {
 	name: 'useDuration',
 	render: () => {
 		const [targetDate, setTargetDate] = useState<Date>(() => new Date(Date.now() + 1000 * 15))
@@ -28,7 +26,7 @@ export const UseDuration: StoryObj = {
 		return (
 			<div className='demo'>
 				<div className='flex gap-2'>
-					{durationUnitsSubset
+					{durationUnitsWithoutMs
 						.filter((u) => selectedUnits.includes(u))
 						.map((unit) => (
 							<CountdownBox key={unit} label={unit} value={duration[unit]} />
@@ -55,7 +53,7 @@ export const UseDuration: StoryObj = {
 				</div>
 
 				<div className='grid gap-2 gap-y-8 place-items-center grid-flow-col grid-rows-3'>
-					{durationUnitsSubset.map((unit) => (
+					{durationUnitsWithoutMs.map((unit) => (
 						<Fragment key={unit}>
 							<button className='btn' type='button' onClick={() => adjustByUnit(unit, 1)}>
 								+1{unit.slice(0, 1)}
