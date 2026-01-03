@@ -14,6 +14,8 @@ const config = [
 			'jsx-a11y/no-noninteractive-element-interactions': 'off',
 			'perfectionist/sort-imports': 'off',
 			'storybook/csf-component': 'off',
+			'no-bitwise': 'off',
+			'no-plusplus': 'off',
 		},
 	}),
 ]

@@ -1,4 +1,3 @@
-/* eslint-disable no-plusplus */
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const characterRamps = [' .:-=+*#%@'] as const
@@ -88,7 +87,7 @@ const processPixels = ({
 
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
-			const gray = (21 * data[dataIndex] + 72 * data[dataIndex + 1] + 7 * data[dataIndex + 2]) >> 8 // eslint-disable-line no-bitwise
+			const gray = (21 * data[dataIndex] + 72 * data[dataIndex + 1] + 7 * data[dataIndex + 2]) >> 8
 			chars[charIndex++] = lookupTable[gray]
 			dataIndex += 4
 		}
