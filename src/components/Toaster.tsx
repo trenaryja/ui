@@ -1,6 +1,8 @@
 import type { ToasterProps as SonnerProps } from 'sonner'
-import { Toaster as Sonner, toast as sonner } from 'sonner'
+import { Toaster as Sonner } from 'sonner'
 import type { OverrideProperties } from 'type-fest'
+
+export { toast } from 'sonner'
 
 export const toastPositions = [
 	'top-left',
@@ -34,5 +36,3 @@ const defaultToastOptions = {
 export const Toaster = ({ toastOptions, ...props }: ToasterProps) => (
 	<Sonner toastOptions={{ ...defaultToastOptions, ...toastOptions }} {...props} />
 )
-
-export const toast = sonner
