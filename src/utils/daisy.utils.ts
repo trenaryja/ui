@@ -20,7 +20,7 @@ export const daisyThemes = R.pipe(
 	R.sortBy((x) => x.name !== 'light' && x.name !== 'dark', R.prop('colorScheme'), R.prop('name')),
 )
 
-export const daisyThemeMap = new Map(daisyThemes.map((x) => [x.name, x]))
+export const daisyThemeMap = R.mapToObj(daisyThemes, (x) => [x.name, x])
 
 export const daisyThemeNames = daisyThemes.map((x) => x.name)
 export const isDaisyThemeName = makeTypeGuard(daisyThemeNames)

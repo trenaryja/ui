@@ -11,3 +11,4 @@ export const TextArea = ({ className, readOnly, tabIndex, ...props }: ComponentP
 )
 
 // TODO: add stories file
+// TODO: fix width of parent growing even when Textarea isn't (problem with field-sizing-content?)

@@ -1,4 +1,4 @@
-import { BalancedGrid } from '@/components'
+import { BalancedGrid, Button } from '@/components'
 import { useCycle as useCycleHook } from '@/hooks'
 import { playingCards } from '@/stories/utils'
 import { cn } from '@/utils'
@@ -75,18 +75,18 @@ export const Default: StoryObj = {
 					</div>
 				</div>
 
-				<div className='grid grid-cols-3 gap-4 *:h-full'>
-					<button className='btn stat' disabled={!items.length} type='button' onClick={cycle.decrement}>
+				<div className='grid grid-cols-3 gap-4 *:h-full *:border-none'>
+					<Button className='stat' disabled={!items.length} onClick={cycle.decrement}>
 						<div className='stat-value text-base'>decrement</div>
 						<div className='stat-desc'>prev: {String(cycle.prev ?? '(empty)')}</div>
-					</button>
-					<button className='btn' disabled={!items.length} type='button' onClick={cycle.reset}>
+					</Button>
+					<Button disabled={!items.length} onClick={cycle.reset}>
 						reset
-					</button>
-					<button className='btn stat' disabled={!items.length} type='button' onClick={cycle.increment}>
+					</Button>
+					<Button className='stat' disabled={!items.length} onClick={cycle.increment}>
 						<div className='stat-value text-base'>increment</div>
 						<div className='stat-desc'>next: {String(cycle.next ?? '(empty)')}</div>
-					</button>
+					</Button>
 				</div>
 
 				<BalancedGrid pack className='w-fit gap-2' maxCols={4}>

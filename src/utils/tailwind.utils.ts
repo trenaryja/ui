@@ -23,7 +23,7 @@ export const tailwindPalette = R.flatMap(R.entries(tailwindColors), ([baseName, 
 )
 export const isTailwindColor = makeTypeGuard(tailwindPalette.map((x) => x.fullName))
 
-export const tailwindPaletteMap = new Map(tailwindPalette.map((x) => [x.fullName, x]))
+export const tailwindPaletteMap = R.mapToObj(tailwindPalette, (x) => [x.fullName, x])
 
 export const getClosestTailwindColor = (input: chroma.ChromaInput) => {
 	let [closest] = tailwindPalette

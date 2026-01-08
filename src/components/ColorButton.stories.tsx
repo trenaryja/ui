@@ -55,7 +55,7 @@ export const Default: StoryObj = {
 
 				<div className='flex gap-4'>
 					<Button className={cn(classNames)} disabled={disabled} type='button'>
-						Default btn Button
+						Default Button
 					</Button>
 					<ColorButton className={cn(classNames)} disabled={disabled}>
 						Default ColorButton

@@ -45,12 +45,11 @@ export const Default: StoryObj = {
 						/>
 					</label>
 
-					<div className='flex gap-4'>
+					<div className='grid sm:flex gap-4'>
 						{MODAL_DISMISS_OPTIONS.map((opt) => {
 							const isOn = has(opt)
 							return (
 								<button
-									aria-pressed={isOn}
 									className={cn(`btn grow`, { 'btn-primary': isOn })}
 									key={opt}
 									type='button'

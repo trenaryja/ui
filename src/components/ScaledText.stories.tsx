@@ -1,4 +1,4 @@
-import { ScaledText } from '@/components'
+import { ScaledText, TextArea } from '@/components'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 
@@ -17,12 +17,7 @@ export const Default: StoryObj = {
 
 		return (
 			<div className='demo *:max-w-xs'>
-				<textarea
-					className='textarea text-center field-sizing-content max-h-60 min-h-fit'
-					value={text}
-					onChange={(e) => setText(e.target.value)}
-				/>
-
+				<TextArea className='text-center' value={text} onChange={(e) => setText(e.target.value)} />
 				<ScaledText lines={lines} />
 			</div>
 		)

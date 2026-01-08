@@ -65,7 +65,7 @@ export const Default: StoryObj = {
 					{R.keys(bp.breakpoints)
 						.slice(1)
 						.map((n) => (
-							<div className='stats' key={n}>
+							<div className='stats *:border-none' key={n}>
 								<div className='stat'>
 									<div className='stat-title'>isAtLeast({n})</div>
 									<div className='stat-value text-center'>{String(bp.isAtLeast(n))}</div>

@@ -41,7 +41,7 @@ export const PlacementPicker = ({ value, onChange, force, className, selectedCla
 	)
 
 	return (
-		<div className={cn('grid grid-cols-5 grid-rows-5 place-items-center gap-1', className)}>
+		<div className={cn('grid grid-cols-5 grid-rows-5 place-items-center gap-1 font-mono', className)}>
 			<div />
 			{verticalPlacements.slice(0, 3).map(([placement, arrow]) => btn(placement, arrow))}
 			<div />

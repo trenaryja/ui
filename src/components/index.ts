@@ -14,6 +14,7 @@ export * from './RadioGroup'
 export * from './ScaledText'
 export * from './Select'
 export * from './TextArea'
+export * from './ThemePicker'
 export * from './Toaster'
 
 export { ThemeProvider } from 'next-themes'

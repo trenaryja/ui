@@ -17,20 +17,20 @@ export const Default: StoryObj = {
 
 		return (
 			<div className='demo'>
-				<Fieldset className='flex flex-wrap w-full justify-between gap-4'>
-					<Field label='Show Labels'>
+				<Fieldset className='flex flex-wrap w-full justify-center gap-4 *:w-fit'>
+					<Field labelPlacement='left-center' label='Show Labels'>
 						<Checkbox checked={showLabels} onChange={(e) => setShowLabels(e.target.checked)} />
 					</Field>
-					<Field label='Show Hints'>
+					<Field labelPlacement='left-center' label='Show Hints'>
 						<Checkbox checked={showHints} onChange={(e) => setShowHints(e.target.checked)} />
 					</Field>
-					<Field label='Show Errors'>
+					<Field labelPlacement='left-center' label='Show Errors'>
 						<Checkbox checked={showErrors} onChange={(e) => setShowErrors(e.target.checked)} />
 					</Field>
-					<Field label='Disable All'>
+					<Field labelPlacement='left-center' label='Disable All'>
 						<Checkbox checked={disableAll} onChange={(e) => setDisableAll(e.target.checked)} />
 					</Field>
-					<Field label='Read-only All'>
+					<Field labelPlacement='left-center' label='Read-only All'>
 						<Checkbox checked={readOnlyAll} onChange={(e) => setReadOnlyAll(e.target.checked)} />
 					</Field>
 				</Fieldset>
@@ -66,9 +66,9 @@ export const Default: StoryObj = {
 							</Select>
 						</Field>
 						<Field
-							label={showLabels ? 'Range Slider' : undefined}
+							label={showLabels ? 'Range' : undefined}
 							hint={showHints ? 'Slide to a value' : undefined}
-							error={showErrors ? 'Value must be between 0 and 100' : undefined}
+							error={showErrors ? 'Must be between 0 and 100' : undefined}
 						>
 							<Range readOnly={readOnlyAll} />
 						</Field>
