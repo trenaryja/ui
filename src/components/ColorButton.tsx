@@ -65,11 +65,11 @@ const DaisyColorButton = ({ color, className, disabled, ...props }: DaisyColorBu
 }
 
 const TailwindColorButton = ({ color, className, disabled, ...props }: TailwindColorButtonProps) => {
-	const twColor = tailwindPaletteMap.get(color)!
+	const twColor = tailwindPaletteMap[color]
 	const btnColor = twColor.oklch
 	const btnFg = twColor.isDark
-		? daisyThemeMap.get('dark')?.theme['--color-base-content']
-		: daisyThemeMap.get('light')?.theme['--color-base-content']
+		? daisyThemeMap.dark.theme['--color-base-content']
+		: daisyThemeMap.light.theme['--color-base-content']
 	return (
 		<Button
 			className={cn(className)}
@@ -86,7 +86,7 @@ export const ColorButton = ({ color = 'base-content', darkModeColor, className, 
 
 	if (!isMounted) return <div className={cn('btn skeleton', className)} />
 
-	const currentTheme = isDaisyThemeName(resolvedTheme) ? daisyThemeMap.get(resolvedTheme) : undefined
+	const currentTheme = isDaisyThemeName(resolvedTheme) ? daisyThemeMap[resolvedTheme] : undefined
 	const colorScheme = currentTheme?.colorScheme ?? systemTheme ?? 'dark'
 	const activeColor = colorScheme === 'dark' && darkModeColor ? darkModeColor : color
 

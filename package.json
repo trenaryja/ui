@@ -40,8 +40,8 @@
 		"dist"
 	],
 	"devDependencies": {
-		"@fullstacksjs/eslint-config": "^13.13.3",
-		"@mantine/hooks": "^8.3.10",
+		"@fullstacksjs/eslint-config": "^13.14.0",
+		"@mantine/hooks": "^8.3.11",
 		"@storybook/addon-themes": "^10.1.11",
 		"@storybook/react-vite": "^10.1.11",
 		"@tailwindcss/cli": "^4.1.18",
@@ -64,7 +64,7 @@
 		"react-icons": "^5.5.0",
 		"react-markdown": "^10.1.0",
 		"rehype-raw": "^7.0.0",
-		"release-it": "^19.2.2",
+		"release-it": "^19.2.3",
 		"storybook": "^10.1.11",
 		"tailwind-merge": "^3.4.0",
 		"tailwindcss": "^4.1.18",
@@ -72,13 +72,13 @@
 		"tsx": "^4.21.0",
 		"type-fest": "^5.3.1",
 		"typescript": "^5.9.3",
-		"vite": "^7.3.0"
+		"vite": "^7.3.1"
 	},
 	"dependencies": {
 		"chroma-js": "^3.2.0",
 		"date-fns": "^4.1.0",
 		"next-themes": "^0.4.6",
-		"remeda": "^2.33.0",
+		"remeda": "^2.33.1",
 		"sonner": "^2.0.7"
 	},
 	"peerDependencies": {

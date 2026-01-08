@@ -34,17 +34,16 @@ const initialState = {
 	title: 'Hello World',
 	description: 'This is a description',
 	hasDescription: false,
-	showCloseButton: false,
 	duration: 4000,
-	useInfiniteDuration: false,
 	overridePosition: false,
-	toastPosition: 'top-center' as const satisfies ToastPosition,
 	dismissible: true,
-	icon: undefined as keyof typeof Lu | undefined,
 	hasAction: false,
 	actionLabel: 'Action',
 	hasCancel: false,
 	cancelLabel: 'Cancel',
+	toastCloseButton: undefined as boolean | undefined,
+	toastPosition: 'top-center' as const satisfies ToastPosition,
+	icon: undefined as keyof typeof Lu | undefined,
 }
 
 type ToastState = OverrideProperties<typeof initialState, { position?: ToastPosition; toastPosition?: ToastPosition }>
@@ -53,12 +52,14 @@ type ToastAction = Partial<ToastState>
 
 const GlobalSettings = ({ state, dispatch }: { state: ToastState; dispatch: React.Dispatch<ToastAction> }) => (
 	<Fieldset legend='Global Settings'>
-		<Field label='Expand by default'>
-			<Toggle checked={state.expand} onChange={(e) => dispatch({ expand: e.target.checked })} />
-		</Field>
-		<Field label='Show close button'>
-			<Toggle checked={state.closeButton} onChange={(e) => dispatch({ closeButton: e.target.checked })} />
-		</Field>
+		<div className='grid grid-cols-2 gap-2'>
+			<Field label='Expand by default'>
+				<Toggle checked={state.expand} onChange={(e) => dispatch({ expand: e.target.checked })} />
+			</Field>
+			<Field label='Show close button'>
+				<Toggle checked={state.closeButton} onChange={(e) => dispatch({ closeButton: e.target.checked })} />
+			</Field>
+		</div>
 		<Field label={`Visible toasts: ${state.visibleToasts}`}>
 			<Range
 				min={1}
@@ -89,35 +90,42 @@ const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: React
 		<Field label='Title'>
 			<Input value={state.title} onChange={(e) => dispatch({ title: e.target.value })} />
 		</Field>
+		<Field label='Icon'>
+			<Select value={state.icon ?? ''} onChange={(e) => dispatch({ icon: e.target.value as keyof typeof Lu })}>
+				<option value=''>None</option>
+				{R.keys(Lu).map((x) => (
+					<option key={x} value={x}>
+						{x.slice(2)}
+					</option>
+				))}
+			</Select>
+		</Field>
+		<Field label={`Duration: ${state.duration} ms`}>
+			<Range
+				max={10000}
+				min={1000}
+				step={500}
+				value={state.duration === Infinity ? 10000 : state.duration}
+				onChange={(e) => dispatch({ duration: e.target.valueAsNumber === 10000 ? Infinity : e.target.valueAsNumber })}
+			/>
+		</Field>
+		<div className='grid grid-cols-2 gap-2'>
+			<Field label='Dismissible'>
+				<Toggle checked={state.dismissible} onChange={(e) => dispatch({ dismissible: e.target.checked })} />
+			</Field>
+			<Field label='Close Button'>
+				<Toggle
+					checked={state.toastCloseButton ?? false}
+					onChange={(e) => dispatch({ toastCloseButton: e.target.checked })}
+				/>
+			</Field>
+		</div>
 		<Field label='Add Description'>
 			<Toggle checked={state.hasDescription} onChange={(e) => dispatch({ hasDescription: e.target.checked })} />
 		</Field>
 		{state.hasDescription && (
 			<Field label='Description'>
 				<TextArea value={state.description} onChange={(e) => dispatch({ description: e.target.value })} />
-			</Field>
-		)}
-		<Field label='Close Button'>
-			<Toggle
-				checked={state.showCloseButton ?? false}
-				onChange={(e) => dispatch({ showCloseButton: e.target.checked })}
-			/>
-		</Field>
-		<Field label='∞ Duration'>
-			<Toggle
-				checked={state.useInfiniteDuration}
-				onChange={(e) => dispatch({ useInfiniteDuration: e.target.checked })}
-			/>
-		</Field>
-		{!state.useInfiniteDuration && (
-			<Field label={`Duration: ${state.duration}ms`}>
-				<Range
-					max={10000}
-					min={1000}
-					step={500}
-					value={state.duration}
-					onChange={(e) => dispatch({ duration: e.target.valueAsNumber })}
-				/>
 			</Field>
 		)}
 		<Field label='Override position'>
@@ -142,19 +150,6 @@ const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: React
 				))}
 			</Field>
 		)}
-		<Field label='Dismissible'>
-			<Toggle checked={state.dismissible} onChange={(e) => dispatch({ dismissible: e.target.checked })} />
-		</Field>
-		<Field label='Icon'>
-			<Select value={state.icon ?? ''} onChange={(e) => dispatch({ icon: e.target.value as keyof typeof Lu })}>
-				<option value=''>None</option>
-				{R.keys(Lu).map((x) => (
-					<option key={x} value={x}>
-						{x.slice(2)}
-					</option>
-				))}
-			</Select>
-		</Field>
 		<Field label='Has action'>
 			<Toggle checked={state.hasAction} onChange={(e) => dispatch({ hasAction: e.target.checked })} />
 		</Field>
@@ -182,11 +177,11 @@ export const Default: StoryObj = {
 		const selectedIcon = state.icon ? Lu[state.icon]({}) : null
 
 		const data = {
-			duration: state.useInfiniteDuration ? Infinity : state.duration,
+			duration: state.duration === 10000 ? Infinity : state.duration,
 			dismissible: state.dismissible,
 			...(state.overridePosition ? { position: state.toastPosition } : undefined),
 			...(state.hasDescription && { description: state.description }),
-			...(state.showCloseButton !== undefined && { closeButton: state.showCloseButton }),
+			...(state.toastCloseButton !== false && { closeButton: state.toastCloseButton }),
 			...(state.hasAction && {
 				action: {
 					label: state.actionLabel,

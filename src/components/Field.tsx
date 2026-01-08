@@ -146,8 +146,7 @@ export const Field = ({
 	for (const slot of slotOrder) {
 		const data = slotData[slot]
 		if (!data) continue
-		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-		groups.get(data.placement)?.push(slot) ?? groups.set(data.placement, [slot])
+		void (groups.get(data.placement)?.push(slot) ?? groups.set(data.placement, [slot]))
 	}
 
 	const style = buildGrid([...groups.keys()])
