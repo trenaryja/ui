@@ -41,6 +41,7 @@ const generateBrowserCss = () => {
 		`@import '../../node_modules/daisyui/daisyui.css';\n` +
 		`@import '../css/index.css';\n` +
 		`@import './prose.css';\n` +
+		`@import '../../dist/css/component.css';\n` +
 		`@config './browser.tailwind.config.ts';\n${[...allUtilities].map((u) => `@source inline('${u}');`).join('\n')}`
 	fs.writeFileSync(path.join(generatedDir, 'browser.css'), browserCss, 'utf-8')
 	log(`Generated ${allUtilities.size} utils → browser.css`)
@@ -52,14 +53,12 @@ const generateComponentCss = () => {
 	log(`Generated component.css`)
 }
 
-const compileGeneratedToDist = () => {
-	for (const file of fs.readdirSync(generatedDir).filter((f) => f.endsWith('.css'))) {
-		const input = path.join(generatedDir, file)
-		const dist = path.join(distCssDir, `${path.parse(file).name}.css`)
-		const cmd = `tailwindcss -i ${input} -o ${dist}`
-		log(cmd)
-		execSync(cmd, { stdio: 'inherit' })
-	}
+const compileCss = (filename: string) => {
+	const input = path.join(generatedDir, filename)
+	const dist = path.join(distCssDir, `${path.parse(filename).name}.css`)
+	const cmd = `tailwindcss -i ${input} -o ${dist}`
+	log(cmd)
+	execSync(cmd, { stdio: 'inherit' })
 }
 
 const copySrcToDist = () => {
@@ -77,13 +76,27 @@ const injectFilesIntoIndex = () => {
 	log(`Injected component.css import into ${indexCss}`)
 }
 
+// Build order:
+// 1. Setup and copy source files
 setup()
-generateTailwindConfig('browser.tailwind.config.ts', { content: { files: ['!../../**/*'] } })
-generateProseCss()
-generateBrowserCss()
-generateTailwindConfig('component.tailwind.config.ts', { content: { files: ['!../../**/*.stories.*'] } })
-generateComponentCss()
-compileGeneratedToDist()
 copySrcToDist()
+
+// 2. Generate all Tailwind configs (prose.css needs browser config)
+generateTailwindConfig('browser.tailwind.config.ts', { content: { files: ['!../../**/*'] } })
+generateTailwindConfig('component.tailwind.config.ts', { content: { files: ['!../../**/*.stories.*'] } })
+
+// 3. Generate and compile component.css FIRST (browser.css will import this)
+generateComponentCss()
+compileCss('component.css')
+
+// 4. Generate and compile prose.css (browser.css will import this)
+generateProseCss()
+compileCss('prose.css')
+
+// 5. Now generate and compile browser.css (which imports the compiled component.css and prose.css)
+generateBrowserCss()
+compileCss('browser.css')
+
+// 6. Final touches
 injectFilesIntoIndex()
 log('Done!')

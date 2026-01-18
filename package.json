@@ -122,6 +122,11 @@
 			"src/index.ts"
 		],
 		"format": "esm",
-		"treeshake": true
+		"treeshake": true,
+		"external": [
+			"react",
+			"react-dom",
+			"react/jsx-runtime"
+		]
 	}
 }
