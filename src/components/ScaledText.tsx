@@ -15,6 +15,7 @@ export type ScaledTextProps = {
 }
 
 export const ScaledText = ({ lines, props }: ScaledTextProps) => {
+	// eslint-disable-next-line @eslint-react/naming-convention/ref-name
 	const refs = useRef<(SVGElement | null)[]>([])
 
 	useEffect(() => {

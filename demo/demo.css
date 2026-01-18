@@ -1,28 +1,18 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+
 @plugin 'daisyui' {
 	themes: all;
 }
 
+@source "../src";
 @import '../src/css/index.css';
-
-html {
-	@apply scroll-smooth;
-}
-
-body {
-	@apply p-0!;
-}
-
-#storybook-root {
-	@apply full-bleed-container min-h-dvh relative p-4!;
-}
-
-@utility demo {
-	@apply grid content-center place-items-center gap-10 size-full;
-}
 
 @font-face {
 	font-family: 'FiraCode NF';
 	src: url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@master/patched-fonts/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf');
+}
+
+@utility demo {
+	@apply grid content-center place-items-center gap-10 size-full overflow-auto;
 }

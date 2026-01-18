@@ -1,8 +1,8 @@
 import { BalancedGrid, Modal } from '@/components'
 import { useCycle } from '@/hooks'
 import { cn } from '@/utils'
+import type { DemoMeta } from '@demo/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
-import type { Meta, StoryObj } from '@storybook/react-vite'
 import Fuse from 'fuse.js'
 import { useMemo, useState } from 'react'
 import type { IconType } from 'react-icons/lib'
@@ -40,8 +40,7 @@ import * as TiIcons from 'react-icons/ti'
 import * as VscIcons from 'react-icons/vsc'
 import * as WiIcons from 'react-icons/wi'
 
-const meta = { title: 'search/React Icons' } satisfies Meta
-export default meta
+export const meta: DemoMeta = { title: 'React Icons', category: 'search' }
 
 const iconFamilies = {
 	ai: { label: 'Ant Design', pack: AiIcons, sample: AiIcons.AiOutlineSearch },
@@ -93,112 +92,109 @@ const flattenPack = (family: Prefix, pack: Record<string, IconType>) =>
 const flatIcons = R.flatMap(R.entries(iconFamilies), ([family, { pack }]) => flattenPack(family, pack))
 const clipboardTimeout = 1000
 
-export const Default: StoryObj = {
-	name: 'React Icons',
-	render: () => {
-		const [query, setQuery] = useState('')
-		const [debouncedQuery] = useDebouncedValue(query, 250)
-		const cycle = useCycle(['jsx', 'name'], { idleResetMs: clipboardTimeout + 50 })
-		const clipboard = useClipboard({ timeout: clipboardTimeout })
-		const [lastCopiedId, setLastCopiedId] = useState<string | null>(null)
-		const [activeFamilies, setActiveFamilies] = useState<Prefix[]>([])
+export const Demo = () => {
+	const [query, setQuery] = useState('')
+	const [debouncedQuery] = useDebouncedValue(query, 250)
+	const cycle = useCycle(['jsx', 'name'], { idleResetMs: clipboardTimeout + 50 })
+	const clipboard = useClipboard({ timeout: clipboardTimeout })
+	const [lastCopiedId, setLastCopiedId] = useState<string | null>(null)
+	const [activeFamilies, setActiveFamilies] = useState<Prefix[]>([])
 
-		const searchableSet = activeFamilies.length ? flatIcons.filter((x) => activeFamilies.includes(x.family)) : flatIcons
+	const searchableSet = activeFamilies.length ? flatIcons.filter((x) => activeFamilies.includes(x.family)) : flatIcons
 
-		const fuse = useMemo(
-			() =>
-				new Fuse(searchableSet, {
-					keys: ['id', 'label'],
-					threshold: 0.3,
-				}),
-			[searchableSet],
-		)
+	const fuse = useMemo(
+		() =>
+			new Fuse(searchableSet, {
+				keys: ['id', 'label'],
+				threshold: 0.3,
+			}),
+		[searchableSet],
+	)
 
-		const results = debouncedQuery.trim()
-			? fuse
-					.search(debouncedQuery)
-					.map((r) => r.item)
-					.slice(0, 2500)
-			: [...searchableSet].slice(0, 300)
+	const results = debouncedQuery.trim()
+		? fuse
+				.search(debouncedQuery)
+				.map((r) => r.item)
+				.slice(0, 2500)
+		: [...searchableSet].slice(0, 300)
 
-		const togglePrefix = (prefix: Prefix) =>
-			setActiveFamilies((prev) => (prev.includes(prefix) ? prev.filter((p) => p !== prefix) : [...prev, prefix]))
+	const togglePrefix = (prefix: Prefix) =>
+		setActiveFamilies((prev) => (prev.includes(prefix) ? prev.filter((p) => p !== prefix) : [...prev, prefix]))
 
-		const handleClick = (icon: (typeof flatIcons)[number]) => {
-			const str = cycle.value === 'jsx' ? `<${icon.id} />` : icon.id
-			clipboard.copy(str)
-			setLastCopiedId(icon.id)
-			cycle.increment()
-		}
+	const handleClick = (icon: (typeof flatIcons)[number]) => {
+		const str = cycle.value === 'jsx' ? `<${icon.id} />` : icon.id
+		clipboard.copy(str)
+		setLastCopiedId(icon.id)
+		cycle.increment()
+	}
 
-		return (
-			<div className='full-bleed grid content-start gap-4 p-4'>
-				<input
-					className='input w-full'
-					type='text'
-					value={query}
-					onChange={(e) => setQuery(e.target.value)}
-					placeholder='Search React Icons...'
-				/>
+	return (
+		<div className='full-bleed grid content-start gap-4 p-4'>
+			<input
+				className='input w-full'
+				type='text'
+				value={query}
+				onChange={(e) => setQuery(e.target.value)}
+				placeholder='Search React Icons...'
+			/>
 
-				<div className='flex items-center justify-between'>
-					<p className='text-sm text-base-content/50'>
-						Showing {results.length} {debouncedQuery ? 'matches' : `icons. Total ${searchableSet.length}.`}
-					</p>
+			<div className='flex items-center justify-between'>
+				<p className='text-sm text-base-content/50'>
+					Showing {results.length} {debouncedQuery ? 'matches' : `icons. Total ${searchableSet.length}.`}
+				</p>
 
-					<Modal
-						trigger={
-							<button className='btn btn-ghost btn-square relative' type='button'>
-								<FaIcons.FaCog />
-								<span
-									className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
-										visible: activeFamilies.length,
-									})}
-								/>
-							</button>
-						}
-					>
-						<BalancedGrid pack className='gap-2' maxCols={3}>
-							{R.entries(iconFamilies).map(([prefix, family]) => {
-								return (
-									<button
-										key={prefix}
-										type='button'
-										onClick={() => togglePrefix(prefix)}
-										className={cn('btn btn-sm flex-col gap-2 h-auto py-1', {
-											'btn-primary': activeFamilies.includes(prefix),
-										})}
-									>
-										<family.sample className='text-2xl' />
-										<div className='font-mono truncate w-full'>{family.label}</div>
-									</button>
-								)
-							})}
-						</BalancedGrid>
-					</Modal>
-				</div>
-
-				<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6')}>
-					{results.map((icon) => (
-						<button
-							className='btn relative grid place-items-center h-max p-4 overflow-hidden'
-							key={icon.id}
-							type='button'
-							onClick={() => handleClick(icon)}
-						>
-							<icon.Icon className='text-5xl' />
-							<div className='text-xs truncate font-mono'>{icon.id}</div>
-							<div className='text-base-content/50 font-mono'>{icon.family}</div>
-							{clipboard.copied && lastCopiedId === icon.id && (
-								<span className='absolute inset-0 grid place-items-center backdrop-blur-2xl'>
-									<span className='font-mono'>{cycle.prev === 'jsx' ? `<${icon.id} />` : icon.id}</span>
-									<span className='text-sm'>Copied</span>
-								</span>
-							)}
+				<Modal
+					trigger={
+						<button className='btn btn-ghost btn-square relative' type='button'>
+							<FaIcons.FaCog />
+							<span
+								className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
+									visible: activeFamilies.length,
+								})}
+							/>
 						</button>
-					))}
-				</div>
+					}
+				>
+					<BalancedGrid pack className='gap-2' maxCols={3}>
+						{R.entries(iconFamilies).map(([prefix, family]) => {
+							return (
+								<button
+									key={prefix}
+									type='button'
+									onClick={() => togglePrefix(prefix)}
+									className={cn('btn btn-sm flex-col gap-2 h-auto py-1', {
+										'btn-primary': activeFamilies.includes(prefix),
+									})}
+								>
+									<family.sample className='text-2xl' />
+									<div className='font-mono truncate w-full'>{family.label}</div>
+								</button>
+							)
+						})}
+					</BalancedGrid>
+				</Modal>
 			</div>
-		)
-	},
+
+			<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6')}>
+				{results.map((icon) => (
+					<button
+						className='btn relative grid place-items-center h-max p-4 overflow-hidden'
+						key={icon.id}
+						type='button'
+						onClick={() => handleClick(icon)}
+					>
+						<icon.Icon className='text-5xl' />
+						<div className='text-xs truncate font-mono'>{icon.id}</div>
+						<div className='text-base-content/50 font-mono'>{icon.family}</div>
+						{clipboard.copied && lastCopiedId === icon.id && (
+							<span className='absolute inset-0 grid place-items-center backdrop-blur-2xl'>
+								<span className='font-mono'>{cycle.prev === 'jsx' ? `<${icon.id} />` : icon.id}</span>
+								<span className='text-sm'>Copied</span>
+							</span>
+						)}
+					</button>
+				))}
+			</div>
+		</div>
+	)
 }

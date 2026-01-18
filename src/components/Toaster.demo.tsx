@@ -15,15 +15,14 @@ import {
 	Toggle,
 } from '@/components'
 import { toastPositionIcons } from '@/stories/utils'
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { DemoMeta } from '@demo/utils'
 import { useReducer } from 'react'
 import * as Lu from 'react-icons/lu'
 import * as R from 'remeda'
 import type { ExternalToast } from 'sonner'
 import type { OverrideProperties } from 'type-fest'
 
-const meta = { title: 'components/Toaster' } satisfies Meta
-export default meta
+export const meta: DemoMeta = { title: 'Toaster', category: 'components' }
 
 const initialState = {
 	expand: false,
@@ -169,90 +168,87 @@ const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: React
 	</Fieldset>
 )
 
-export const Default: StoryObj = {
-	name: 'Toaster',
-	render: () => {
-		const [state, dispatch] = useReducer((s: ToastState, a: ToastAction) => ({ ...s, ...a }), initialState)
+export const Demo = () => {
+	const [state, dispatch] = useReducer((s: ToastState, a: ToastAction) => ({ ...s, ...a }), initialState)
 
-		const selectedIcon = state.icon ? Lu[state.icon]({}) : null
+	const selectedIcon = state.icon ? Lu[state.icon]({}) : null
 
-		const data = {
-			duration: state.duration === 10000 ? Infinity : state.duration,
-			dismissible: state.dismissible,
-			...(state.overridePosition ? { position: state.toastPosition } : undefined),
-			...(state.hasDescription && { description: state.description }),
-			...(state.toastCloseButton !== false && { closeButton: state.toastCloseButton }),
-			...(state.hasAction && {
-				action: {
-					label: state.actionLabel,
-					onClick: () => toast('Action clicked'),
-				},
-			}),
-			...(state.hasCancel && {
-				cancel: {
-					label: state.cancelLabel,
-					onClick: () => toast('Cancel clicked'),
-				},
-			}),
-		} satisfies ExternalToast
+	const data = {
+		duration: state.duration === 10000 ? Infinity : state.duration,
+		dismissible: state.dismissible,
+		...(state.overridePosition ? { position: state.toastPosition } : undefined),
+		...(state.hasDescription && { description: state.description }),
+		...(state.toastCloseButton !== false && { closeButton: state.toastCloseButton }),
+		...(state.hasAction && {
+			action: {
+				label: state.actionLabel,
+				onClick: () => toast('Action clicked'),
+			},
+		}),
+		...(state.hasCancel && {
+			cancel: {
+				label: state.cancelLabel,
+				onClick: () => toast('Cancel clicked'),
+			},
+		}),
+	} satisfies ExternalToast
 
-		const triggerSuccess = () => toast.success(state.title, data)
-		const triggerError = () => toast.error(state.title, data)
-		const triggerWarning = () => toast.warning(state.title, data)
-		const triggerInfo = () => toast.info(state.title, data)
-		const triggerDefault = () => toast(state.title, { ...data, icon: selectedIcon })
+	const triggerSuccess = () => toast.success(state.title, data)
+	const triggerError = () => toast.error(state.title, data)
+	const triggerWarning = () => toast.warning(state.title, data)
+	const triggerInfo = () => toast.info(state.title, data)
+	const triggerDefault = () => toast(state.title, { ...data, icon: selectedIcon })
 
-		const triggerLoading = (resolve: 'error' | 'success') => {
-			const id = toast.loading('Loading...')
-			setTimeout(() => {
-				if (resolve === 'success') toast.success('Done!', { id })
-				else toast.error('Oops!', { id })
-			}, 1000)
-		}
+	const triggerLoading = (resolve: 'error' | 'success') => {
+		const id = toast.loading('Loading...')
+		setTimeout(() => {
+			if (resolve === 'success') toast.success('Done!', { id })
+			else toast.error('Oops!', { id })
+		}, 1000)
+	}
 
-		const triggerCustom = () =>
-			toast.custom(
-				(t) => (
-					<div className='prose text-center' onClick={() => toast.dismiss(t)}>
-						<h3>{state.title}</h3>
-						<p>Click anywhere to dismiss.</p>
-					</div>
-				),
-				{ duration: Infinity, className: 'glass w-full block cursor-pointer' },
-			)
-
-		return (
-			<div className='demo *:max-w-sm *:w-full'>
-				<GlobalSettings state={state} dispatch={dispatch} />
-				<ColorButton className='btn' onClick={() => toast.dismiss()}>
-					Dismiss All
-				</ColorButton>
-				<div className='flex flex-wrap justify-center gap-2'>
-					<Button className='btn-success' onClick={triggerSuccess}>
-						Success
-					</Button>
-					<Button className='btn-error' onClick={triggerError}>
-						Error
-					</Button>
-					<Button className='btn-warning' onClick={triggerWarning}>
-						Warning
-					</Button>
-					<Button className='btn-info' onClick={triggerInfo}>
-						Info
-					</Button>
-					<Button onClick={triggerDefault}>Default</Button>
-					<Button onClick={() => triggerLoading('success')}>Loading ✅</Button>
-					<Button onClick={() => triggerLoading('error')}>Loading ❌</Button>
-					<Button onClick={triggerCustom}>Custom</Button>
+	const triggerCustom = () =>
+		toast.custom(
+			(t) => (
+				<div className='prose text-center' onClick={() => toast.dismiss(t)}>
+					<h3>{state.title}</h3>
+					<p>Click anywhere to dismiss.</p>
 				</div>
-				<ToastSettings state={state} dispatch={dispatch} />
-				<Toaster
-					expand={state.expand}
-					closeButton={state.closeButton}
-					position={state.position}
-					visibleToasts={state.visibleToasts}
-				/>
-			</div>
+			),
+			{ duration: Infinity, className: 'glass w-full block cursor-pointer' },
 		)
-	},
+
+	return (
+		<div className='demo *:max-w-sm *:w-full'>
+			<GlobalSettings state={state} dispatch={dispatch} />
+			<ColorButton className='btn' onClick={() => toast.dismiss()}>
+				Dismiss All
+			</ColorButton>
+			<div className='flex flex-wrap justify-center gap-2'>
+				<Button className='btn-success' onClick={triggerSuccess}>
+					Success
+				</Button>
+				<Button className='btn-error' onClick={triggerError}>
+					Error
+				</Button>
+				<Button className='btn-warning' onClick={triggerWarning}>
+					Warning
+				</Button>
+				<Button className='btn-info' onClick={triggerInfo}>
+					Info
+				</Button>
+				<Button onClick={triggerDefault}>Default</Button>
+				<Button onClick={() => triggerLoading('success')}>Loading ✅</Button>
+				<Button onClick={() => triggerLoading('error')}>Loading ❌</Button>
+				<Button onClick={triggerCustom}>Custom</Button>
+			</div>
+			<ToastSettings state={state} dispatch={dispatch} />
+			<Toaster
+				expand={state.expand}
+				closeButton={state.closeButton}
+				position={state.position}
+				visibleToasts={state.visibleToasts}
+			/>
+		</div>
+	)
 }

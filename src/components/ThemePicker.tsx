@@ -33,7 +33,7 @@ export const ThemePicker = ({ className, trigger, classNames }: ThemePickerProps
 			<ul
 				tabIndex={0}
 				className={cn(
-					'dropdown-content overflow-auto max-h-[40dvh] menu grid p-2 gap-2 border border-current/25 rounded-box frosted-glass',
+					'dropdown-content overflow-auto max-h-[40dvh] menu flex-nowrap p-2 gap-2 border border-current/5 rounded-box frosted-glass',
 					classNames?.dropdown,
 				)}
 			>
@@ -52,3 +52,7 @@ export const ThemePicker = ({ className, trigger, classNames }: ThemePickerProps
 		</div>
 	)
 }
+
+// TODO: add search input to filter themes
+// TODO: option for modal vs dropdown vs 3-way (system/light/dark)
+// TODO: show more theme preview (colors)
