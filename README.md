@@ -38,32 +38,3 @@ If you'd like to try this out in the browser, like maybe in a [new pen](https://
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser"></script>
 <link href="https://cdn.jsdelivr.net/npm/@trenaryja/ui" rel="stylesheet" type="text/css" />
 ```
-
-> #### **Browser Templates** ⚛️
->
-> You can explore the templates directly in the [`docs/`](./docs/readme.md) folder.
-
-#### Codepen Templates
-
-See the folder for templates []
-
-## What tools are used?
-
-### Build Tools
-
-- 📦 [pnpm](https://pnpm.io)
-- ⚡️ [tsup](https://github.com/egoist/tsup)
-- ☑️ [eslint](https://eslint.org)
-- 🎨 [prettier](https://prettier.io)
-
-### Publish Tools
-
-- 📖 [storybook](https://storybook.js.org)
-- 🔼 [release-it](https://github.com/release-it/release-it)
-- 🐙 [github actions](https://docs.github.com/en/actions)
-
-### Peer Dependencies
-
-- ⚛️ [react](https://react.dev)
-- 🌊 [tailwindcss](https://tailwindcss.com/)
-- 🌼 [daisyui](https://daisyui.com/)

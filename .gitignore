@@ -1,7 +1,13 @@
 *.tsbuildinfo
 *.tgz
+*.log
 node_modules
 dist
 storybook-static
 .env
 _generated
+.vercel
+.claude
+.env*.local
+project-memory
+demo-dist

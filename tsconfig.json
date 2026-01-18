@@ -9,7 +9,8 @@
 		"strict": true,
 		"noEmit": true,
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": ["./src/*"],
+			"@demo/*": ["./demo/*"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx"],

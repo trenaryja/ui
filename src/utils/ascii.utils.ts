@@ -144,7 +144,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 		canvas.height = height
 		const context = canvas.getContext('2d', { willReadFrequently: true })!
 		context.drawImage(source, 0, 0, width, height)
-		const { data } = context.getImageData(0, 0, width, height)
+		const { data } = context.getImageData(0, 0, width || 1, height || 1)
 
 		return processPixels({ width, height, data, lookupTable: lookupTable ?? createLookupTable(' .:-=+*#@') })
 	}, [])
