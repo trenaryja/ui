@@ -1,3 +1,5 @@
+export { ThemeProvider } from '../lib/theme'
+
 export * from './AsciiImage'
 export * from './AsciiVideo'
 export * from './BalancedGrid'
@@ -16,5 +18,3 @@ export * from './Select'
 export * from './TextArea'
 export * from './ThemePicker'
 export * from './Toaster'
-
-export { ThemeProvider } from 'next-themes'
