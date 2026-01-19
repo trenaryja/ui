@@ -1,5 +1,5 @@
 import { AsciiImage } from '@/components'
-import { picsum } from '@/stories/utils'
+import { picsum } from '@/demos/utils'
 import { characterRamps, cn } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
 import { useEffect, useState } from 'react'

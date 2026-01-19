@@ -1,6 +1,6 @@
 import { Field, PlacementPicker, Select } from '@/components'
-import type { ControlName } from '@/stories/utils'
-import { controlMeta } from '@/stories/utils'
+import type { ControlName } from '@/demos/utils'
+import { controlMeta } from '@/demos/utils'
 import type { Placement } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
 import { useState } from 'react'

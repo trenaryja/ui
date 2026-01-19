@@ -1,5 +1,5 @@
-import type { ModalDismissOption } from '@/components/Modal'
-import { Modal, MODAL_DISMISS_OPTIONS } from '@/components/Modal'
+import type { ModalDismissOption } from '@/components'
+import { Modal, MODAL_DISMISS_OPTIONS } from '@/components'
 import { cn } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
 import { useMemo, useState } from 'react'

@@ -14,7 +14,7 @@ import {
 	toastPositions,
 	Toggle,
 } from '@/components'
-import { toastPositionIcons } from '@/stories/utils'
+import { toastPositionIcons } from '@/demos/utils'
 import type { DemoMeta } from '@demo/utils'
 import { useReducer } from 'react'
 import * as Lu from 'react-icons/lu'

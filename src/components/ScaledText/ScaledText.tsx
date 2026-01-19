@@ -48,3 +48,5 @@ export const ScaledText = ({ lines, props }: ScaledTextProps) => {
 		</>
 	)
 }
+
+// TODO: fix initial emoji render being small

@@ -1,5 +1,5 @@
 import { LineFieldImage } from '@/components'
-import { picsum } from '@/stories/utils'
+import { picsum } from '@/demos/utils'
 import type { DemoMeta } from '@demo/utils'
 import { useEffect, useState } from 'react'
 

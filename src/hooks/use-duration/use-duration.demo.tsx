@@ -1,5 +1,5 @@
+import { CountdownBox, durationUnitsWithoutMs } from '@/demos/utils'
 import { useDuration } from '@/hooks'
-import { CountdownBox, durationUnitsWithoutMs } from '@/stories/utils'
 import type { DurationUnit } from '@/utils'
 import { durationUnitMap, randomDate, toDateTimeLocal } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
