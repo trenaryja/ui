@@ -2,7 +2,8 @@ import { cn } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
 import type { ChangeEvent } from 'react'
 import { useId } from 'react'
-import { Field, Radio } from '.'
+import { Field } from '../Field/Field'
+import { Radio } from '../Input/Input'
 
 export type RadioOption =
 	| string

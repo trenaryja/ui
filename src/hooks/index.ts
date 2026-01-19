@@ -1,6 +1,7 @@
 export { useTheme } from '../lib/theme'
 
-export * from './use-breakpoint'
-export * from './use-cycle'
-export * from './use-duration'
-export * from './use-unsaved-changes-prompt'
+export * from './use-breakpoint/use-breakpoint'
+export * from './use-cycle/use-cycle'
+export * from './use-duration/use-duration'
+export * from './use-native-dialog/use-native-dialog'
+export * from './use-unsaved-changes-prompt/use-unsaved-changes-prompt'

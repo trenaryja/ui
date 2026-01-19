@@ -1,15 +1,19 @@
 import type { DirectionPlacement, FlexPlacement, Placement } from '@/utils'
-import { cn, flexPlacements } from '@/utils'
-import type { CSSProperties, ReactNode } from 'react'
-import type { FieldsetProps } from './Fieldset'
-import { Fieldset } from './Fieldset'
+import { flexPlacements } from '@/utils'
+import type { CSSProperties } from 'react'
 
 export const fieldSlots = ['label', 'hint', 'error'] as const
-type FieldSlot = (typeof fieldSlots)[number]
+export type FieldSlot = (typeof fieldSlots)[number]
 
-const placementToArea = (p: Placement) => p.replace('-', '_')
+export const slotBaseClasses: Record<FieldSlot, string> = {
+	label: '',
+	hint: 'text-base-content/50',
+	error: 'text-error',
+}
 
-const buildGrid = (placements: Placement[]) => {
+export const placementToArea = (p: Placement) => p.replace('-', '_')
+
+export const buildGrid = (placements: Placement[]) => {
 	if (placements.length === 0)
 		return {
 			gridTemplateAreas: '"ctrl"',
@@ -86,7 +90,7 @@ const gridAlignMap = {
 	end: { self: 'self-end', justify: 'justify-self-end' },
 } satisfies Record<FlexPlacement, { self: string; justify: string }>
 
-const getGridAlignment = (p: Placement) => {
+export const getGridAlignment = (p: Placement) => {
 	const [dir, flex] = p.split('-') as [DirectionPlacement, FlexPlacement]
 	const { self, justify } = gridAlignMap[flex]
 	return dir === 'top' || dir === 'bottom'
@@ -94,103 +98,8 @@ const getGridAlignment = (p: Placement) => {
 		: `${self} ${gridAlignMap[dir === 'left' ? 'end' : 'start'].justify}`
 }
 
-const getItemsAlign = (p: Placement) => {
+export const getItemsAlign = (p: Placement) => {
 	const [dir, flex] = p.split('-') as [DirectionPlacement, FlexPlacement]
 	if (dir === 'top' || dir === 'bottom') return `items-${flex}`
 	return dir === 'left' ? 'items-end' : 'items-start'
 }
-
-const slotBaseClasses: Record<FieldSlot, string> = {
-	label: '',
-	hint: 'text-base-content/50',
-	error: 'text-error',
-}
-
-export type FieldProps = FieldsetProps & {
-	label?: ReactNode
-	labelPlacement?: Placement
-	hint?: ReactNode
-	hintPlacement?: Placement
-	error?: ReactNode
-	errorPlacement?: Placement
-	slotOrder?: readonly [FieldSlot, FieldSlot, FieldSlot]
-	classNames?: {
-		label?: string
-		control?: string
-		hint?: string
-		error?: string
-		group?: string
-	}
-}
-
-export const Field = ({
-	label,
-	labelPlacement = 'top-start',
-	hint,
-	hintPlacement = 'bottom-start',
-	error,
-	errorPlacement = 'bottom-end',
-	slotOrder = fieldSlots,
-	className,
-	classNames,
-	children,
-}: FieldProps) => {
-	const slotData = {
-		label: label ? { content: label, placement: labelPlacement } : null,
-		hint: hint ? { content: hint, placement: hintPlacement } : null,
-		error: error ? { content: error, placement: errorPlacement } : null,
-	}
-
-	const groups = new Map<Placement, FieldSlot[]>()
-
-	for (const slot of slotOrder) {
-		const data = slotData[slot]
-		if (!data) continue
-		void (groups.get(data.placement)?.push(slot) ?? groups.set(data.placement, [slot]))
-	}
-
-	const style = buildGrid([...groups.keys()])
-
-	const renderSlotContent = (slot: FieldSlot) => {
-		const data = slotData[slot]!
-		const Tag = slot === 'label' ? 'label' : 'span'
-		return <Tag className={cn(slotBaseClasses[slot], classNames?.[slot])}>{data.content}</Tag>
-	}
-
-	const renderGroup = (placement: Placement, slots: FieldSlot[]) => {
-		const area = placementToArea(placement)
-		const gridAlign = getGridAlignment(placement)
-
-		if (slots.length === 1) {
-			const slot = slots[0]
-			const data = slotData[slot]!
-			const Tag = slot === 'label' ? 'label' : 'span'
-			return (
-				<Tag key={area} className={cn(slotBaseClasses[slot], gridAlign, classNames?.[slot])} style={{ gridArea: area }}>
-					{data.content}
-				</Tag>
-			)
-		}
-
-		return (
-			<div
-				key={area}
-				className={cn('flex flex-col', gridAlign, getItemsAlign(placement), classNames?.group)}
-				style={{ gridArea: area }}
-			>
-				{slots.map(renderSlotContent)}
-			</div>
-		)
-	}
-
-	return (
-		<Fieldset className={cn(className)} style={style}>
-			{[...groups.entries()].map(([placement, slots]) => renderGroup(placement, slots))}
-			<div className={cn(classNames?.control)} style={{ gridArea: 'ctrl' }}>
-				{children}
-			</div>
-		</Fieldset>
-	)
-}
-
-// TODO: add name/htmlFor abilities, including wrapLabel

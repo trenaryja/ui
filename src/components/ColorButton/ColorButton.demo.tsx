@@ -1,6 +1,6 @@
 import { Button, ColorButton } from '@/components'
-import type { ButtonStyle } from '@/stories/utils'
-import { buttonStyles } from '@/stories/utils'
+import type { ButtonStyle } from '@/demos/utils'
+import { buttonStyles } from '@/demos/utils'
 import { cn, daisyThemeColors, tailwindPalette } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
 import { useState } from 'react'

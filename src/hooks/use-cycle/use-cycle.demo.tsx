@@ -1,6 +1,6 @@
 import { BalancedGrid, Button } from '@/components'
+import { playingCards } from '@/demos/utils'
 import { useCycle as useCycleHook } from '@/hooks'
-import { playingCards } from '@/stories/utils'
 import { cn } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
 import { useMemo, useState } from 'react'

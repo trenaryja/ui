@@ -2,9 +2,9 @@
 
 import { characterRamps, cn, useAscii } from '@/utils'
 import { useEffect, useRef, useState } from 'react'
-import type { AsciiImageProps } from './AsciiImage'
+import type { AsciiImageProps } from '../AsciiImage/AsciiImage'
 
-type AsciiVideoProps = Omit<AsciiImageProps, 'showImage'>
+export type AsciiVideoProps = Omit<AsciiImageProps, 'showImage'>
 
 export const AsciiVideo = ({
 	src,

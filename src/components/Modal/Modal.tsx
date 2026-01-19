@@ -1,13 +1,15 @@
 'use client'
 
-import { attempt, cn } from '@/utils'
+import { cn } from '@/utils'
+import { useNativeDialog } from '@/hooks'
 import { useUncontrolled } from '@mantine/hooks'
 import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
-import { cloneElement, useCallback, useEffect, useId, useMemo, useRef } from 'react'
+import { cloneElement, useId, useMemo } from 'react'
 import { LuX } from 'react-icons/lu'
+import { MODAL_DISMISS_OPTIONS, resolveDismissOptions } from './Modal.utils'
 
-export const MODAL_DISMISS_OPTIONS = ['closeButton', 'outsideClick', 'escapeKey'] as const
 export type ModalDismissOption = (typeof MODAL_DISMISS_OPTIONS)[number]
+export { MODAL_DISMISS_OPTIONS }
 
 export type ModalApi = {
 	close: () => void
@@ -37,78 +39,6 @@ export type ModalProps = {
 	backdropTransparent?: boolean
 }
 
-const useNativeDialog = ({
-	dialogId,
-	hasEscapeKey,
-	open,
-	setOpen,
-}: {
-	dialogId: string
-	hasEscapeKey: boolean
-	open: boolean
-	setOpen: (next: boolean) => void
-}) => {
-	const getDialog = useCallback(() => {
-		if (typeof document === 'undefined') return null
-		const el = document.getElementById(dialogId)
-		return el instanceof HTMLDialogElement ? el : null
-	}, [dialogId])
-
-	const openRef = useRef(open)
-	useEffect(() => {
-		openRef.current = open
-	}, [open])
-
-	const hasEscapeKeyRef = useRef(hasEscapeKey)
-	useEffect(() => {
-		hasEscapeKeyRef.current = hasEscapeKey
-	}, [hasEscapeKey])
-
-	const lastCloseWasCancelRef = useRef(false)
-
-	const openNative = useCallback(() => {
-		const el = getDialog()
-		if (!el || el.open) return
-		attempt(() => el.showModal())
-	}, [getDialog])
-
-	const closeNative = useCallback(() => {
-		const el = getDialog()
-		if (!el || !el.open) return
-		el.close()
-	}, [getDialog])
-
-	useEffect(() => {
-		const el = getDialog()
-		if (!el) return
-		if (open && !el.open) return attempt(() => el.showModal())
-		if (!open && el.open) el.close()
-	}, [getDialog, open])
-
-	const onCancel = useCallback((e: React.SyntheticEvent<HTMLDialogElement>) => {
-		lastCloseWasCancelRef.current = true
-		if (hasEscapeKeyRef.current) return
-		e.preventDefault()
-		e.stopPropagation()
-	}, [])
-
-	const onClose = useCallback(() => {
-		const wasCancel = lastCloseWasCancelRef.current
-		lastCloseWasCancelRef.current = false
-
-		setOpen(false)
-
-		if (hasEscapeKeyRef.current) return
-		if (!wasCancel) return
-		if (!openRef.current) return
-
-		openNative()
-		setOpen(true)
-	}, [openNative, setOpen])
-
-	return { closeNative, onCancel, onClose, openNative }
-}
-
 export const Modal = ({
 	id,
 	open,
@@ -132,14 +62,7 @@ export const Modal = ({
 		onChange: onOpenChange,
 	})
 
-	const dismissList = useMemo(() => {
-		if (Array.isArray(dismissOptions)) return dismissOptions
-		return {
-			unset: MODAL_DISMISS_OPTIONS,
-			true: MODAL_DISMISS_OPTIONS,
-			false: [],
-		}[dismissOptions === undefined ? 'unset' : dismissOptions ? 'true' : 'false']
-	}, [dismissOptions])
+	const dismissList = useMemo(() => resolveDismissOptions(dismissOptions), [dismissOptions])
 
 	const { closeNative, onCancel, onClose, openNative } = useNativeDialog({
 		dialogId,
