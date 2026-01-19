@@ -8,12 +8,14 @@ const config = [
 			radix: 'off',
 			'@eslint-react/no-children-to-array': 'off',
 			'@eslint-react/no-clone-element': 'off',
+			'@eslint-react/no-missing-context-display-name': 'off',
 			'@typescript-eslint/consistent-type-definitions': ['error', 'type'],
 			'jsx-a11y/click-events-have-key-events': 'off',
 			'jsx-a11y/no-noninteractive-element-interactions': 'off',
 			'no-bitwise': 'off',
 			'no-plusplus': 'off',
 			'perfectionist/sort-imports': 'off', // handled by vscode organize imports
+			'react-hooks/set-state-in-effect': 'off',
 		},
 	}),
 ]
