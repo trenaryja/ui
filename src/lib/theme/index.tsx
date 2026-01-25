@@ -23,6 +23,8 @@ const defaultContext: UseThemeProps<any> = {
 	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	setTheme: () => {},
 	themes: [],
+	defaultLight: 'light',
+	defaultDark: 'dark',
 }
 
 const disableAnimation = (nonce?: string) => {
@@ -97,6 +99,8 @@ const Theme = <TThemes extends readonly string[] = never>({
 	children,
 	nonce,
 	scriptProps,
+	defaultLight = 'light' as string,
+	defaultDark = 'dark' as string,
 }: ThemeProviderProps<TThemes>) => {
 	const [theme, setThemeState] = useLocalStorage({
 		key: storageKey,
@@ -173,7 +177,14 @@ const Theme = <TThemes extends readonly string[] = never>({
 	useWindowEvent('storage', (e) => {
 		if (e.key !== storageKey) return
 		if (!e.newValue) setTheme(defaultTheme)
-		else setThemeState(e.newValue)
+		else {
+			try {
+				const parsed = JSON.parse(e.newValue)
+				setThemeState(parsed)
+			} catch {
+				setThemeState(e.newValue)
+			}
+		}
 	})
 
 	useEffect(() => {
@@ -187,10 +198,12 @@ const Theme = <TThemes extends readonly string[] = never>({
 				setTheme,
 				forcedTheme,
 				resolvedTheme: theme === SYSTEM_THEME ? resolvedTheme : theme,
-				themes: enableSystem ? ([...themes, SYSTEM_THEME] as const) : themes,
+				themes: enableSystem ? ([SYSTEM_THEME, ...themes] as const) : themes,
 				systemTheme: (enableSystem ? resolvedTheme : undefined) as 'dark' | 'light' | undefined,
+				defaultLight,
+				defaultDark,
 			}) as UseThemeProps<TThemes>,
-		[theme, setTheme, forcedTheme, resolvedTheme, enableSystem, themes],
+		[theme, setTheme, forcedTheme, resolvedTheme, enableSystem, themes, defaultLight, defaultDark],
 	)
 
 	return (
