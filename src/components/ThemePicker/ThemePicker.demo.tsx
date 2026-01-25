@@ -11,7 +11,7 @@ export const Demo = () => {
 
 	return (
 		<ThemeProvider>
-			<div className='demo prose overflow-auto no-scrollbar'>
+			<div className='demo'>
 				<div className='stats w-full grid-cols-3 *:place-items-center'>
 					<div className='stat'>
 						<div className='stat-title'>theme</div>
@@ -27,7 +27,7 @@ export const Demo = () => {
 					</div>
 				</div>
 
-				<div className='grid place-items-center grid-cols-2 gap-10 '>
+				<div className='prose grid place-items-center grid-cols-2 gap-10 '>
 					<article className='grid place-items-center'>
 						<h2>
 							toggle <span className='text-xs opacity-50'>(default)</span>
