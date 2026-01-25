@@ -1,7 +1,7 @@
 'use client'
 
-import { cn } from '@/utils'
 import { useNativeDialog } from '@/hooks'
+import { cn } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
 import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
 import { cloneElement, useId, useMemo } from 'react'
@@ -103,16 +103,14 @@ export const Modal = ({
 			>
 				<div className={cn('modal-box', className, classNames?.box)}>
 					{dismissList.includes('closeButton') && (
-						<div className='sticky top-0'>
-							<button
-								aria-label='Close'
-								className={cn('absolute -top-6 -right-6 btn btn-circle btn-ghost btn-sm', classNames?.closeButton)}
-								type='button'
-								onClick={closeNative}
-							>
-								<LuX className={cn(classNames?.closeIcon)} />
-							</button>
-						</div>
+						<button
+							aria-label='Close'
+							className={cn('absolute top-0 right-0 btn btn-circle btn-ghost btn-sm', classNames?.closeButton)}
+							type='button'
+							onClick={closeNative}
+						>
+							<LuX className={cn(classNames?.closeIcon)} />
+						</button>
 					)}
 
 					{typeof children === 'function' ? children(api) : children}
