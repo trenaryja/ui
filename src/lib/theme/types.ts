@@ -24,6 +24,10 @@ export type UseThemeProps<TThemes extends readonly string[] = never> = {
 	resolvedTheme?: ThemeName<TThemes> | undefined
 	/** If enableSystem is true, returns the System theme preference ("dark" or "light"), regardless what the active theme is */
 	systemTheme?: 'dark' | 'light' | undefined
+	/** Default light theme to use when toggling (defaults to 'light') */
+	defaultLight: ThemeName<TThemes>
+	/** Default dark theme to use when toggling (defaults to 'dark') */
+	defaultDark: ThemeName<TThemes>
 }
 
 export type Attribute = 'class' | DataAttribute
@@ -51,4 +55,8 @@ export type ThemeProviderProps<TThemes extends readonly string[] = never> = Prop
 	nonce?: string
 	/** Props to pass the inline script */
 	scriptProps?: ScriptProps
+	/** Default light theme to use when toggling (defaults to 'light') */
+	defaultLight?: ThemeName<TThemes> | undefined
+	/** Default dark theme to use when toggling (defaults to 'dark') */
+	defaultDark?: ThemeName<TThemes> | undefined
 }>
