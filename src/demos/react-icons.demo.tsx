@@ -1,10 +1,5 @@
-import { BalancedGrid, Modal } from '@/components'
-import { useCycle } from '@/hooks'
-import { cn } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
-import { useClipboard, useDebouncedValue } from '@mantine/hooks'
-import Fuse from 'fuse.js'
-import { useMemo, useState } from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
 import type { IconType } from 'react-icons/lib'
 import * as R from 'remeda'
 
@@ -40,45 +35,56 @@ import * as TiIcons from 'react-icons/ti'
 import * as VscIcons from 'react-icons/vsc'
 import * as WiIcons from 'react-icons/wi'
 
+import { SearchableGrid } from './SearchableGrid'
+
 export const meta: DemoMeta = { title: 'React Icons', category: 'search' }
 
+const iconSample = (Icon: IconType) => <Icon className='text-2xl' />
+
 const iconFamilies = {
-	ai: { label: 'Ant Design', pack: AiIcons, sample: AiIcons.AiOutlineSearch },
-	bi: { label: 'BoxIcons', pack: BiIcons, sample: BiIcons.BiSearch },
-	bs: { label: 'Bootstrap Icons', pack: BsIcons, sample: BsIcons.BsSearch },
-	cg: { label: 'css.gg', pack: CgIcons, sample: CgIcons.CgSearch },
-	ci: { label: 'Circum Icons', pack: CiIcons, sample: CiIcons.CiSearch },
-	di: { label: 'Devicons', pack: DiIcons, sample: DiIcons.DiReact },
-	fa: { label: 'Font Awesome 5', pack: FaIcons, sample: FaIcons.FaSearch },
-	fa6: { label: 'Font Awesome 6', pack: Fa6Icons, sample: Fa6Icons.FaMagnifyingGlass },
-	fc: { label: 'Flat Color Icons', pack: FcIcons, sample: FcIcons.FcSearch },
-	fi: { label: 'Feather', pack: FiIcons, sample: FiIcons.FiSearch },
-	gi: { label: 'Game Icons', pack: GiIcons, sample: GiIcons.GiMagnifyingGlass },
-	go: { label: 'Github Octicons', pack: GoIcons, sample: GoIcons.GoSearch },
-	gr: { label: 'Grommet', pack: GrIcons, sample: GrIcons.GrSearch },
-	hi: { label: 'Heroicons v1', pack: HiIcons, sample: HiIcons.HiSearch },
-	hi2: { label: 'Heroicons v2', pack: Hi2Icons, sample: Hi2Icons.HiMagnifyingGlass },
-	im: { label: 'IcoMoon Free', pack: ImIcons, sample: ImIcons.ImSearch },
-	io: { label: 'Ionicons 4', pack: IoIcons, sample: IoIcons.IoIosSearch },
-	io5: { label: 'Ionicons 5', pack: Io5Icons, sample: Io5Icons.IoSearch },
-	lia: { label: 'Line Awesome', pack: LiaIcons, sample: LiaIcons.LiaSearchSolid },
-	lu: { label: 'Lucide', pack: LuIcons, sample: LuIcons.LuSearch },
-	md: { label: 'Material Design', pack: MdIcons, sample: MdIcons.MdSearch },
-	pi: { label: 'Phosphor', pack: PiIcons, sample: PiIcons.PiMagnifyingGlass },
-	ri: { label: 'Remix', pack: RiIcons, sample: RiIcons.RiSearch2Fill },
-	rx: { label: 'Radix Icons', pack: RxIcons, sample: RxIcons.RxMagnifyingGlass },
-	si: { label: 'Simple Icons', pack: SiIcons, sample: SiIcons.SiReact },
-	sl: { label: 'Simple Line', pack: SlIcons, sample: SlIcons.SlMagnifier },
-	tb: { label: 'Tabler', pack: TbIcons, sample: TbIcons.TbSearch },
-	tfi: { label: 'Themify', pack: TfiIcons, sample: TfiIcons.TfiSearch },
-	ti: { label: 'Typicons', pack: TiIcons, sample: TiIcons.TiCogOutline },
-	vsc: { label: 'VSCode Codicons', pack: VscIcons, sample: VscIcons.VscSearch },
-	wi: { label: 'Weather Icons', pack: WiIcons, sample: WiIcons.WiAlien },
+	ai: { label: 'Ant Design', pack: AiIcons, sample: iconSample(AiIcons.AiOutlineSearch) },
+	bi: { label: 'BoxIcons', pack: BiIcons, sample: iconSample(BiIcons.BiSearch) },
+	bs: { label: 'Bootstrap Icons', pack: BsIcons, sample: iconSample(BsIcons.BsSearch) },
+	cg: { label: 'css.gg', pack: CgIcons, sample: iconSample(CgIcons.CgSearch) },
+	ci: { label: 'Circum Icons', pack: CiIcons, sample: iconSample(CiIcons.CiSearch) },
+	di: { label: 'Devicons', pack: DiIcons, sample: iconSample(DiIcons.DiReact) },
+	fa: { label: 'Font Awesome 5', pack: FaIcons, sample: iconSample(FaIcons.FaSearch) },
+	fa6: { label: 'Font Awesome 6', pack: Fa6Icons, sample: iconSample(Fa6Icons.FaMagnifyingGlass) },
+	fc: { label: 'Flat Color Icons', pack: FcIcons, sample: iconSample(FcIcons.FcSearch) },
+	fi: { label: 'Feather', pack: FiIcons, sample: iconSample(FiIcons.FiSearch) },
+	gi: { label: 'Game Icons', pack: GiIcons, sample: iconSample(GiIcons.GiMagnifyingGlass) },
+	go: { label: 'Github Octicons', pack: GoIcons, sample: iconSample(GoIcons.GoSearch) },
+	gr: { label: 'Grommet', pack: GrIcons, sample: iconSample(GrIcons.GrSearch) },
+	hi: { label: 'Heroicons v1', pack: HiIcons, sample: iconSample(HiIcons.HiSearch) },
+	hi2: { label: 'Heroicons v2', pack: Hi2Icons, sample: iconSample(Hi2Icons.HiMagnifyingGlass) },
+	im: { label: 'IcoMoon Free', pack: ImIcons, sample: iconSample(ImIcons.ImSearch) },
+	io: { label: 'Ionicons 4', pack: IoIcons, sample: iconSample(IoIcons.IoIosSearch) },
+	io5: { label: 'Ionicons 5', pack: Io5Icons, sample: iconSample(Io5Icons.IoSearch) },
+	lia: { label: 'Line Awesome', pack: LiaIcons, sample: iconSample(LiaIcons.LiaSearchSolid) },
+	lu: { label: 'Lucide', pack: LuIcons, sample: iconSample(LuIcons.LuSearch) },
+	md: { label: 'Material Design', pack: MdIcons, sample: iconSample(MdIcons.MdSearch) },
+	pi: { label: 'Phosphor', pack: PiIcons, sample: iconSample(PiIcons.PiMagnifyingGlass) },
+	ri: { label: 'Remix', pack: RiIcons, sample: iconSample(RiIcons.RiSearch2Fill) },
+	rx: { label: 'Radix Icons', pack: RxIcons, sample: iconSample(RxIcons.RxMagnifyingGlass) },
+	si: { label: 'Simple Icons', pack: SiIcons, sample: iconSample(SiIcons.SiReact) },
+	sl: { label: 'Simple Line', pack: SlIcons, sample: iconSample(SlIcons.SlMagnifier) },
+	tb: { label: 'Tabler', pack: TbIcons, sample: iconSample(TbIcons.TbSearch) },
+	tfi: { label: 'Themify', pack: TfiIcons, sample: iconSample(TfiIcons.TfiSearch) },
+	ti: { label: 'Typicons', pack: TiIcons, sample: iconSample(TiIcons.TiCogOutline) },
+	vsc: { label: 'VSCode Codicons', pack: VscIcons, sample: iconSample(VscIcons.VscSearch) },
+	wi: { label: 'Weather Icons', pack: WiIcons, sample: iconSample(WiIcons.WiAlien) },
 } as const
 
 type Prefix = keyof typeof iconFamilies
 
-const flattenPack = (family: Prefix, pack: Record<string, IconType>) =>
+type IconItem = {
+	id: string
+	label: string
+	family: Prefix
+	Icon: IconType
+}
+
+const flattenPack = (family: Prefix, pack: Record<string, IconType>): IconItem[] =>
 	Object.entries(pack).map(([id, Icon]) => ({
 		id,
 		label: id
@@ -90,111 +96,47 @@ const flattenPack = (family: Prefix, pack: Record<string, IconType>) =>
 	}))
 
 const flatIcons = R.flatMap(R.entries(iconFamilies), ([family, { pack }]) => flattenPack(family, pack))
-const clipboardTimeout = 1000
 
-export const Demo = () => {
-	const [query, setQuery] = useState('')
-	const [debouncedQuery] = useDebouncedValue(query, 250)
-	const cycle = useCycle(['jsx', 'name'], { idleResetMs: clipboardTimeout + 50 })
-	const clipboard = useClipboard({ timeout: clipboardTimeout })
-	const [lastCopiedId, setLastCopiedId] = useState<string | null>(null)
-	const [activeFamilies, setActiveFamilies] = useState<Prefix[]>([])
+type CopyKey = 'jsx' | 'name' | 'svg'
 
-	const searchableSet = activeFamilies.length ? flatIcons.filter((x) => activeFamilies.includes(x.family)) : flatIcons
+const copyKeys: CopyKey[] = ['jsx', 'name', 'svg']
 
-	const fuse = useMemo(
-		() =>
-			new Fuse(searchableSet, {
-				keys: ['id', 'label'],
-				threshold: 0.3,
-			}),
-		[searchableSet],
-	)
-
-	const results = debouncedQuery.trim()
-		? fuse
-				.search(debouncedQuery)
-				.map((r) => r.item)
-				.slice(0, 2500)
-		: [...searchableSet].slice(0, 300)
-
-	const togglePrefix = (prefix: Prefix) =>
-		setActiveFamilies((prev) => (prev.includes(prefix) ? prev.filter((p) => p !== prefix) : [...prev, prefix]))
-
-	const handleClick = (icon: (typeof flatIcons)[number]) => {
-		const str = cycle.value === 'jsx' ? `<${icon.id} />` : icon.id
-		clipboard.copy(str)
-		setLastCopiedId(icon.id)
-		cycle.increment()
-	}
-
+export function Demo() {
 	return (
-		<div className='full-bleed grid content-start gap-4 p-4'>
-			<input
-				className='input w-full'
-				type='text'
-				value={query}
-				onChange={(e) => setQuery(e.target.value)}
-				placeholder='Search React Icons...'
-			/>
+		<SearchableGrid<IconItem, Prefix, CopyKey>
+			items={flatIcons}
+			families={iconFamilies}
+			getSearchText={(icon) => `${icon.id} ${icon.label}`}
+			getFamily={(icon) => icon.family}
+			placeholder='Search React Icons...'
+			copyKeys={copyKeys}
+			getCopyValue={(icon, key) => {
+				switch (key) {
+					case 'jsx':
+						return `<${icon.id} />`
 
-			<div className='flex items-center justify-between'>
-				<p className='text-sm text-base-content/50'>
-					Showing {results.length} {debouncedQuery ? 'matches' : `icons. Total ${searchableSet.length}.`}
-				</p>
+					case 'name':
+						return icon.id
 
-				<Modal
-					trigger={
-						<button className='btn btn-ghost btn-square relative' type='button'>
-							<FaIcons.FaCog />
-							<span
-								className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
-									visible: activeFamilies.length,
-								})}
-							/>
-						</button>
-					}
-				>
-					<BalancedGrid pack className='gap-2' maxCols={3}>
-						{R.entries(iconFamilies).map(([prefix, family]) => {
-							return (
-								<button
-									key={prefix}
-									type='button'
-									onClick={() => togglePrefix(prefix)}
-									className={cn('btn btn-sm flex-col gap-2 h-auto py-1', {
-										'btn-primary': activeFamilies.includes(prefix),
-									})}
-								>
-									<family.sample className='text-2xl' />
-									<div className='font-mono truncate w-full'>{family.label}</div>
-								</button>
-							)
-						})}
-					</BalancedGrid>
-				</Modal>
-			</div>
-
-			<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6')}>
-				{results.map((icon) => (
-					<button
-						className='btn relative grid place-items-center h-max p-4 overflow-hidden'
-						key={icon.id}
-						type='button'
-						onClick={() => handleClick(icon)}
-					>
-						<icon.Icon className='text-5xl' />
-						<div className='text-xs truncate font-mono'>{icon.id}</div>
-						<div className='text-base-content/50 font-mono'>{icon.family}</div>
-						{clipboard.copied && lastCopiedId === icon.id && (
-							<span className='absolute inset-0 grid place-items-center backdrop-blur-2xl'>
-								<span className='font-mono'>{cycle.prev === 'jsx' ? `<${icon.id} />` : icon.id}</span>
-								<span className='text-sm'>Copied</span>
-							</span>
-						)}
-					</button>
-				))}
-			</div>
-		</div>
+					case 'svg':
+						return renderToStaticMarkup(<icon.Icon />)
+				}
+			}}
+			getItemId={(icon) => `${icon.family}-${icon.id}`}
+			renderItem={(icon) => (
+				<>
+					<icon.Icon className='text-5xl' />
+					<div className='text-xs truncate font-mono'>{icon.id}</div>
+					<div className='text-base-content/50 font-mono'>{icon.family}</div>
+				</>
+			)}
+			renderCopiedOverlay={(icon, copiedKey) => (
+				<span className='font-mono'>
+					{copiedKey === 'jsx' ? `<${icon.id} />` : copiedKey === 'name' ? icon.id : 'SVG'}
+				</span>
+			)}
+			settingsIcon={<FaIcons.FaCog />}
+			debounceMs={250}
+		/>
 	)
 }

@@ -1,142 +1,80 @@
-import { BalancedGrid, Modal } from '@/components'
 import glyphs from '@/data/glyphnames.json'
-import { useCycle } from '@/hooks'
-import { cn } from '@/utils'
 import type { DemoMeta } from '@demo/utils'
-import { useClipboard, useDebouncedValue } from '@mantine/hooks'
-import Fuse from 'fuse.js'
-import { useMemo, useState } from 'react'
 import * as R from 'remeda'
+
+import { SearchableGrid } from './SearchableGrid'
 
 export const meta: DemoMeta = { title: 'Nerd Font Glyphs', category: 'search' }
 
-export type GlyphFamily = {
-	label: string
-	char: string
-}
+const nfClass = "font-['FiraCode_NF']"
+const nfSample = (char: string) => <span className={`text-2xl ${nfClass}`}>{char}</span>
 
 const glyphFamilies = {
-	'cod-': { label: 'Codicons (VS Code)', char: '' },
-	'custom-': { label: 'Custom Icons', char: '' },
-	'dev-': { label: 'Devicons', char: '' },
-	'extra-': { label: 'Extra Icons', char: '󰑾' },
-	'fa-': { label: 'Font Awesome', char: '' },
-	'fae-': { label: 'Font Awesome Extension', char: '' },
-	'iec-': { label: 'IEC Power Symbols', char: '⏻' },
-	'indent-': { label: 'Indent Icons', char: '' },
-	'indentation-': { label: 'Indentation Icons', char: '' },
-	'linux-': { label: 'Linux Distros', char: '' },
-	'md-': { label: 'Material Design', char: '' },
-	'oct-': { label: 'Octicons (GitHub)', char: '' },
-	'pl-': { label: 'Powerline', char: '' },
-	'ple-': { label: 'Powerline Extra', char: '' },
-	'pom-': { label: 'Pomicons', char: '' },
-	'seti-': { label: 'Seti UI', char: '' },
-	'weather-': { label: 'Weather', char: '' },
-} as const satisfies Record<string, GlyphFamily>
+	'cod-': { label: 'Codicons (VS Code)', sample: nfSample('') },
+	'custom-': { label: 'Custom Icons', sample: nfSample('') },
+	'dev-': { label: 'Devicons', sample: nfSample('') },
+	'extra-': { label: 'Extra Icons', sample: nfSample('󰑾') },
+	'fa-': { label: 'Font Awesome', sample: nfSample('') },
+	'fae-': { label: 'Font Awesome Extension', sample: nfSample('') },
+	'iec-': { label: 'IEC Power Symbols', sample: nfSample('⏻') },
+	'indent-': { label: 'Indent Icons', sample: nfSample('') },
+	'indentation-': { label: 'Indentation Icons', sample: nfSample('') },
+	'linux-': { label: 'Linux Distros', sample: nfSample('') },
+	'md-': { label: 'Material Design', sample: nfSample('󰇉') },
+	'oct-': { label: 'Octicons (GitHub)', sample: nfSample('') },
+	'pl-': { label: 'Powerline', sample: nfSample('') },
+	'ple-': { label: 'Powerline Extra', sample: nfSample('') },
+	'pom-': { label: 'Pomicons', sample: nfSample('') },
+	'seti-': { label: 'Seti UI', sample: nfSample('') },
+	'weather-': { label: 'Weather', sample: nfSample('') },
+} as const
 
 type Prefix = keyof typeof glyphFamilies
 
-const raw = glyphs as Record<string, { char: string; code: string }>
-const flatGlyphs = Object.entries(raw).map(([id, { char, code }]) => ({ char, id, code }))
-const glyphProperties = ['char', 'id', 'code'] as const satisfies (keyof (typeof flatGlyphs)[number])[]
-const clipboardTimeout = 1000
+type GlyphItem = {
+	char: string
+	id: string
+	code: string
+}
 
-export const Demo = () => {
-	const [query, setQuery] = useState('')
-	const [debouncedQuery] = useDebouncedValue(query, 200)
-	const cycle = useCycle(glyphProperties, { idleResetMs: clipboardTimeout + 50 })
-	const clipboard = useClipboard({ timeout: clipboardTimeout })
-	const [lastCopiedId, setLastCopiedId] = useState<string | null>(null)
-	const [activeFamilies, setActiveFamilies] = useState<Prefix[]>([])
+type CopyKey = keyof GlyphItem
 
-	const searchableSet = activeFamilies.length
-		? flatGlyphs.filter((x) => activeFamilies.some((prefix) => x.id.startsWith(prefix)))
-		: flatGlyphs
+const flatGlyphs: GlyphItem[] = R.pipe(
+	glyphs,
+	R.entries(),
+	R.map(([id, { char, code }]) => ({ char, id, code })),
+)
 
-	const fuse = useMemo(() => new Fuse(searchableSet, { keys: glyphProperties, threshold: 0.3 }), [searchableSet])
+const copyKeys: CopyKey[] = ['char', 'id', 'code']
 
-	const results = debouncedQuery.trim()
-		? fuse.search(debouncedQuery).map((r) => r.item)
-		: [...searchableSet].slice(0, 300)
+const getFamily = (item: GlyphItem): Prefix | undefined =>
+	R.keys(glyphFamilies).find((prefix) => item.id.startsWith(prefix))
 
-	const togglePrefix = (prefix: Prefix) =>
-		setActiveFamilies((prev) => (prev.includes(prefix) ? prev.filter((p) => p !== prefix) : [...prev, prefix]))
-
-	const handleClick = (glyph: (typeof flatGlyphs)[number]) => {
-		const key = cycle.value
-		clipboard.copy(glyph[key])
-		setLastCopiedId(glyph.id)
-		cycle.increment()
-	}
-
+export function Demo() {
 	return (
-		<div className='full-bleed grid content-start gap-4 p-4' style={{ fontFamily: 'FiraCode NF' }}>
-			<input
-				className='input w-full'
-				type='text'
-				value={query}
-				onChange={(e) => setQuery(e.target.value)}
-				placeholder='Search Nerd Font glyphs...'
-			/>
-
-			<div className='flex items-center justify-between'>
-				<p className='text-sm text-base-content/50'>
-					Showing {results.length} {debouncedQuery ? 'matches' : `glyphs. There are ${searchableSet.length} total.`}
-				</p>
-
-				<Modal
-					trigger={
-						<button className='btn btn-ghost btn-square relative' type='button'>
-							<span className='text-lg' />
-							<span
-								className={cn('absolute size-2 rounded-full bg-primary top-0 right-0 invisible', {
-									visible: activeFamilies.length,
-								})}
-							/>
-						</button>
-					}
-				>
-					<BalancedGrid pack className='gap-2' maxCols={3}>
-						{R.entries(glyphFamilies).map(([prefix, fam]) => (
-							<button
-								key={prefix}
-								type='button'
-								onClick={() => togglePrefix(prefix)}
-								className={cn('btn flex-col gap-2 h-auto py-2', {
-									'btn-primary': activeFamilies.includes(prefix),
-								})}
-							>
-								<div className='text-2xl'>{fam.char}</div>
-								<div className='text-2xs font-mono truncate w-full'>{fam.label}</div>
-							</button>
-						))}
-					</BalancedGrid>
-				</Modal>
-			</div>
-
-			<div className={cn('grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 ')}>
-				{results.map((glyph) => (
-					<button
-						className='btn relative grid place-items-center h-max p-4 overflow-x-auto'
-						key={glyph.id}
-						type='button'
-						onClick={() => handleClick(glyph)}
-					>
-						<div className='text-5xl font-normal'>{glyph.char}</div>
-						<div className='text-xs truncate font-mono' title={glyph.id}>
-							{glyph.id}
-						</div>
-						<div className='text-2xs text-base-content/50 font-mono'>{glyph.code}</div>
-						{clipboard.copied && lastCopiedId === glyph.id && (
-							<span className='absolute inset-0 grid place-items-center backdrop-blur-2xl'>
-								<span className={cn({ 'text-5xl font-normal': cycle.prev === 'char' })}>{glyph[cycle.prev]}</span>
-								<span className='text-sm'>Copied</span>
-							</span>
-						)}
-					</button>
-				))}
-			</div>
-		</div>
+		<SearchableGrid<GlyphItem, Prefix, CopyKey>
+			items={flatGlyphs}
+			families={glyphFamilies}
+			getSearchText={(item) => `${item.id} ${item.code}`}
+			getFamily={getFamily}
+			placeholder='Search Nerd Font glyphs...'
+			copyKeys={copyKeys}
+			getCopyValue={(item, key) => item[key]}
+			getItemId={(item) => item.id}
+			className={nfClass}
+			renderItem={(item) => (
+				<>
+					<div className='text-5xl font-normal'>{item.char}</div>
+					<div className='text-xs truncate font-mono' title={item.id}>
+						{item.id}
+					</div>
+					<div className='text-2xs text-base-content/50 font-mono'>{item.code}</div>
+				</>
+			)}
+			renderCopiedOverlay={(item, copiedKey) => (
+				<span className={copiedKey === 'char' ? 'text-5xl font-normal' : ''}>{item[copiedKey]}</span>
+			)}
+			settingsIcon={<span className={`text-lg ${nfClass}`}></span>}
+		/>
 	)
 }
