@@ -108,3 +108,15 @@ export const joinTyped = <const A extends readonly string[], const B extends rea
 	b: B,
 	delimiter: D,
 ): `${A[number]}${D}${B[number]}`[] => a.flatMap((x) => b.map((y) => `${x}${delimiter}${y}` as const))
+
+/**
+ * Maps a nullable optional boolean to one of three values.
+ *
+ * @example
+ * ```ts
+ * boolMap(value, ['Yes', 'No', 'Not Sure'])
+ * boolMap(isEnabled, ['On', 'Off', 'Default'])
+ * ```
+ */
+export const boolMap = <T>(value: boolean | null | undefined, [onTrue, onFalse, onNullOrUndefined]: [T, T, T]) =>
+	value === true ? onTrue : value === false ? onFalse : onNullOrUndefined
