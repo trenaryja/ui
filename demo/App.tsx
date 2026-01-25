@@ -73,7 +73,7 @@ export const App = () => {
 						<LuPanelLeft className='size-5' />
 					</label>
 					<span>{currentDemo?.meta.title}</span>
-					<ThemePicker />
+					<ThemePicker variant='popover' position='bottom end' />
 				</header>
 
 				<main className='full-bleed-container h-full'>{PageContent}</main>
