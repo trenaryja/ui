@@ -32,8 +32,6 @@ export function Demo() {
 				</Field>
 			</div>
 
-			<hr className='w-full opacity-25' />
-
 			<Fieldset legend='Basic Usage' className='w-full max-w-sm'>
 				<Field label='Have you been here before?'>
 					<div className='flex items-center gap-2'>

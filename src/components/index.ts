@@ -1,5 +1,6 @@
 export { ThemeProvider } from '../lib/theme'
 
+export * from './AnimatedNumber/AnimatedNumber'
 export * from './AsciiImage/AsciiImage'
 export * from './AsciiVideo/AsciiVideo'
 export * from './BalancedGrid/BalancedGrid'

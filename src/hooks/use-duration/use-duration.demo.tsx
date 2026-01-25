@@ -1,4 +1,5 @@
-import { CountdownBox, durationUnitsWithoutMs } from '@/demos/utils'
+import { AnimatedNumber } from '@/components'
+import { durationUnitsWithoutMs } from '@/demos/utils'
 import { useDuration } from '@/hooks'
 import type { DurationUnit } from '@/utils'
 import { durationUnitMap, randomDate, toDateTimeLocal } from '@/utils'
@@ -7,7 +8,7 @@ import { Fragment, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'useDuration', category: 'hooks' }
 
-export const Demo = () => {
+export function Demo() {
 	const [targetDate, setTargetDate] = useState<Date>(() => new Date(Date.now() + 1000 * 15))
 	const [selectedUnits, setSelectedUnits] = useState<DurationUnit[]>(['days', 'hours', 'minutes', 'seconds'])
 
@@ -16,9 +17,8 @@ export const Demo = () => {
 	const toggleUnit = (unit: DurationUnit) =>
 		setSelectedUnits((prev) => (prev.includes(unit) ? prev.filter((u) => u !== unit) : [...prev, unit]))
 
-	const adjustByUnit = (unit: DurationUnit, amount: number) => {
+	const adjustByUnit = (unit: DurationUnit, amount: number) =>
 		setTargetDate((d) => durationUnitMap[unit].add(d, amount))
-	}
 
 	return (
 		<div className='demo'>
@@ -26,7 +26,10 @@ export const Demo = () => {
 				{durationUnitsWithoutMs
 					.filter((u) => selectedUnits.includes(u))
 					.map((unit) => (
-						<CountdownBox key={unit} label={unit} value={duration[unit]} />
+						<div key={unit} className='alert'>
+							<AnimatedNumber className='text-5xl' value={duration[unit]} />
+							<span className='text-center'>{unit}</span>
+						</div>
 					))}
 			</div>
 
@@ -36,10 +39,7 @@ export const Demo = () => {
 					className='input'
 					type='datetime-local'
 					value={toDateTimeLocal(targetDate)}
-					onChange={(e) => {
-						if (!e.target.value) return
-						setTargetDate(new Date(e.target.value))
-					}}
+					onChange={(e) => e.target.value && setTargetDate(new Date(e.target.value))}
 				/>
 				<button className='btn' type='button' onClick={() => setTargetDate(new Date())}>
 					Now
