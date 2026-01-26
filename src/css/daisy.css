@@ -89,3 +89,23 @@
 @utility toggle-indeterminate {
 	grid-template-columns: 0.5fr 1fr 0.5fr;
 }
+
+@utility checkbox-indeterminate {
+	background-color: var(
+		--input-color,
+		color-mix(in oklab, var(--color-base-content) 20%, #0000)
+	);
+	&::before {
+		opacity: 1;
+		clip-path: polygon(
+			20% 100%,
+			20% 80%,
+			50% 80%,
+			50% 80%,
+			80% 80%,
+			80% 100%
+		);
+		translate: 0 -35%;
+		rotate: none;
+	}
+}

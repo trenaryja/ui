@@ -1,12 +1,11 @@
 import { useMergedRef, useUncontrolled } from '@mantine/hooks'
 import type { ComponentProps } from 'react'
 import { useEffect, useRef } from 'react'
-import { Toggle } from '../Input/Input'
+import { Toggle } from '../Toggle/Toggle'
 import { serializeTriToggleValue } from './TriToggle.utils'
 
 export type TriToggleValue = boolean | null | undefined
 
-// Export utilities for consumers
 export { parseTriToggleValue, serializeTriToggleValue } from './TriToggle.utils'
 
 export type TriToggleProps = Omit<
@@ -53,7 +52,6 @@ export const TriToggle = ({
 	const handleChange = () => {
 		if (isEffectivelyReadOnly) return
 		hasInteractedRef.current = true
-		// If required and has been interacted with, skip null in the cycle
 		const skipNull = required && hasInteractedRef.current
 		const nextValue = normalizedValue === null ? true : normalizedValue === true ? false : skipNull ? true : null
 		setValue(nextValue)

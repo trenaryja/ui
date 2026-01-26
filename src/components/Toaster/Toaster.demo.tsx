@@ -71,8 +71,7 @@ const GlobalSettings = ({ state, dispatch }: { state: ToastState; dispatch: Reac
 			{toastPositions.map((p) => (
 				<Radio
 					key={p}
-					className='reset btn btn-circle'
-					type='radio'
+					variant='btn'
 					name='position'
 					aria-label={toastPositionIcons[p]}
 					value={p}
@@ -138,8 +137,8 @@ const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: React
 				{toastPositions.map((p) => (
 					<Radio
 						key={p}
-						className='reset btn btn-circle'
-						type='radio'
+						variant='btn'
+						className='reset btn-circle'
 						name='toast-position'
 						aria-label={toastPositionIcons[p]}
 						value={p}
