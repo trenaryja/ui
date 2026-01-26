@@ -12,18 +12,15 @@ export function Demo() {
 
 			<Fieldset legend='Modifiers' className='flex flex-wrap gap-4 justify-center'>
 				<div className='flex flex-col items-center gap-1'>
-					<span className='text-sm opacity-60'>Disabled</span>
-					<TextArea disabled placeholder='Cannot edit' />
+					<TextArea disabled placeholder='Disabled' />
 				</div>
 				<div className='flex flex-col items-center gap-1'>
-					<span className='text-sm opacity-60'>ReadOnly</span>
-					<TextArea readOnly defaultValue='Read-only content' />
+					<TextArea readOnly defaultValue='ReadOnly' />
 				</div>
 			</Fieldset>
 
 			<Fieldset legend='Styles' className='flex justify-center'>
 				<div className='flex flex-col items-center gap-1'>
-					<span className='text-sm opacity-60'>Ghost</span>
 					<TextArea className='textarea-ghost' placeholder='Ghost style' />
 				</div>
 			</Fieldset>

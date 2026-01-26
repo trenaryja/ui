@@ -1,5 +1,5 @@
 import type { ToastPosition } from '@/components'
-import { Checkbox, Input, RadioGroup, Range, Select, TextArea, Toggle } from '@/components'
+import { Checkbox, Input, Radio, RadioGroup, Range, Select, TextArea, Toggle, TriToggle } from '@/components'
 import type { Arrow } from '@/utils'
 import { durationUnits, joinTyped } from '@/utils'
 import type { JSXElementConstructor, ReactElement, ReactNode } from 'react'
@@ -19,8 +19,10 @@ export const nest = <P,>(n: number, el: ReactElement<P>): ReactElement<P> => {
 export const controlMeta = {
 	input: <Input placeholder='Enter Text...' />,
 	textarea: <TextArea placeholder='Enter multiple lines...' />,
+	radio: <Radio />,
 	radioGroup: <RadioGroup options={['First', 'Second', 'Third']} />,
 	toggle: <Toggle />,
+	triToggle: <TriToggle />,
 	checkbox: <Checkbox />,
 	range: <Range />,
 	select: (

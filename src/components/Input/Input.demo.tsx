@@ -35,6 +35,17 @@ export function Demo() {
 				<Input placeholder='Large' className='input-lg' />
 				<Input placeholder='Extra Large' className='input-xl' />
 			</Fieldset>
+
+			<Fieldset legend='With Datalist' className='flex flex-wrap justify-center gap-4 items-center'>
+				<Input list='browsers' placeholder='Choose a browser' />
+				<datalist id='browsers'>
+					<option value='Chrome' />
+					<option value='Firefox' />
+					<option value='Safari' />
+					<option value='Edge' />
+					<option value='Opera' />
+				</datalist>
+			</Fieldset>
 		</div>
 	)
 }

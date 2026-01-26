@@ -1,4 +1,4 @@
-import { BalancedGrid, Modal } from '@/components'
+import { BalancedGrid, Input, Modal } from '@/components'
 import { useCycle } from '@/hooks'
 import { cn } from '@/utils'
 import { useClipboard, useDebouncedValue } from '@mantine/hooks'
@@ -87,9 +87,9 @@ export function SearchableGrid<TItem, TFamily extends string, TCopyKey extends s
 
 	return (
 		<div className={cn('full-bleed grid content-start gap-4 p-4', className)}>
-			<input
-				className='input w-full'
-				type='text'
+			<Input
+				className='w-full'
+				type='search'
 				value={query}
 				onChange={(e) => setQuery(e.target.value)}
 				placeholder={placeholder}

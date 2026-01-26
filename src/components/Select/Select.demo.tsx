@@ -92,6 +92,33 @@ export function Demo() {
 					{options}
 				</Select>
 			</Fieldset>
+
+			<Fieldset legend='With Optgroups' className='flex justify-center'>
+				<Select>
+					<option value=''>Choose a fruit</option>
+					<optgroup label='Citrus'>
+						<option value='orange'>Orange</option>
+						<option value='lemon'>Lemon</option>
+						<option value='grapefruit'>Grapefruit</option>
+					</optgroup>
+					<optgroup label='Berries'>
+						<option value='strawberry'>Strawberry</option>
+						<option value='blueberry'>Blueberry</option>
+						<option value='raspberry'>Raspberry</option>
+					</optgroup>
+					<optgroup label='Tropical'>
+						<option value='mango'>Mango</option>
+						<option value='pineapple'>Pineapple</option>
+						<option value='coconut' disabled>
+							Coconut (sold out)
+						</option>
+					</optgroup>
+					<optgroup label='Stone Fruits (seasonal)' disabled>
+						<option value='peach'>Peach</option>
+						<option value='plum'>Plum</option>
+					</optgroup>
+				</Select>
+			</Fieldset>
 		</div>
 	)
 }
