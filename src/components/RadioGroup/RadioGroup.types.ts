@@ -5,6 +5,8 @@ type BaseProps = Omit<ComponentProps<'input'>, 'children' | 'defaultValue' | 'ty
 	options: RadioOption[]
 	value?: string
 	defaultValue?: string
+	/** Allow clicking a selected radio to deselect it */
+	allowDeselect?: boolean
 }
 
 export type RadioGroupDefaultProps = BaseProps

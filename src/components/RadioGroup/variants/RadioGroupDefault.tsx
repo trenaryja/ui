@@ -13,14 +13,16 @@ export const RadioGroupDefault = ({
 	disabled,
 	readOnly,
 	onChange,
+	allowDeselect,
 	...inputProps
 }: RadioGroupDefaultProps) => {
-	const { name, value, options, handleChange } = useRadioGroup({
+	const { name, value, options, handleChange, handleClick, handleKeyDown } = useRadioGroup({
 		name: nameProp,
 		value: valueProp,
 		defaultValue,
 		options: optionsProp,
 		onChange,
+		allowDeselect,
 	})
 
 	return (
@@ -31,6 +33,8 @@ export const RadioGroupDefault = ({
 						name={name}
 						value={option.value}
 						onChange={handleChange}
+						onClick={handleClick}
+						onKeyDown={handleKeyDown}
 						disabled={option.disabled}
 						readOnly={readOnly}
 						checked={value === option.value}
