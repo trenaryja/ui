@@ -13,14 +13,16 @@ export const RadioGroupBtn = ({
 	disabled,
 	readOnly,
 	onChange,
+	allowDeselect,
 	...inputProps
 }: RadioGroupBtnProps) => {
-	const { name, value, options, handleChange } = useRadioGroup({
+	const { name, value, options, handleChange, handleClick, handleKeyDown } = useRadioGroup({
 		name: nameProp,
 		value: valueProp,
 		defaultValue,
 		options: optionsProp,
 		onChange,
+		allowDeselect,
 	})
 
 	return (
@@ -33,6 +35,8 @@ export const RadioGroupBtn = ({
 					value={option.value}
 					aria-label={option.label}
 					onChange={handleChange}
+					onClick={handleClick}
+					onKeyDown={handleKeyDown}
 					disabled={disabled || option.disabled}
 					readOnly={readOnly}
 					checked={value === option.value}

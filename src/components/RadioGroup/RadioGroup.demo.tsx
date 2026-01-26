@@ -58,6 +58,14 @@ export function Demo() {
 					classNames={{ container: 'join', item: 'join-item' }}
 				/>
 			</Fieldset>
+
+			<Fieldset legend='Allow Deselect' className='flex justify-center'>
+				<RadioGroup options={['Yes', 'No', 'Maybe']} defaultValue='Yes' allowDeselect />
+			</Fieldset>
+
+			<Fieldset legend='Allow Deselect (btn)' className='flex justify-center'>
+				<RadioGroup variant='btn' options={['S', 'M', 'L']} defaultValue='S' allowDeselect />
+			</Fieldset>
 		</div>
 	)
 }
