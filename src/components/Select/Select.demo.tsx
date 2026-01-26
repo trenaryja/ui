@@ -31,6 +31,12 @@ export function Demo() {
 						{options}
 					</Select>
 				</div>
+				<div className='flex flex-col items-center gap-1'>
+					<span className='text-sm opacity-60'>NativeDropdown</span>
+					<Select nativeDropdown defaultValue='1'>
+						{options}
+					</Select>
+				</div>
 			</Fieldset>
 
 			<Fieldset legend='Styles' className='flex justify-center'>
