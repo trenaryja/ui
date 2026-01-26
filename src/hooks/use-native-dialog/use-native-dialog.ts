@@ -69,5 +69,3 @@ export const useNativeDialog = ({ dialogId, hasEscapeKey, open, setOpen }: UseNa
 
 	return { closeNative, onCancel, onClose, openNative }
 }
-
-// TODO: add a demo page
