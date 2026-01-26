@@ -1,12 +1,12 @@
+'use client'
+
+import { cn } from '@/utils'
 import { useMergedRef, useUncontrolled } from '@mantine/hooks'
 import type { ComponentProps } from 'react'
 import { useEffect, useRef } from 'react'
 import { Toggle } from '../Toggle/Toggle'
-import { serializeTriToggleValue } from './TriToggle.utils'
 
 export type TriToggleValue = boolean | null | undefined
-
-export { parseTriToggleValue, serializeTriToggleValue } from './TriToggle.utils'
 
 export type TriToggleProps = Omit<
 	ComponentProps<'input'>,
@@ -15,9 +15,6 @@ export type TriToggleProps = Omit<
 	value?: TriToggleValue
 	defaultValue?: TriToggleValue
 	onChange?: (value: TriToggleValue) => void
-	name?: string
-	/** When true, prevents returning to null/indeterminate after first interaction */
-	required?: boolean
 }
 
 export const TriToggle = ({
@@ -27,34 +24,23 @@ export const TriToggle = ({
 	name,
 	ref,
 	readOnly,
-	required,
+	className,
 	...props
 }: TriToggleProps) => {
 	const inputRef = useRef<HTMLInputElement>(null)
 	const mergedRef = useMergedRef(inputRef, ref)
-	const hasInteractedRef = useRef(false)
 
-	const [currentValue, setValue, isControlled] = useUncontrolled<TriToggleValue>({
-		value,
-		defaultValue,
-		finalValue: null,
-		onChange,
-	})
+	const [currentValue, setValue] = useUncontrolled<TriToggleValue>({ value, defaultValue, finalValue: null, onChange })
 
-	const isEffectivelyReadOnly = readOnly || (isControlled && !onChange)
-
-	const normalizedValue = currentValue === null || currentValue === undefined ? null : currentValue
+	const isIndeterminate = currentValue == null
 
 	useEffect(() => {
-		if (inputRef.current) inputRef.current.indeterminate = normalizedValue === null
-	}, [normalizedValue])
+		if (inputRef.current) inputRef.current.indeterminate = isIndeterminate
+	}, [isIndeterminate])
 
 	const handleChange = () => {
-		if (isEffectivelyReadOnly) return
-		hasInteractedRef.current = true
-		const skipNull = required && hasInteractedRef.current
-		const nextValue = normalizedValue === null ? true : normalizedValue === true ? false : skipNull ? true : null
-		setValue(nextValue)
+		if (readOnly) return
+		setValue(isIndeterminate ? true : currentValue ? false : null)
 	}
 
 	return (
@@ -62,11 +48,13 @@ export const TriToggle = ({
 			<Toggle
 				{...props}
 				ref={mergedRef}
-				checked={normalizedValue === true}
-				readOnly={isEffectivelyReadOnly}
+				name={isIndeterminate ? undefined : name}
+				checked={currentValue === true}
+				readOnly={readOnly}
 				onChange={handleChange}
+				className={cn(isIndeterminate && 'toggle-indeterminate', className)}
 			/>
-			{name && <input type='hidden' name={name} value={serializeTriToggleValue(normalizedValue)} />}
+			{name && isIndeterminate && <input type='hidden' name={name} value='' />}
 		</>
 	)
 }

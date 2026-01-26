@@ -10,7 +10,7 @@ const DEFAULT_ICON_LIGHT = <FaSun />
 const DEFAULT_ICON_DARK = <FaMoon />
 const DEFAULT_ICON_SYSTEM = <FaCircleHalfStroke />
 
-const THEME_CYCLE = ['light', 'system', 'dark'] as const
+const THEME_CYCLE = ['system', 'light', 'dark'] as const
 
 export const ThemePickerToggle3Way = ({
 	className,
@@ -52,7 +52,7 @@ export const ThemePickerToggle3Way = ({
 			className={cn('toggle text-base-content', isSystem && 'toggle-indeterminate', className, classNames?.toggle)}
 			aria-label={`Theme: ${value}. Click to switch to ${next}`}
 		>
-			<input ref={inputRef} type='checkbox' checked={value === 'dark'} onChange={handleChange} />
+			<input ref={inputRef} type='checkbox' checked={value === 'light'} onChange={handleChange} />
 			<span className='scale-75'>{currentIcon}</span>
 			<span className='scale-75'>{currentIcon}</span>
 		</label>
