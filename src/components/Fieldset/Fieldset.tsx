@@ -12,5 +12,3 @@ export const Fieldset = ({ legend, children, className, legendClassName, ...prop
 		{children}
 	</fieldset>
 )
-
-// TODO: add stories file

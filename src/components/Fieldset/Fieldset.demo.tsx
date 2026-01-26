@@ -56,15 +56,15 @@ export function Demo() {
 					</Field>
 
 					<Field label='Range'>
-						<Range name='range' min={0} max={100} defaultValue={50} />
+						<Range name='range' />
 					</Field>
 
 					<Field label='Checkbox'>
-						<Checkbox name='checkbox' value='yes' />
+						<Checkbox name='checkbox' />
 					</Field>
 
 					<Field label='Toggle'>
-						<Toggle name='toggle' value='on' />
+						<Toggle name='toggle' />
 					</Field>
 
 					<Field label='TriToggle'>
@@ -74,10 +74,13 @@ export function Demo() {
 					<Field label='Radio'>
 						<div className='flex gap-4'>
 							<Field label='Option A' labelPlacement='right-center'>
-								<Radio name='radio' value='a' defaultChecked />
+								<Radio name='radio' value='a' />
 							</Field>
 							<Field label='Option B' labelPlacement='right-center'>
 								<Radio name='radio' value='b' />
+							</Field>
+							<Field label='None' labelPlacement='right-center'>
+								<Radio name='radio' />
 							</Field>
 						</div>
 					</Field>
@@ -88,6 +91,10 @@ export function Demo() {
 
 					<Field label='RadioGroup (btn allowDeselect)'>
 						<RadioGroup name='radiogroup-btn' variant='btn' allowDeselect options={['S', 'M', 'L']} defaultValue='S' />
+					</Field>
+
+					<Field label='RadioGroup (required)'>
+						<RadioGroup name='radiogroup-required' options={['Yes', 'No']} required allowDeselect />
 					</Field>
 
 					<Button type='submit' className='btn-primary btn-block'>

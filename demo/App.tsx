@@ -37,6 +37,7 @@ export const App = () => {
 
 					<div className='px-4'>
 						<Input
+							type='search'
 							placeholder='Search...'
 							className='input'
 							value={searchQuery}

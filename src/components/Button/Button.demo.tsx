@@ -7,6 +7,10 @@ export const meta: DemoMeta = { title: 'Button', category: 'components', tags: [
 export function Demo() {
 	return (
 		<div className='demo [&_legend]:text-center'>
+			<Fieldset legend='Default' className='flex justify-center'>
+				<Button>Button</Button>
+			</Fieldset>
+
 			<Fieldset legend='Colors' className='flex flex-wrap gap-2 items-center'>
 				<Button className='btn-neutral'>Neutral</Button>
 				<Button className='btn-primary'>Primary</Button>

@@ -15,5 +15,3 @@ export const TextArea = ({ className, readOnly, tabIndex, ...props }: ComponentP
 		{...props}
 	/>
 )
-
-// TODO: add stories file
