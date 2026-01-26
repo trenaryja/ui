@@ -10,7 +10,7 @@ export { parseTriToggleValue, serializeTriToggleValue } from './TriToggle.utils'
 
 export type TriToggleProps = Omit<
 	ComponentProps<'input'>,
-	'checked' | 'defaultChecked' | 'onChange' | 'type' | 'value'
+	'checked' | 'defaultChecked' | 'defaultValue' | 'onChange' | 'type' | 'value'
 > & {
 	value?: TriToggleValue
 	defaultValue?: TriToggleValue
