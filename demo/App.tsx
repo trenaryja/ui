@@ -17,7 +17,11 @@ export const App = () => {
 	const filterDemos = (categoryDemos: (typeof demosByCategory)[string]) => {
 		if (!searchQuery.trim()) return categoryDemos
 		const query = searchQuery.toLowerCase()
-		return categoryDemos.filter((demo) => demo.meta.title.toLowerCase().includes(query))
+		return categoryDemos.filter(
+			(demo) =>
+				demo.meta.title.toLowerCase().includes(query) ||
+				demo.meta.tags?.some((tag) => tag.toLowerCase().includes(query)),
+		)
 	}
 
 	return (
@@ -55,7 +59,14 @@ export const App = () => {
 										<ul>
 											{filteredDemos.map((demo) => (
 												<li key={demo.id} className={cn({ 'menu-active': route === demo.id })}>
-													<a href={`/#${demo.id}`}>{demo.meta.title}</a>
+													<a href={`/#${demo.id}`}>
+														{demo.meta.title}
+														{demo.meta.tags?.map((tag) => (
+															<span key={tag} className='badge badge-xs badge-soft'>
+																{tag}
+															</span>
+														))}
+													</a>
 												</li>
 											))}
 										</ul>

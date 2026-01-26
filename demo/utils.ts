@@ -11,7 +11,7 @@ export const categoryLabels = {
 	other: 'Other',
 } as const satisfies Record<Category, unknown>
 
-export type DemoMeta = { title: string; category: Category }
+export type DemoMeta = { title: string; category: Category; tags?: string[] }
 
 type DemoModule = { meta: DemoMeta; Demo: React.ComponentType }
 
