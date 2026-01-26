@@ -8,6 +8,7 @@ storybook-static
 _generated
 .vercel
 .claude
+.playwright-mcp
 .env*.local
 project-memory
 demo-dist
