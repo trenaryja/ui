@@ -5,16 +5,16 @@ export const Select = ({
 	className,
 	readOnly,
 	tabIndex,
+	nativeDropdown,
 	...props
-}: ComponentProps<'select'> & { readOnly?: boolean }) => (
+}: ComponentProps<'select'> & { readOnly?: boolean; nativeDropdown?: boolean }) => (
 	<select
-		className={cn('select', { 'pointer-events-none bg-none': readOnly }, className)}
+		className={cn('select', { 'pointer-events-none bg-none': readOnly, 'appearance-none': nativeDropdown }, className)}
 		tabIndex={(tabIndex ?? readOnly) ? -1 : undefined}
 		{...props}
 	/>
 )
 
-// TODO: add stories file
 // TODO: options prop for simplification of children (make mutually exclusive of children, or no?)
 // TODO: allowDeselect
 // TODO: allowSearch
