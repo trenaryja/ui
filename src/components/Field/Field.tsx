@@ -1,3 +1,4 @@
+import type { ClassNames } from '@/types'
 import type { Placement } from '@/utils'
 import { cn } from '@/utils'
 import type { ReactNode } from 'react'
@@ -6,22 +7,20 @@ import { Fieldset } from '../Fieldset/Fieldset'
 import type { FieldSlot } from './Field.utils'
 import { buildGrid, fieldSlots, getGridAlignment, getItemsAlign, placementToArea, slotBaseClasses } from './Field.utils'
 
-export type FieldProps = FieldsetProps & {
-	label?: ReactNode
-	labelPlacement?: Placement
-	hint?: ReactNode
-	hintPlacement?: Placement
-	error?: ReactNode
-	errorPlacement?: Placement
-	slotOrder?: readonly [FieldSlot, FieldSlot, FieldSlot]
-	classNames?: {
-		label?: string
-		control?: string
-		hint?: string
-		error?: string
-		group?: string
+export const fieldClassNames = ['control', 'error', 'group', 'hint', 'label']
+
+export type FieldClassNames = (typeof fieldClassNames)[number]
+
+export type FieldProps = ClassNames<FieldClassNames> &
+	FieldsetProps & {
+		label?: ReactNode
+		labelPlacement?: Placement
+		hint?: ReactNode
+		hintPlacement?: Placement
+		error?: ReactNode
+		errorPlacement?: Placement
+		slotOrder?: readonly [FieldSlot, FieldSlot, FieldSlot]
 	}
-}
 
 export const Field = ({
 	label,

@@ -1,4 +1,5 @@
 import type { PopoverPosition } from '@/hooks'
+import type { ClassNames } from '@/types'
 import type { ButtonHTMLAttributes, ComponentType, ReactElement, ReactNode } from 'react'
 import type { ModalProps } from '../Modal/Modal'
 
@@ -7,9 +8,6 @@ type Base = { className?: string }
 type Icons = { iconDark?: ReactNode; iconLight?: ReactNode }
 
 type Trigger = { trigger?: ReactElement<ButtonHTMLAttributes<HTMLButtonElement>> }
-
-// TODO: Move to a global types file and reuse in other components
-type ClassNames<T extends string> = { classNames?: Partial<Record<T, string>> }
 
 export type ThemePickerToggleProps = Base & ClassNames<'button' | 'icon' | 'label'> & Icons & { showLabel?: boolean }
 

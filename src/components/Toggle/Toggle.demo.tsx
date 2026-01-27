@@ -7,12 +7,12 @@ const noop = () => undefined
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center'>
-			<Fieldset legend='Default' className='flex justify-center'>
+		<div className='demo'>
+			<Fieldset legend='Default' className='fieldset-flex-examples'>
 				<Toggle />
 			</Fieldset>
 
-			<Fieldset legend='States' className='flex flex-wrap gap-4 items-center'>
+			<Fieldset legend='States' className='fieldset-flex-examples'>
 				<Field label='Off' labelPlacement='right-center'>
 					<Toggle readOnly checked={false} onChange={noop} />
 				</Field>
@@ -36,7 +36,15 @@ export function Demo() {
 				<Toggle readOnly checked={false} className='toggle-indeterminate justify-self-center' />
 			</Fieldset>
 
-			<Fieldset legend='Colors' className='flex flex-wrap gap-4 items-center'>
+			<Fieldset legend='Sizes' className='fieldset-flex-examples'>
+				<Toggle className='toggle-xs' defaultChecked />
+				<Toggle className='toggle-sm' defaultChecked />
+				<Toggle className='toggle-md' defaultChecked />
+				<Toggle className='toggle-lg' defaultChecked />
+				<Toggle className='toggle-xl' defaultChecked />
+			</Fieldset>
+
+			<Fieldset legend='Colors' className='fieldset-flex-examples'>
 				<Toggle className='toggle-primary' defaultChecked />
 				<Toggle className='toggle-secondary' defaultChecked />
 				<Toggle className='toggle-accent' defaultChecked />
@@ -45,14 +53,6 @@ export function Demo() {
 				<Toggle className='toggle-success' defaultChecked />
 				<Toggle className='toggle-warning' defaultChecked />
 				<Toggle className='toggle-error' defaultChecked />
-			</Fieldset>
-
-			<Fieldset legend='Sizes' className='flex flex-wrap gap-4 items-center'>
-				<Toggle className='toggle-xs' defaultChecked />
-				<Toggle className='toggle-sm' defaultChecked />
-				<Toggle className='toggle-md' defaultChecked />
-				<Toggle className='toggle-lg' defaultChecked />
-				<Toggle className='toggle-xl' defaultChecked />
 			</Fieldset>
 		</div>
 	)

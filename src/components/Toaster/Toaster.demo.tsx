@@ -77,6 +77,7 @@ const GlobalSettings = ({ state, dispatch }: { state: ToastState; dispatch: Reac
 					value={p}
 					checked={state.position === p}
 					onChange={(e) => dispatch({ position: e.target.value as ToastPosition })}
+					className='font-mono'
 				/>
 			))}
 		</Field>

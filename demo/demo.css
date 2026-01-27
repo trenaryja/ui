@@ -14,5 +14,9 @@
 }
 
 @utility demo {
-	@apply grid content-center place-items-center gap-10 size-full overflow-auto;
+	@apply grid content-center place-items-center gap-10 size-full p-2;
+}
+
+@utility fieldset-flex-examples {
+	@apply [&_legend]:text-center flex flex-wrap gap-2 items-center justify-center;
 }

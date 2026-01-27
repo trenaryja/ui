@@ -5,12 +5,12 @@ export const meta: DemoMeta = { title: 'TextArea', category: 'components', tags:
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center'>
-			<Fieldset legend='Default' className='flex justify-center'>
+		<div className='demo'>
+			<Fieldset legend='Default' className='fieldset-flex-examples'>
 				<TextArea placeholder='Type something...' />
 			</Fieldset>
 
-			<Fieldset legend='Modifiers' className='flex flex-wrap gap-4 justify-center'>
+			<Fieldset legend='Modifiers' className='fieldset-flex-examples'>
 				<div className='flex flex-col items-center gap-1'>
 					<TextArea disabled placeholder='Disabled' />
 				</div>
@@ -19,13 +19,21 @@ export function Demo() {
 				</div>
 			</Fieldset>
 
-			<Fieldset legend='Styles' className='flex justify-center'>
+			<Fieldset legend='Styles' className='fieldset-flex-examples'>
 				<div className='flex flex-col items-center gap-1'>
 					<TextArea className='textarea-ghost' placeholder='Ghost style' />
 				</div>
 			</Fieldset>
 
-			<Fieldset legend='Colors' className='flex flex-wrap gap-4 justify-center'>
+			<Fieldset legend='Sizes' className='fieldset-flex-examples items-start'>
+				<TextArea className='textarea-xs' placeholder='Extra Small' />
+				<TextArea className='textarea-sm' placeholder='Small' />
+				<TextArea className='textarea-md' placeholder='Medium' />
+				<TextArea className='textarea-lg' placeholder='Large' />
+				<TextArea className='textarea-xl' placeholder='Extra Large' />
+			</Fieldset>
+
+			<Fieldset legend='Colors' className='fieldset-flex-examples'>
 				<TextArea className='textarea-primary' placeholder='Primary' />
 				<TextArea className='textarea-secondary' placeholder='Secondary' />
 				<TextArea className='textarea-accent' placeholder='Accent' />
@@ -34,14 +42,6 @@ export function Demo() {
 				<TextArea className='textarea-success' placeholder='Success' />
 				<TextArea className='textarea-warning' placeholder='Warning' />
 				<TextArea className='textarea-error' placeholder='Error' />
-			</Fieldset>
-
-			<Fieldset legend='Sizes' className='flex flex-wrap gap-4 items-start justify-center'>
-				<TextArea className='textarea-xs' placeholder='Extra Small' />
-				<TextArea className='textarea-sm' placeholder='Small' />
-				<TextArea className='textarea-md' placeholder='Medium' />
-				<TextArea className='textarea-lg' placeholder='Large' />
-				<TextArea className='textarea-xl' placeholder='Extra Large' />
 			</Fieldset>
 		</div>
 	)

@@ -5,12 +5,12 @@ export const meta: DemoMeta = { title: 'TriToggle', category: 'components', tags
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center'>
-			<Fieldset legend='Default' className='flex justify-center'>
+		<div className='demo'>
+			<Fieldset legend='Default' className='fieldset-flex-examples'>
 				<TriToggle />
 			</Fieldset>
 
-			<Fieldset legend='States' className='flex flex-wrap gap-4 items-center'>
+			<Fieldset legend='States' className='fieldset-flex-examples'>
 				<Field label='Null' labelPlacement='right-center'>
 					<TriToggle value={null} />
 				</Field>
@@ -39,7 +39,15 @@ export function Demo() {
 				<TriToggle required defaultValue className='justify-self-center' />
 			</Fieldset>
 
-			<Fieldset legend='Colors' className='flex flex-wrap gap-4 items-center'>
+			<Fieldset legend='Sizes' className='fieldset-flex-examples'>
+				<TriToggle className='toggle-xs' defaultValue />
+				<TriToggle className='toggle-sm' defaultValue />
+				<TriToggle className='toggle-md' defaultValue />
+				<TriToggle className='toggle-lg' defaultValue />
+				<TriToggle className='toggle-xl' defaultValue />
+			</Fieldset>
+
+			<Fieldset legend='Colors' className='fieldset-flex-examples'>
 				<TriToggle className='toggle-primary' defaultValue />
 				<TriToggle className='toggle-secondary' defaultValue />
 				<TriToggle className='toggle-accent' defaultValue />
@@ -48,14 +56,6 @@ export function Demo() {
 				<TriToggle className='toggle-success' defaultValue />
 				<TriToggle className='toggle-warning' defaultValue />
 				<TriToggle className='toggle-error' defaultValue />
-			</Fieldset>
-
-			<Fieldset legend='Sizes' className='flex flex-wrap gap-4 items-center'>
-				<TriToggle className='toggle-xs' defaultValue />
-				<TriToggle className='toggle-sm' defaultValue />
-				<TriToggle className='toggle-md' defaultValue />
-				<TriToggle className='toggle-lg' defaultValue />
-				<TriToggle className='toggle-xl' defaultValue />
 			</Fieldset>
 		</div>
 	)

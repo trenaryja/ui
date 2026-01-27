@@ -1,4 +1,5 @@
 import type { RadioOption } from '@/hooks'
+import type { ClassNames } from '@/types'
 import type { ComponentProps, ComponentType } from 'react'
 
 type BaseProps = Omit<ComponentProps<'input'>, 'children' | 'defaultValue' | 'type' | 'value'> & {
@@ -11,9 +12,7 @@ type BaseProps = Omit<ComponentProps<'input'>, 'children' | 'defaultValue' | 'ty
 
 export type RadioGroupDefaultProps = BaseProps
 
-export type RadioGroupBtnProps = BaseProps & {
-	classNames?: Partial<Record<'container' | 'item', string>>
-}
+export type RadioGroupBtnProps = BaseProps & ClassNames<'container' | 'item'>
 
 type VariantProps = {
 	default: RadioGroupDefaultProps
