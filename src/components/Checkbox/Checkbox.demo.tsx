@@ -7,12 +7,12 @@ const noop = () => undefined
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center'>
-			<Fieldset legend='Default' className='flex justify-center'>
+		<div className='demo'>
+			<Fieldset legend='Default' className='fieldset-flex-examples'>
 				<Checkbox />
 			</Fieldset>
 
-			<Fieldset legend='States' className='flex flex-wrap gap-4 items-center'>
+			<Fieldset legend='States' className='fieldset-flex-examples'>
 				<Field label='Unchecked' labelPlacement='right-center'>
 					<Checkbox checked={false} onChange={noop} />
 				</Field>
@@ -37,7 +37,15 @@ export function Demo() {
 				<Checkbox readOnly checked={false} className='checkbox-indeterminate justify-self-center' />
 			</Fieldset>
 
-			<Fieldset legend='Colors' className='flex flex-wrap gap-4 items-center'>
+			<Fieldset legend='Sizes' className='fieldset-flex-examples'>
+				<Checkbox className='checkbox-xs' defaultChecked />
+				<Checkbox className='checkbox-sm' defaultChecked />
+				<Checkbox className='checkbox-md' defaultChecked />
+				<Checkbox className='checkbox-lg' defaultChecked />
+				<Checkbox className='checkbox-xl' defaultChecked />
+			</Fieldset>
+
+			<Fieldset legend='Colors' className='fieldset-flex-examples'>
 				<Checkbox className='checkbox-primary' defaultChecked />
 				<Checkbox className='checkbox-secondary' defaultChecked />
 				<Checkbox className='checkbox-accent' defaultChecked />
@@ -46,14 +54,6 @@ export function Demo() {
 				<Checkbox className='checkbox-success' defaultChecked />
 				<Checkbox className='checkbox-warning' defaultChecked />
 				<Checkbox className='checkbox-error' defaultChecked />
-			</Fieldset>
-
-			<Fieldset legend='Sizes' className='flex flex-wrap gap-4 items-center'>
-				<Checkbox className='checkbox-xs' defaultChecked />
-				<Checkbox className='checkbox-sm' defaultChecked />
-				<Checkbox className='checkbox-md' defaultChecked />
-				<Checkbox className='checkbox-lg' defaultChecked />
-				<Checkbox className='checkbox-xl' defaultChecked />
 			</Fieldset>
 		</div>
 	)

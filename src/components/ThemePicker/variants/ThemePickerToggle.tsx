@@ -2,12 +2,12 @@
 
 import { useTheme } from '@/hooks'
 import { cn } from '@/utils'
-import { FaMoon, FaSun } from 'react-icons/fa6'
+import { LuMoon, LuSun } from 'react-icons/lu'
 import type { ThemePickerToggleProps } from '../ThemePicker.types'
 import { getNextToggleTheme, resolveThemeMode } from '../ThemePicker.utils'
 
-const DEFAULT_ICON_LIGHT = <FaSun />
-const DEFAULT_ICON_DARK = <FaMoon />
+const DEFAULT_ICON_LIGHT = <LuSun />
+const DEFAULT_ICON_DARK = <LuMoon />
 
 export const ThemePickerToggle = ({
 	className,

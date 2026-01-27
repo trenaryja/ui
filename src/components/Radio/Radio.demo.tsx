@@ -7,13 +7,13 @@ const noop = () => undefined
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center'>
-			<Fieldset legend='Default' className='flex justify-center gap-4'>
+		<div className='demo'>
+			<Fieldset legend='Default' className='fieldset-flex-examples'>
 				<Radio name='default' />
 				<Radio name='default' />
 			</Fieldset>
 
-			<Fieldset legend='States' className='flex flex-wrap gap-4 items-center'>
+			<Fieldset legend='States' className='fieldset-flex-examples'>
 				<Field label='Unchecked' labelPlacement='right-center'>
 					<Radio readOnly checked={false} onChange={noop} />
 				</Field>
@@ -32,7 +32,15 @@ export function Demo() {
 				<Radio readOnly checked className='justify-self-center' />
 			</Fieldset>
 
-			<Fieldset legend='Colors' className='flex flex-wrap gap-6 items-center'>
+			<Fieldset legend='Sizes' className='fieldset-flex-examples'>
+				<Radio name='sizes' className='radio-xs' />
+				<Radio name='sizes' className='radio-sm' />
+				<Radio name='sizes' className='radio-md' defaultChecked />
+				<Radio name='sizes' className='radio-lg' />
+				<Radio name='sizes' className='radio-xl' />
+			</Fieldset>
+
+			<Fieldset legend='Colors' className='fieldset-flex-examples gap-6'>
 				<div className='flex flex-col gap-1'>
 					<Radio name='primary' className='radio-primary' defaultChecked />
 					<Radio name='primary' className='radio-primary' />
@@ -67,21 +75,13 @@ export function Demo() {
 				</div>
 			</Fieldset>
 
-			<Fieldset legend='Sizes' className='flex flex-wrap gap-4 items-center'>
-				<Radio name='sizes' className='radio-xs' />
-				<Radio name='sizes' className='radio-sm' />
-				<Radio name='sizes' className='radio-md' defaultChecked />
-				<Radio name='sizes' className='radio-lg' />
-				<Radio name='sizes' className='radio-xl' />
-			</Fieldset>
-
-			<Fieldset legend='Button Variant' className='flex justify-center gap-2'>
+			<Fieldset legend='Button Variant' className='fieldset-flex-examples'>
 				<Radio variant='btn' name='btn-variant' aria-label='Small' defaultChecked />
 				<Radio variant='btn' name='btn-variant' aria-label='Medium' />
 				<Radio variant='btn' name='btn-variant' aria-label='Large' />
 			</Fieldset>
 
-			<Fieldset legend='Button Variant (Join)' className='flex justify-center'>
+			<Fieldset legend='Button Variant (Join)' className='fieldset-flex-examples'>
 				<div className='join'>
 					<Radio variant='btn' name='btn-join' aria-label='Small' className='join-item' defaultChecked />
 					<Radio variant='btn' name='btn-join' aria-label='Medium' className='join-item' />

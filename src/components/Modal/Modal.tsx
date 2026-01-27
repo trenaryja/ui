@@ -1,6 +1,7 @@
 'use client'
 
 import { useNativeDialog } from '@/hooks'
+import type { ClassNames } from '@/types'
 import { cn } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
 import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
@@ -16,16 +17,11 @@ export type ModalApi = {
 	open: () => void
 }
 
-export type ModalClassNames = {
-	dialog: string
-	box: string
-	closeButton: string
-	closeIcon: string
-	backdrop: string
-	backdropButton: string
-}
+export const modalClassNames = ['backdrop', 'backdropButton', 'box', 'closeButton', 'closeIcon', 'dialog']
 
-export type ModalProps = {
+export type ModalClassNames = (typeof modalClassNames)[number]
+
+export type ModalProps = ClassNames<ModalClassNames> & {
 	id?: string
 	open?: boolean
 	defaultOpen?: boolean
@@ -33,7 +29,6 @@ export type ModalProps = {
 	trigger?: ReactElement<ButtonHTMLAttributes<HTMLButtonElement>>
 	children: ((api: ModalApi) => ReactNode) | ReactNode
 	className?: string
-	classNames?: Partial<ModalClassNames>
 	dismissOptions?: boolean | readonly ModalDismissOption[]
 	backdropBlur?: boolean
 	backdropTransparent?: boolean

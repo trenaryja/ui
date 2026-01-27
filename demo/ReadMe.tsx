@@ -22,7 +22,7 @@ export const ReadMe = () => {
 	const [lastCopied, setLastCopied] = useState<string | null>(null)
 
 	return (
-		<div className='prose prose-img:inline-block prose-img:m-0 max-w-full overflow-auto'>
+		<div className='prose prose-img:inline-block prose-img:m-0 max-w-full overflow-fade p-4'>
 			<img alt='' className='fixed grayscale opacity-5 object-cover inset-0 size-full -z-10' src={randomBackground} />
 			<ReactMarkdown
 				rehypePlugins={[raw]}

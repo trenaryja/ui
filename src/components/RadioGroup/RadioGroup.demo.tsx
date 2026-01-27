@@ -5,12 +5,12 @@ export const meta: DemoMeta = { title: 'RadioGroup', category: 'components', tag
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center'>
-			<Fieldset legend='String Options' className='flex justify-center'>
+		<div className='demo'>
+			<Fieldset legend='String Options' className='fieldset-flex-examples'>
 				<RadioGroup options={['Small', 'Medium', 'Large']} defaultValue='Small' />
 			</Fieldset>
 
-			<Fieldset legend='Object Options' className='flex justify-center'>
+			<Fieldset legend='Object Options' className='fieldset-flex-examples'>
 				<RadioGroup
 					options={[
 						{ value: 'sm', label: 'Small' },
@@ -21,7 +21,7 @@ export function Demo() {
 				/>
 			</Fieldset>
 
-			<Fieldset legend='Disabled Option' className='flex justify-center'>
+			<Fieldset legend='Disabled Option' className='fieldset-flex-examples'>
 				<RadioGroup
 					options={[
 						{ value: 'free', label: 'Free' },
@@ -32,25 +32,25 @@ export function Demo() {
 				/>
 			</Fieldset>
 
-			<Fieldset legend='Disabled Group' className='flex justify-center'>
+			<Fieldset legend='Disabled Group' className='fieldset-flex-examples'>
 				<RadioGroup options={['Yes', 'No', 'Maybe']} defaultValue='Yes' disabled />
 			</Fieldset>
 
-			<Fieldset legend='ReadOnly' className='flex justify-center'>
+			<Fieldset legend='ReadOnly' className='fieldset-flex-examples'>
 				<RadioGroup options={['Yes', 'No', 'Maybe']} defaultValue='Yes' readOnly />
 			</Fieldset>
 
-			<Fieldset legend='With Field' className='flex justify-center'>
+			<Fieldset legend='With Field' className='fieldset-flex-examples'>
 				<Field label='Priority'>
 					<RadioGroup options={['Low', 'Medium', 'High']} defaultValue='Low' />
 				</Field>
 			</Fieldset>
 
-			<Fieldset legend='Button Variant' className='flex justify-center'>
+			<Fieldset legend='Button Variant' className='fieldset-flex-examples'>
 				<RadioGroup variant='btn' options={['Small', 'Medium', 'Large']} defaultValue='Small' />
 			</Fieldset>
 
-			<Fieldset legend='Button Variant (Join)' className='flex justify-center'>
+			<Fieldset legend='Button Variant (Join)' className='fieldset-flex-examples'>
 				<RadioGroup
 					variant='btn'
 					options={['Small', 'Medium', 'Large']}
@@ -59,11 +59,11 @@ export function Demo() {
 				/>
 			</Fieldset>
 
-			<Fieldset legend='Allow Deselect' className='flex justify-center'>
+			<Fieldset legend='Allow Deselect' className='fieldset-flex-examples'>
 				<RadioGroup options={['Yes', 'No', 'Maybe']} defaultValue='Yes' allowDeselect />
 			</Fieldset>
 
-			<Fieldset legend='Allow Deselect (btn)' className='flex justify-center'>
+			<Fieldset legend='Allow Deselect (btn)' className='fieldset-flex-examples'>
 				<RadioGroup variant='btn' options={['S', 'M', 'L']} defaultValue='S' allowDeselect />
 			</Fieldset>
 		</div>

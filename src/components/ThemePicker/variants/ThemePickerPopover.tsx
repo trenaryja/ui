@@ -3,7 +3,7 @@
 import { useNativePopover, useTheme } from '@/hooks'
 import { cn } from '@/utils'
 import { useState } from 'react'
-import { FaPalette } from 'react-icons/fa6'
+import { LuPalette } from 'react-icons/lu'
 import type { ThemePickerPopoverProps } from '../ThemePicker.types'
 import { filterThemes } from '../ThemePicker.utils'
 
@@ -23,7 +23,7 @@ export const ThemePickerPopover = ({
 	return (
 		<>
 			<button type='button' className={cn('btn btn-square btn-ghost', className)} {...triggerProps}>
-				{trigger || <FaPalette />}
+				{trigger || <LuPalette />}
 			</button>
 
 			<div

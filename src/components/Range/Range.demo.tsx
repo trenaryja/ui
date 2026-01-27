@@ -5,12 +5,12 @@ export const meta: DemoMeta = { title: 'Range', category: 'components', tags: ['
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center [&_fieldset]:w-full'>
-			<Fieldset legend='Default' className='flex flex-col gap-2 items-center'>
+		<div className='demo [&_fieldset]:w-full'>
+			<Fieldset legend='Default' className='fieldset-flex-examples flex-col'>
 				<Range />
 			</Fieldset>
 
-			<Fieldset legend='Modifiers' className='flex flex-col gap-4 items-center w-full'>
+			<Fieldset legend='Modifiers' className='fieldset-flex-examples flex-col'>
 				<div className='flex items-center gap-4'>
 					<span className='text-sm opacity-60 w-20'>Disabled</span>
 					<Range disabled className='flex-1' />
@@ -21,7 +21,15 @@ export function Demo() {
 				</div>
 			</Fieldset>
 
-			<Fieldset legend='Colors' className='flex flex-col gap-2 items-center'>
+			<Fieldset legend='Sizes' className='fieldset-flex-examples flex-col'>
+				<Range className='range-xs' />
+				<Range className='range-sm' />
+				<Range className='range-md' />
+				<Range className='range-lg' />
+				<Range className='range-xl' />
+			</Fieldset>
+
+			<Fieldset legend='Colors' className='fieldset-flex-examples flex-col'>
 				<Range className='range-primary' />
 				<Range className='range-secondary' />
 				<Range className='range-accent' />
@@ -32,15 +40,7 @@ export function Demo() {
 				<Range className='range-error' />
 			</Fieldset>
 
-			<Fieldset legend='Sizes' className='flex flex-col gap-2 items-center'>
-				<Range className='range-xs' />
-				<Range className='range-sm' />
-				<Range className='range-md' />
-				<Range className='range-lg' />
-				<Range className='range-xl' />
-			</Fieldset>
-
-			<Fieldset legend='With Datalist (stops at 33, 66, and 69)' className='flex justify-center'>
+			<Fieldset legend='With Datalist (stops at 33, 66, and 69)' className='fieldset-flex-examples'>
 				<Range list='stops' />
 				<datalist id='stops'>
 					<option value={33} />

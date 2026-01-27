@@ -45,8 +45,8 @@ export const App = () => {
 						/>
 					</div>
 
-					<nav className='overflow-auto'>
-						<ul className='menu'>
+					<nav className='overflow-fade size-full'>
+						<ul className='menu w-full'>
 							{categories.map((category) => {
 								const categoryDemos = demosByCategory[category]
 								if (!categoryDemos?.length) return null
@@ -79,16 +79,16 @@ export const App = () => {
 				</aside>
 			</div>
 
-			<div className='drawer-content flex flex-col min-h-dvh'>
-				<header className='navbar justify-between bg-base-200'>
-					<label htmlFor='sidebar' className='btn btn-ghost btn-square lg:invisible'>
-						<LuPanelLeft className='size-5' />
+			<div className='drawer-content flex flex-col h-dvh'>
+				<header className='flex items-center p-2 justify-between bg-base-200'>
+					<label htmlFor='sidebar' className='btn btn-ghost btn-square  lg:invisible'>
+						<LuPanelLeft />
 					</label>
-					<span>{currentDemo?.meta.title}</span>
-					<ThemePicker variant='popover' position='bottom end' />
+					<span className='font-bold'>{currentDemo?.meta.title}</span>
+					<ThemePicker variant='popover' classNames={{ popover: 'mr-2' }} />
 				</header>
 
-				<main className='full-bleed-container h-full'>{PageContent}</main>
+				<main className='full-bleed-container overflow-fade size-full'>{PageContent}</main>
 			</div>
 		</div>
 	)

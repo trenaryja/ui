@@ -13,12 +13,12 @@ const options = (
 
 export function Demo() {
 	return (
-		<div className='demo [&_legend]:text-center'>
-			<Fieldset legend='Default' className='flex justify-center'>
+		<div className='demo'>
+			<Fieldset legend='Default' className='fieldset-flex-examples'>
 				<Select defaultValue='1'>{options}</Select>
 			</Fieldset>
 
-			<Fieldset legend='Modifiers' className='flex flex-wrap gap-4 justify-center'>
+			<Fieldset legend='Modifiers' className='fieldset-flex-examples'>
 				<div className='flex flex-col items-center gap-1'>
 					<span className='text-sm opacity-60'>Disabled</span>
 					<Select disabled defaultValue='1'>
@@ -39,7 +39,7 @@ export function Demo() {
 				</div>
 			</Fieldset>
 
-			<Fieldset legend='Styles' className='flex justify-center'>
+			<Fieldset legend='Styles' className='fieldset-flex-examples'>
 				<div className='flex flex-col items-center gap-1'>
 					<span className='text-sm opacity-60'>Ghost</span>
 					<Select className='select-ghost' defaultValue='1'>
@@ -48,7 +48,25 @@ export function Demo() {
 				</div>
 			</Fieldset>
 
-			<Fieldset legend='Colors' className='flex flex-wrap gap-4 justify-center'>
+			<Fieldset legend='Sizes' className='fieldset-flex-examples'>
+				<Select className='select-xs' defaultValue='1'>
+					{options}
+				</Select>
+				<Select className='select-sm' defaultValue='1'>
+					{options}
+				</Select>
+				<Select className='select-md' defaultValue='1'>
+					{options}
+				</Select>
+				<Select className='select-lg' defaultValue='1'>
+					{options}
+				</Select>
+				<Select className='select-xl' defaultValue='1'>
+					{options}
+				</Select>
+			</Fieldset>
+
+			<Fieldset legend='Colors' className='fieldset-flex-examples'>
 				<Select className='select-primary' defaultValue='1'>
 					{options}
 				</Select>
@@ -75,25 +93,7 @@ export function Demo() {
 				</Select>
 			</Fieldset>
 
-			<Fieldset legend='Sizes' className='flex flex-wrap gap-4 items-center justify-center'>
-				<Select className='select-xs' defaultValue='1'>
-					{options}
-				</Select>
-				<Select className='select-sm' defaultValue='1'>
-					{options}
-				</Select>
-				<Select className='select-md' defaultValue='1'>
-					{options}
-				</Select>
-				<Select className='select-lg' defaultValue='1'>
-					{options}
-				</Select>
-				<Select className='select-xl' defaultValue='1'>
-					{options}
-				</Select>
-			</Fieldset>
-
-			<Fieldset legend='With Optgroups' className='flex justify-center'>
+			<Fieldset legend='With Optgroups' className='fieldset-flex-examples'>
 				<Select>
 					<option value=''>Choose a fruit</option>
 					<optgroup label='Citrus'>

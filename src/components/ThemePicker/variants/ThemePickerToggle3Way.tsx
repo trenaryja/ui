@@ -3,12 +3,12 @@
 import { useCycle, useTheme } from '@/hooks'
 import { cn } from '@/utils'
 import { useEffect, useRef } from 'react'
-import { FaCircleHalfStroke, FaMoon, FaSun } from 'react-icons/fa6'
+import { LuMonitor, LuMoon, LuSun } from 'react-icons/lu'
 import type { ThemePickerToggle3WayProps } from '../ThemePicker.types'
 
-const DEFAULT_ICON_LIGHT = <FaSun />
-const DEFAULT_ICON_DARK = <FaMoon />
-const DEFAULT_ICON_SYSTEM = <FaCircleHalfStroke />
+const DEFAULT_ICON_LIGHT = <LuSun />
+const DEFAULT_ICON_DARK = <LuMoon />
+const DEFAULT_ICON_SYSTEM = <LuMonitor />
 
 const THEME_CYCLE = ['system', 'light', 'dark'] as const
 
