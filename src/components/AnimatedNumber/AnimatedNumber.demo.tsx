@@ -1,4 +1,4 @@
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useEffect, useState } from 'react'
 import { AnimatedNumber } from './AnimatedNumber'
 

@@ -1,8 +1,7 @@
 import { Button, ColorButton } from '@/components'
-import type { ButtonStyle } from '@/demos/utils'
-import { buttonStyles } from '@/demos/utils'
 import { cn, daisyThemeColors, tailwindPalette } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { ButtonStyle, DemoMeta } from '@demo'
+import { buttonStyles } from '@demo'
 import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'ColorButton', category: 'components' }

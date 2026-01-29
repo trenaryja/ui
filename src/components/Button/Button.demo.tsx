@@ -1,5 +1,5 @@
 import { Button, Fieldset } from '@/components'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { LuCircle, LuSquare } from 'react-icons/lu'
 
 export const meta: DemoMeta = { title: 'Button', category: 'components', tags: ['input'] }

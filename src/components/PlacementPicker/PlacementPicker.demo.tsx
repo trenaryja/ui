@@ -1,6 +1,6 @@
 import { Fieldset, PlacementPicker } from '@/components'
 import type { Placement } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'PlacementPicker', category: 'components' }

@@ -1,5 +1,5 @@
 import { useUnsavedChangesPrompt } from '@/hooks'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'useUnsavedChangesPrompt', category: 'hooks' }

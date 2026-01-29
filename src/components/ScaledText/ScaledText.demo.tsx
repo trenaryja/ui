@@ -1,5 +1,5 @@
 import { ScaledText, TextArea } from '@/components'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'ScaledText', category: 'components' }

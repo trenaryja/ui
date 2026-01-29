@@ -1,8 +1,8 @@
 import { BalancedGrid, Button } from '@/components'
-import { playingCards } from '@/demos/utils'
 import { useCycle as useCycleHook } from '@/hooks'
 import { cn } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
+import { playingCards } from '@demo'
 import { useMemo, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'useCycle', category: 'hooks' }
