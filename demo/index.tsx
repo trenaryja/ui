@@ -5,6 +5,8 @@ import { durationUnits, joinTyped } from '@/utils'
 import type { JSXElementConstructor, ReactElement, ReactNode } from 'react'
 import { createElement } from 'react'
 
+export * from './meta'
+
 export const picsum = async (size = 500) => await fetch(`https://picsum.photos/${size}`).then((res) => res.url)
 
 export const nest = <P,>(n: number, el: ReactElement<P>): ReactElement<P> => {

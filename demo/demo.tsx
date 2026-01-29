@@ -1,12 +1,16 @@
 import { Input, ThemePicker } from '@/components'
+import { ThemeProvider } from '@/hooks'
 import { cn } from '@/utils'
 import { useHash } from '@mantine/hooks'
-import { useState } from 'react'
+import { StrictMode, useState } from 'react'
+import { createRoot } from 'react-dom/client'
 import { LuPanelLeft } from 'react-icons/lu'
+import { categories, demos, demosByCategory } from './meta'
 import { ReadMe } from './ReadMe'
-import { categories, categoryLabels, demos, demosByCategory } from './utils'
 
-export const App = () => {
+import './demo.css'
+
+const App = () => {
 	const [hash] = useHash()
 	const route = hash.startsWith('#/') ? hash.slice(2) : hash.slice(1)
 	const [searchQuery, setSearchQuery] = useState('')
@@ -56,7 +60,7 @@ export const App = () => {
 
 								return (
 									<li key={category}>
-										<h2 className='menu-title'>{categoryLabels[category]}</h2>
+										<h2 className='menu-title capitalize'>{category}</h2>
 										<ul>
 											{filteredDemos.map((demo) => (
 												<li key={demo.id} className={cn({ 'menu-active': route === demo.id })}>
@@ -93,3 +97,11 @@ export const App = () => {
 		</div>
 	)
 }
+
+createRoot(document.getElementById('root')!).render(
+	<StrictMode>
+		<ThemeProvider>
+			<App />
+		</ThemeProvider>
+	</StrictMode>,
+)

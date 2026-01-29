@@ -3,25 +3,17 @@ import * as R from 'remeda'
 export const categories = ['components', 'hooks', 'classes', 'search', 'other'] as const
 export type Category = (typeof categories)[number]
 
-export const categoryLabels = {
-	components: 'Components',
-	hooks: 'Hooks',
-	classes: 'Classes',
-	search: 'Search',
-	other: 'Other',
-} as const satisfies Record<Category, unknown>
-
 export type DemoMeta = { title: string; category: Category; tags?: string[] }
 
 type DemoModule = { meta: DemoMeta; Demo: React.ComponentType }
 
-const modules = import.meta.glob<DemoModule>('../src/**/*.demo.tsx', { eager: true })
-
-export const demos = R.entries(modules).map(([path, mod]) => ({
-	...mod,
-	id: path.replace('../src/', '').replace('.demo.tsx', '').replace(/\//g, '-').toLowerCase(),
-	path,
-}))
+export const demos = R.entries(import.meta.glob<DemoModule>('../**/*.demo.tsx', { eager: true })).map(
+	([path, demo]) => ({
+		...demo,
+		id: path.split('/').pop()!.replace('.demo.tsx', '').toLowerCase(),
+		path,
+	}),
+)
 
 export const demosByCategory = R.reduce(
 	demos,
