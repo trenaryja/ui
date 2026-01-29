@@ -46,7 +46,18 @@ export const script = (config: ScriptConfig) => {
 		updateDOM(forcedTheme)
 	} else {
 		try {
-			const themeName = localStorage.getItem(storageKey) || defaultTheme
+			const stored = localStorage.getItem(storageKey)
+			// Handle both JSON-serialized values (from Mantine's useLocalStorage) and raw strings
+			let themeName = defaultTheme
+
+			if (stored) {
+				try {
+					themeName = JSON.parse(stored)
+				} catch {
+					themeName = stored
+				}
+			}
+
 			const isSystem = enableSystem && themeName === 'system'
 			const theme = isSystem ? getSystemTheme() : themeName
 			updateDOM(theme)
