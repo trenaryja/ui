@@ -1,6 +1,7 @@
 'use client'
 
-import { characterRamps, cn, useAscii } from '@/utils'
+import { useAscii } from '@/hooks'
+import { characterRamps, cn } from '@/utils'
 import type { ComponentProps } from 'react'
 import { useEffect } from 'react'
 import type { LiteralUnion } from 'type-fest'

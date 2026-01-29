@@ -1,7 +1,7 @@
 import { AsciiImage } from '@/components'
-import { picsum } from '@/demos/utils'
 import { characterRamps, cn } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
+import { picsum } from '@demo'
 import { useEffect, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'AsciiImage', category: 'components' }

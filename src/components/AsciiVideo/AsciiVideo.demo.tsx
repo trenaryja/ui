@@ -1,6 +1,6 @@
 import { AsciiVideo } from '@/components'
 import { characterRamps } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'AsciiVideo', category: 'components' }
