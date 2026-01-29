@@ -1,5 +1,5 @@
 import { useBreakpoint } from '@/hooks'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useState } from 'react'
 import * as R from 'remeda'
 

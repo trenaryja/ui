@@ -1,5 +1,5 @@
 import { ConditionalWrapper } from '@/components'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'ConditionalWrapper', category: 'components' }

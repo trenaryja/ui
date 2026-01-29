@@ -1,4 +1,4 @@
-import type { ThemeName } from '@/lib/theme'
+import type { ThemeName } from '@/hooks'
 
 /**
  * Smart toggle logic for 2-way theme switching

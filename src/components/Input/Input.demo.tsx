@@ -1,5 +1,5 @@
 import { Fieldset, Input } from '@/components'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 
 export const meta: DemoMeta = { title: 'Input', category: 'components', tags: ['input'] }
 

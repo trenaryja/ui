@@ -1,8 +1,7 @@
 import { Field, PlacementPicker, Select } from '@/components'
-import type { ControlName } from '@/demos/utils'
-import { controlMeta } from '@/demos/utils'
 import type { Placement } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { ControlName, DemoMeta } from '@demo'
+import { controlMeta } from '@demo'
 import { useState } from 'react'
 import * as R from 'remeda'
 

@@ -2,7 +2,7 @@
 
 import { Button, Field, Fieldset, Toggle } from '@/components'
 import { useNativeDialog } from '@/hooks'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useId, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'useNativeDialog', category: 'hooks' }

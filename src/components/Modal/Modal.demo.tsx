@@ -1,7 +1,7 @@
 import type { ModalDismissOption } from '@/components'
 import { Modal, MODAL_DISMISS_OPTIONS } from '@/components'
 import { cn } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { useMemo, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'Modal', category: 'components' }

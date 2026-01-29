@@ -1,5 +1,5 @@
 import { Field, Fieldset, RadioGroup } from '@/components'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 
 export const meta: DemoMeta = { title: 'RadioGroup', category: 'components', tags: ['input'] }
 

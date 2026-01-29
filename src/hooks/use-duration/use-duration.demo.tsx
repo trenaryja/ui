@@ -1,9 +1,9 @@
 import { AnimatedNumber } from '@/components'
-import { durationUnitsWithoutMs } from '@/demos/utils'
 import { useDuration } from '@/hooks'
 import type { DurationUnit } from '@/utils'
 import { durationUnitMap, randomDate, toDateTimeLocal } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
+import { durationUnitsWithoutMs } from '@demo'
 import { Fragment, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'useDuration', category: 'hooks' }

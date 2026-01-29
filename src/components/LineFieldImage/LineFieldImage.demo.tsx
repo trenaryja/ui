@@ -1,6 +1,6 @@
 import { LineFieldImage } from '@/components'
-import { picsum } from '@/demos/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
+import { picsum } from '@demo'
 import { useEffect, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'LineFieldImage', category: 'components' }

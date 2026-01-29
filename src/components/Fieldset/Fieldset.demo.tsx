@@ -12,7 +12,7 @@ import {
 	Toggle,
 	TriToggle,
 } from '@/components'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import type { FormEvent } from 'react'
 import { useState } from 'react'
 
