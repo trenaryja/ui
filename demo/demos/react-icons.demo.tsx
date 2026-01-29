@@ -1,4 +1,4 @@
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { IconType } from 'react-icons/lib'
 import * as R from 'remeda'

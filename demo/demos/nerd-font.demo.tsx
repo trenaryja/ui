@@ -1,5 +1,5 @@
 import glyphs from '@/data/glyphnames.json'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import * as R from 'remeda'
 
 import { SearchableGrid } from './SearchableGrid'

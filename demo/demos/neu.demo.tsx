@@ -1,6 +1,6 @@
 import { Range } from '@/components'
 import { cn } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 import type { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 
