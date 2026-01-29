@@ -10,7 +10,7 @@
 		"noEmit": true,
 		"paths": {
 			"@/*": ["./src/*"],
-			"@demo/*": ["./demo/*"]
+			"@demo": ["./demo/index.tsx"]
 		}
 	},
 	"include": ["**/*.ts", "**/*.tsx"],

@@ -18,10 +18,11 @@
 		"format": "prettier -w . !\"pnpm-lock.yaml\"",
 		"tsc": "tsc",
 		"build": "tsup",
+		"build:use-client": "tsx scripts/build-use-client.ts",
 		"build:css": "tsx scripts/build-css.ts",
 		"build:nf": "tsx scripts/build-nf.ts",
 		"build:demo": "vite build",
-		"postbuild": "pnpm build:css && pnpm build:nf && pnpm build:demo",
+		"postbuild": "pnpm build:use-client && pnpm build:css && pnpm build:nf && pnpm build:demo",
 		"get-latest": "pnpm up -L -i -r",
 		"release": "pnpm build && release-it --"
 	},
@@ -34,7 +35,11 @@
 		},
 		"./css": "./dist/css/index.css",
 		"./prose": "./dist/css/prose.css",
-		"./browser": "./dist/css/browser.css"
+		"./browser": "./dist/css/browser.css",
+		"./utils": {
+			"import": "./dist/utils/index.js",
+			"types": "./dist/utils/index.d.ts"
+		}
 	},
 	"files": [
 		"dist"
@@ -46,31 +51,31 @@
 		"@tailwindcss/typography": "^0.5.19",
 		"@tailwindcss/vite": "^4.1.18",
 		"@types/chroma-js": "^3.1.2",
-		"@types/node": "^25.0.9",
-		"@types/react": "^19.2.8",
+		"@types/node": "^25.1.0",
+		"@types/react": "^19.2.10",
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^5.1.2",
 		"clsx": "^2.1.1",
 		"concurrently": "^9.2.1",
 		"daisyui": "^5.5.14",
 		"eslint": "^9.39.2",
-		"prettier": "^3.8.0",
-		"react": "^19.2.3",
-		"react-dom": "^19.2.3",
+		"prettier": "^3.8.1",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
 		"react-icons": "^5.5.0",
 		"react-markdown": "^10.1.0",
 		"rehype-raw": "^7.0.0",
-		"release-it": "^19.2.3",
+		"release-it": "^19.2.4",
 		"tailwind-merge": "^3.4.0",
 		"tailwindcss": "^4.1.18",
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
-		"type-fest": "^5.4.1",
+		"type-fest": "^5.4.2",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
-		"@mantine/hooks": "^8.3.12",
+		"@mantine/hooks": "^8.3.13",
 		"chroma-js": "^3.2.0",
 		"date-fns": "^4.1.0",
 		"remeda": "^2.33.4",
@@ -117,7 +122,8 @@
 		"clean": true,
 		"dts": true,
 		"entry": [
-			"src/index.ts"
+			"src/index.ts",
+			"src/utils/index.ts"
 		],
 		"format": "esm",
 		"treeshake": true,
