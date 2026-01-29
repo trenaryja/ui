@@ -1,5 +1,5 @@
 import { cn } from '@/utils'
-import type { DemoMeta } from '@demo/utils'
+import type { DemoMeta } from '@demo'
 
 export const meta: DemoMeta = { title: 'surface', category: 'classes' }
 

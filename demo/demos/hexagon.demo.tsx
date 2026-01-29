@@ -1,5 +1,5 @@
-import type { DemoMeta } from '@demo/utils'
-import { nest } from './utils'
+import type { DemoMeta } from '@demo'
+import { nest } from '@demo'
 
 export const meta: DemoMeta = { title: 'hexagon', category: 'classes' }
 
