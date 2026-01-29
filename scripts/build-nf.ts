@@ -1,3 +1,4 @@
+import { execSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import { dataDir, log } from './utils'
@@ -13,6 +14,7 @@ const downloadGlyphs = async () => {
 	delete json.METADATA
 	fs.mkdirSync(path.dirname(glyphsFile), { recursive: true })
 	fs.writeFileSync(glyphsFile, JSON.stringify(json, null, 2), 'utf-8')
+	execSync(`prettier --write "${glyphsFile}"`, { stdio: 'ignore' })
 	log('Saved glyphnames.json')
 }
 
