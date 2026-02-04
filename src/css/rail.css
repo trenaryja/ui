@@ -1,0 +1,31 @@
+.rail {
+	display: flex;
+	flex-direction: row;
+	interpolate-size: allow-keywords;
+}
+
+.rail > .rail-toggle {
+	appearance: none;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.rail-end {
+	flex-direction: row-reverse;
+}
+
+@custom-variant is-rail-open {
+	.rail:has(> .rail-toggle:checked) &,
+	.rail.rail-open & {
+		@slot;
+	}
+}
+
+@custom-variant is-rail-close {
+	.rail:has(> .rail-toggle:not(:checked)):not(.rail-open) & {
+		@slot;
+	}
+}

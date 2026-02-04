@@ -150,3 +150,6 @@ export function SearchableGrid<TItem, TFamily extends string, TCopyKey extends s
 		</div>
 	)
 }
+
+// TODO: Add search to filter Modal
+// TODO: store filter state in url (make this a hook)

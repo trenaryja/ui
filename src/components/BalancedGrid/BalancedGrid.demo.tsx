@@ -35,7 +35,7 @@ export const Demo = () => {
 			</fieldset>
 			<BalancedGrid className='gap-2 place-items-center w-full' pack={pack} maxCols={maxCols}>
 				{[...Array(itemCount).keys()].map((i) => (
-					<div className='paper grid place-items-center h-20 w-full' key={i}>
+					<div className='surface grid place-items-center h-20 w-full' key={i}>
 						{i + 1}
 					</div>
 				))}
