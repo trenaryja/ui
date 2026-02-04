@@ -1,0 +1,95 @@
+@utility overflow-fade {
+	--fade-size: 2rem;
+	--fade-start: 0;
+	--fade-end: 1;
+	overflow: auto;
+	scroll-timeline:
+		--overflow-fade-y y,
+		--overflow-fade-x x;
+	animation:
+		overflow-fade-y linear,
+		overflow-fade-x linear;
+	animation-timeline: --overflow-fade-y, --overflow-fade-x;
+	mask-image:
+		linear-gradient(
+			to bottom,
+			rgb(0 0 0 / calc(1 - var(--fade-start))) 0%,
+			black var(--fade-size),
+			black calc(100% - var(--fade-size)),
+			rgb(0 0 0 / calc(1 - var(--fade-end))) 100%
+		),
+		linear-gradient(
+			to right,
+			rgb(0 0 0 / calc(1 - var(--fade-left, 0))) 0%,
+			black var(--fade-size),
+			black calc(100% - var(--fade-size)),
+			rgb(0 0 0 / calc(1 - var(--fade-right, 0))) 100%
+		);
+	mask-composite: intersect;
+}
+
+@utility overflow-y-fade {
+	--fade-size: 2rem;
+	--fade-start: 0;
+	--fade-end: 1;
+	overflow-y: auto;
+	scroll-timeline: --overflow-fade-y y;
+	animation: overflow-fade-y linear;
+	animation-timeline: --overflow-fade-y;
+	mask-image: linear-gradient(
+		to bottom,
+		rgb(0 0 0 / calc(1 - var(--fade-start))) 0%,
+		black var(--fade-size),
+		black calc(100% - var(--fade-size)),
+		rgb(0 0 0 / calc(1 - var(--fade-end))) 100%
+	);
+}
+
+@utility overflow-x-fade {
+	--fade-size: 2rem;
+	--fade-left: 0;
+	--fade-right: 1;
+	overflow-x: auto;
+	scroll-timeline: --overflow-fade-x x;
+	animation: overflow-fade-x linear;
+	animation-timeline: --overflow-fade-x;
+	mask-image: linear-gradient(
+		to right,
+		rgb(0 0 0 / calc(1 - var(--fade-left))) 0%,
+		black var(--fade-size),
+		black calc(100% - var(--fade-size)),
+		rgb(0 0 0 / calc(1 - var(--fade-right))) 100%
+	);
+}
+
+@keyframes overflow-fade-y {
+	0% {
+		--fade-start: 0;
+		--fade-end: 1;
+	}
+	1%,
+	99% {
+		--fade-start: 1;
+		--fade-end: 1;
+	}
+	100% {
+		--fade-start: 1;
+		--fade-end: 0;
+	}
+}
+
+@keyframes overflow-fade-x {
+	0% {
+		--fade-left: 0;
+		--fade-right: 1;
+	}
+	1%,
+	99% {
+		--fade-left: 1;
+		--fade-right: 1;
+	}
+	100% {
+		--fade-left: 1;
+		--fade-right: 0;
+	}
+}

@@ -30,7 +30,7 @@ export const ThemePickerPopover = ({
 				{...contentProps}
 				className={cn('dropdown shadow p-2 border border-current/20 rounded-box frosted-glass', classNames?.popover)}
 			>
-				<div className={cn('grid gap-2', classNames?.content)}>
+				<div className={cn('grid gap-2 grid-rows-[auto_1fr]', classNames?.content)}>
 					{showSearch && (
 						<input
 							type='search'
