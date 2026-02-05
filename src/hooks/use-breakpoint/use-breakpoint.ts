@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as R from 'remeda'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
@@ -15,24 +15,14 @@ type NormalizedBreakpoints<T extends Breakpoints | undefined> = Record<Breakpoin
 export const useBreakpoint = <const T extends Breakpoints = DefaultBreakpoints>(breakpoints?: T) => {
 	const [currentBreakpoint, setCurrentBreakpoint] = useState<BreakpointName<T>>('base')
 
-	const normalized = useMemo(
-		() =>
-			(breakpoints
-				? { base: '0rem', ...breakpoints }
-				: { base: '0rem', ...defaultTheme.screens }) as NormalizedBreakpoints<T>,
-		[breakpoints],
-	)
+	const normalized = (
+		breakpoints ? { base: '0rem', ...breakpoints } : { base: '0rem', ...defaultTheme.screens }
+	) as NormalizedBreakpoints<T>
 
-	const sorted = useMemo(
-		() => R.entries(normalized).sort(([, a], [, b]) => Number.parseFloat(a) - Number.parseFloat(b)),
-		[normalized],
-	)
+	const sorted = R.entries(normalized).sort(([, a], [, b]) => Number.parseFloat(a) - Number.parseFloat(b))
 
-	const ranked = useMemo(() => {
-		const m = new Map<BreakpointName<T>, number>()
-		sorted.forEach(([name], i) => m.set(name as BreakpointName<T>, i))
-		return m
-	}, [sorted])
+	const ranked = new Map<BreakpointName<T>, number>()
+	sorted.forEach(([name], i) => ranked.set(name as BreakpointName<T>, i))
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return
