@@ -1,9 +1,8 @@
 import { Checkbox, Field, Fieldset } from '@/components'
+import { noop } from '@/utils'
 import type { DemoMeta } from '@demo'
 
 export const meta: DemoMeta = { title: 'Checkbox', category: 'components', tags: ['input'] }
-
-const noop = () => undefined
 
 export function Demo() {
 	return (
@@ -30,7 +29,6 @@ export function Demo() {
 				<Checkbox disabled checked onChange={noop} className='justify-self-center' />
 				<Checkbox disabled checked={false} onChange={noop} className='checkbox-indeterminate justify-self-center' />
 
-				{/* ReadOnly row */}
 				<div className='text-sm opacity-60'>ReadOnly</div>
 				<Checkbox readOnly checked={false} className='justify-self-center' />
 				<Checkbox readOnly checked className='justify-self-center' />

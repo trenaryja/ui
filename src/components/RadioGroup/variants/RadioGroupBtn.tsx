@@ -37,7 +37,7 @@ export const RadioGroupBtn = ({
 					onChange={handleChange}
 					onClick={handleClick}
 					onKeyDown={handleKeyDown}
-					disabled={disabled || option.disabled}
+					disabled={disabled ?? option.disabled}
 					readOnly={readOnly}
 					checked={value === option.value}
 					className={classNames?.item}

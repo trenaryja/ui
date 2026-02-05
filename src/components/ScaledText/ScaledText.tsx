@@ -15,11 +15,10 @@ export type ScaledTextProps = {
 }
 
 export const ScaledText = ({ lines, props }: ScaledTextProps) => {
-	// eslint-disable-next-line @eslint-react/naming-convention/ref-name
-	const refs = useRef<(SVGElement | null)[]>([])
+	const svgElementsRef = useRef<(SVGElement | null)[]>([])
 
 	useEffect(() => {
-		refs.current.forEach((svg) => {
+		svgElementsRef.current.forEach((svg) => {
 			const text = svg?.querySelector('text')
 			const bbox = text?.getBBox()
 			svg?.setAttribute('viewBox', [bbox?.x, bbox?.y, bbox?.width, bbox?.height].join(' '))
@@ -36,7 +35,7 @@ export const ScaledText = ({ lines, props }: ScaledTextProps) => {
 						className='fill-current'
 						key={key}
 						ref={(svg) => {
-							refs.current[i] = svg
+							svgElementsRef.current[i] = svg
 						}}
 					>
 						<text {...props} {...(typeof line === 'string' ? undefined : line.props)}>

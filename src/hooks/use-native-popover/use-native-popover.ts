@@ -16,8 +16,7 @@ export const useNativePopover = (options?: UseNativePopoverOptions) => {
 	const popoverId = `popover-${id}`
 	const anchorName = `--popover-anchor-${id.replace(/:/g, '')}`
 
-	const getPopoverElement = () =>
-		typeof document !== 'undefined' ? (document.getElementById(popoverId) as HTMLElement | null) : null
+	const getPopoverElement = () => (typeof document !== 'undefined' ? document.getElementById(popoverId) : null)
 
 	return {
 		triggerProps: {

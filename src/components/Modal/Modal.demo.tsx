@@ -1,6 +1,6 @@
 import type { ModalDismissOption } from '@/components'
 import { Modal, MODAL_DISMISS_OPTIONS } from '@/components'
-import { cn } from '@/utils'
+import { cn, noop } from '@/utils'
 import type { DemoMeta } from '@demo'
 import { useMemo, useState } from 'react'
 
@@ -21,7 +21,7 @@ export const Demo = () => {
 	const isDismissable = dismiss.length > 0
 
 	const modalProps = useMemo(
-		() => (isControlled ? { open, onOpenChange: setOpen } : { defaultOpen: false, onOpenChange: () => undefined }),
+		() => (isControlled ? { open, onOpenChange: setOpen } : { defaultOpen: false, onOpenChange: noop }),
 		[isControlled, open],
 	)
 

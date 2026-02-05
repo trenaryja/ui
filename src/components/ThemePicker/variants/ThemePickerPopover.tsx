@@ -23,7 +23,7 @@ export const ThemePickerPopover = ({
 	return (
 		<>
 			<button type='button' className={cn('btn btn-square btn-ghost', className)} {...triggerProps}>
-				{trigger || <LuPalette />}
+				{trigger ?? <LuPalette />}
 			</button>
 
 			<div

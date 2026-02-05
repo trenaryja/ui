@@ -6,9 +6,9 @@
 
 'use client'
 
-import { daisyThemeNames } from '@/utils'
+import { daisyThemeNames, noop } from '@/utils'
 import { useLocalStorage, useMediaQuery, useWindowEvent } from '@mantine/hooks'
-import { createContext, memo, use, useCallback, useEffect, useMemo, useState } from 'react'
+import { createContext, memo, use, useCallback, useEffect, useMemo } from 'react'
 import { script } from './script'
 import type { Attribute, ThemeProviderProps, UseThemeProps } from './types'
 
@@ -20,8 +20,7 @@ const SYSTEM_THEME = 'system'
 
 const ThemeContext = createContext<UseThemeProps<any> | undefined>(undefined)
 const defaultContext: UseThemeProps<any> = {
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	setTheme: () => {},
+	setTheme: noop,
 	themes: [],
 	defaultLight: 'light',
 	defaultDark: 'dark',
@@ -110,7 +109,7 @@ const Theme = <TThemes extends readonly string[] = never>({
 	const prefersDark = useMediaQuery(MEDIA, false, { getInitialValueInEffect: false })
 	const systemTheme = prefersDark ? 'dark' : 'light'
 
-	const [resolvedTheme, setResolvedTheme] = useState(() => (theme === SYSTEM_THEME ? systemTheme : theme))
+	const resolvedTheme = theme === SYSTEM_THEME ? systemTheme : theme
 	const attrs = !value ? themes : Object.values(value)
 
 	const applyTheme = useCallback(
@@ -170,7 +169,6 @@ const Theme = <TThemes extends readonly string[] = never>({
 	)
 
 	useEffect(() => {
-		setResolvedTheme(systemTheme)
 		if (theme === SYSTEM_THEME && enableSystem && !forcedTheme) applyTheme(SYSTEM_THEME)
 	}, [systemTheme, theme, forcedTheme, applyTheme, enableSystem])
 
