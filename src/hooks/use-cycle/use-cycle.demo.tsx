@@ -3,13 +3,13 @@ import { useCycle as useCycleHook } from '@/hooks'
 import { cn } from '@/utils'
 import type { DemoMeta } from '@demo'
 import { playingCards } from '@demo'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'useCycle', category: 'hooks' }
 
 export const Demo = () => {
 	const [count, setCount] = useState(16)
-	const items = useMemo(() => playingCards.slice(0, Math.min(playingCards.length, count)), [count])
+	const items = playingCards.slice(0, Math.min(playingCards.length, count))
 
 	const [wrap, setWrap] = useState(true)
 	const [idleResetEnabled, setIdleResetEnabled] = useState(true)
