@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
-
 'use client'
 
 import { useAscii } from '@/hooks'
@@ -62,6 +60,7 @@ export const AsciiVideo = ({
 
 	return (
 		<pre
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
 			role='button'
 			tabIndex={0}
 			className={cn('bg-cover bg-no-repeat w-fit text-[.4rem] cursor-pointer', className)}

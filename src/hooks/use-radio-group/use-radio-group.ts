@@ -1,6 +1,6 @@
 import { useUncontrolled } from '@mantine/hooks'
 import type { ChangeEvent, KeyboardEvent, MouseEvent } from 'react'
-import { useId, useMemo } from 'react'
+import { useId } from 'react'
 
 export type RadioOption =
 	| string
@@ -64,7 +64,7 @@ export const useRadioGroup = ({
 		}
 	}
 
-	const options = useMemo(() => optionsProp.map(normalizeOption), [optionsProp])
+	const options = optionsProp.map(normalizeOption)
 
 	return { name, value, options, handleChange, handleClick, handleKeyDown }
 }

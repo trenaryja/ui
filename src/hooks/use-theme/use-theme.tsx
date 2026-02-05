@@ -8,7 +8,7 @@
 
 import { daisyThemeNames, noop } from '@/utils'
 import { useLocalStorage, useMediaQuery, useWindowEvent } from '@mantine/hooks'
-import { createContext, memo, use, useCallback, useEffect, useMemo } from 'react'
+import { createContext, memo, use, useEffect, useMemo } from 'react'
 import { script } from './script'
 import type { Attribute, ThemeProviderProps, UseThemeProps } from './types'
 
@@ -112,61 +112,45 @@ const Theme = <TThemes extends readonly string[] = never>({
 	const resolvedTheme = theme === SYSTEM_THEME ? systemTheme : theme
 	const attrs = !value ? themes : Object.values(value)
 
-	const applyTheme = useCallback(
-		(themeToApply: string) => {
-			let resolved = themeToApply
-			if (!resolved) return
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
+	const applyTheme = (themeToApply: string) => {
+		let resolved = themeToApply
+		if (!resolved) return
 
-			if (themeToApply === SYSTEM_THEME && enableSystem) resolved = systemTheme
+		if (themeToApply === SYSTEM_THEME && enableSystem) resolved = systemTheme
 
-			const name = value ? value[resolved] : resolved
-			const enable = disableTransitionOnChange ? disableAnimation(nonce) : null
-			const d = document.documentElement
+		const name = value ? value[resolved] : resolved
+		const enable = disableTransitionOnChange ? disableAnimation(nonce) : null
+		const d = document.documentElement
 
-			const handleAttribute = (attr: Attribute) => {
-				if (attr === 'class') {
-					d.classList.remove(...attrs)
-					if (name) d.classList.add(name)
-					return
-				}
-
-				if (!attr.startsWith('data-')) return
-
-				if (name) d.setAttribute(attr, name)
-				else d.removeAttribute(attr)
+		const handleAttribute = (attr: Attribute) => {
+			if (attr === 'class') {
+				d.classList.remove(...attrs)
+				if (name) d.classList.add(name)
+				return
 			}
 
-			if (Array.isArray(attribute)) attribute.forEach(handleAttribute)
-			else handleAttribute(attribute)
+			if (!attr.startsWith('data-')) return
 
-			if (enableColorScheme) {
-				const isColorScheme = (val: string): val is 'dark' | 'light' => colorSchemes.includes(val)
-				const fallback = isColorScheme(defaultTheme) ? defaultTheme : null
-				const colorScheme = isColorScheme(resolved) ? resolved : fallback
-				d.style.colorScheme = colorScheme ?? ''
-			}
+			if (name) d.setAttribute(attr, name)
+			else d.removeAttribute(attr)
+		}
 
-			enable?.()
-		},
-		[
-			attribute,
-			attrs,
-			defaultTheme,
-			disableTransitionOnChange,
-			enableColorScheme,
-			enableSystem,
-			value,
-			nonce,
-			systemTheme,
-		],
-	)
+		if (Array.isArray(attribute)) attribute.forEach(handleAttribute)
+		else handleAttribute(attribute)
 
-	const setTheme = useCallback(
-		(newTheme: ((prevTheme: string) => string) | string) => {
-			setThemeState(newTheme)
-		},
-		[setThemeState],
-	)
+		if (enableColorScheme) {
+			const isColorScheme = (val: string): val is 'dark' | 'light' => colorSchemes.includes(val)
+			const fallback = isColorScheme(defaultTheme) ? defaultTheme : null
+			const colorScheme = isColorScheme(resolved) ? resolved : fallback
+			d.style.colorScheme = colorScheme ?? ''
+		}
+
+		enable?.()
+	}
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
+	const setTheme = (newTheme: ((prevTheme: string) => string) | string) => setThemeState(newTheme)
 
 	useEffect(() => {
 		if (theme === SYSTEM_THEME && enableSystem && !forcedTheme) applyTheme(SYSTEM_THEME)

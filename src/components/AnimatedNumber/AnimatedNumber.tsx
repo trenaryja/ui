@@ -1,5 +1,3 @@
-/* eslint-disable @eslint-react/no-array-index-key */
-
 import { cn } from '@/utils'
 import type { ComponentProps } from 'react'
 import { useEffect, useRef, useState } from 'react'
@@ -53,6 +51,7 @@ const Digit = ({
 				}}
 			>
 				{[...range, ...range].map((d, i) => (
+					// eslint-disable-next-line @eslint-react/no-array-index-key
 					<span key={i} className='h-[1em] leading-[1em]'>
 						{d}
 					</span>

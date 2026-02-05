@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { characterRamps } from '@/utils'
 
 const getFontDimensions = (ref: HTMLPreElement | null) => {
@@ -120,7 +120,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 	const [ascii, setAscii] = useState('')
 	const [fontDimensions, setFontDimensions] = useState(() => getFontDimensions(null))
 
-	const processSource = useCallback((source: CanvasImageSource) => {
+	const processSource = (source: CanvasImageSource) => {
 		sourceRef.current = source
 		const { fontHeight, fontWidth, maxHeight: cfgMaxHeight, maxWidth: cfgMaxWidth, lookupTable } = configRef.current
 
@@ -146,7 +146,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 		const { data } = context.getImageData(0, 0, width || 1, height || 1)
 
 		return processPixels({ width, height, data, lookupTable: lookupTable ?? createLookupTable(' .:-=+*#@') })
-	}, [])
+	}
 
 	useEffect(() => {
 		const observer = new ResizeObserver(() => {
@@ -162,7 +162,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 		const lookupTable = createLookupTable(ramp)
 		configRef.current = { fontHeight, fontWidth, maxHeight, maxWidth, lookupTable }
 		if (sourceRef.current) setAscii(processSource(sourceRef.current))
-	}, [characterRamp, reverseRamp, maxHeight, maxWidth, fontDimensions, processSource])
+	}, [characterRamp, reverseRamp, maxHeight, maxWidth, fontDimensions])
 
 	return { preRef, ascii, setAscii, processSource }
 }
