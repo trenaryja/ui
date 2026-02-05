@@ -109,12 +109,18 @@ export const useAscii = (options: AsciiProcessOptions) => {
 
 	const preRef = useRef<HTMLPreElement>(null)
 	const sourceRef = useRef<CanvasImageSource | null>(null)
-	const configRef = useRef({
+	const configRef = useRef<{
+		fontHeight: number
+		fontWidth: number
+		maxHeight: number | undefined
+		maxWidth: number | undefined
+		lookupTable: string[] | null
+	}>({
 		fontHeight: 0,
 		fontWidth: 0,
 		maxHeight,
 		maxWidth,
-		lookupTable: null as string[] | null,
+		lookupTable: null,
 	})
 
 	const [ascii, setAscii] = useState('')

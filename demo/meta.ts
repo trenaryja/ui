@@ -15,13 +15,4 @@ export const demos = R.entries(import.meta.glob<DemoModule>('../**/*.demo.tsx', 
 	}),
 )
 
-export const demosByCategory = R.reduce(
-	demos,
-	(acc, demo) => {
-		const { category } = demo.meta
-		if (!acc[category]) acc[category] = []
-		acc[category].push(demo)
-		return acc
-	},
-	{} as Record<string, typeof demos>,
-)
+export const demosByCategory: Record<string, typeof demos> = R.groupBy(demos, (demo) => demo.meta.category)
