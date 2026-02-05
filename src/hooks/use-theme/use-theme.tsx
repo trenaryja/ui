@@ -98,8 +98,8 @@ const Theme = <TThemes extends readonly string[] = never>({
 	children,
 	nonce,
 	scriptProps,
-	defaultLight = 'light' as string,
-	defaultDark = 'dark' as string,
+	defaultLight = 'light',
+	defaultDark = 'dark',
 }: ThemeProviderProps<TThemes>) => {
 	const [theme, setThemeState] = useLocalStorage({
 		key: storageKey,
