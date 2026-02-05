@@ -21,7 +21,7 @@ export const ThemePickerModal = ({
 
 	return (
 		<Modal
-			trigger={trigger || <DefaultTrigger className={classNames?.defaultTrigger} />}
+			trigger={trigger ?? <DefaultTrigger className={classNames?.defaultTrigger} />}
 			className={className}
 			classNames={{ box: 'grid gap-2', ...modalProps?.classNames }}
 			dismissOptions={['escapeKey', 'outsideClick']}

@@ -34,7 +34,7 @@ export const ReadMe = () => {
 							</div>
 						),
 						code: ({ node: _node, children, className, ...props }) => {
-							const toCopy = children?.toString().trim() || ''
+							const toCopy = children?.toString().trim() ?? ''
 							return (
 								<code {...props} className={cn(className, 'size-full overflow-auto')}>
 									{children}

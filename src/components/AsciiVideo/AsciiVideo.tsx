@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-to-interactive-role */
+
 'use client'
 
 import { useAscii } from '@/hooks'
@@ -21,7 +23,7 @@ export const AsciiVideo = ({
 	const { preRef, ascii, setAscii, processSource } = useAscii({ characterRamp, reverseRamp, maxHeight, maxWidth })
 
 	useEffect(() => {
-		if (!videoRef.current) videoRef.current = document.createElement('video')
+		videoRef.current ??= document.createElement('video')
 		const video = videoRef.current
 
 		let cancelled = false
@@ -60,10 +62,14 @@ export const AsciiVideo = ({
 
 	return (
 		<pre
+			role='button'
+			tabIndex={0}
 			className={cn('bg-cover bg-no-repeat w-fit text-[.4rem] cursor-pointer', className)}
 			ref={preRef}
-			tabIndex={0}
 			onClick={handlePlayPause}
+			onKeyDown={(e) => {
+				if (e.key === 'Enter' || e.key === ' ') handlePlayPause()
+			}}
 			{...props}
 		>
 			{ascii}

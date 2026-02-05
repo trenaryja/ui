@@ -210,10 +210,10 @@ export const Demo = () => {
 	const triggerCustom = () =>
 		toast.custom(
 			(t) => (
-				<div className='prose text-center' onClick={() => toast.dismiss(t)}>
+				<button type='button' className='prose text-center' onClick={() => toast.dismiss(t)}>
 					<h3>{state.title}</h3>
 					<p>Click anywhere to dismiss.</p>
-				</div>
+				</button>
 			),
 			{ duration: Infinity, className: 'glass w-full block cursor-pointer' },
 		)

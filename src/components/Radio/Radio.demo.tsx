@@ -1,9 +1,8 @@
 import { Field, Fieldset, Radio } from '@/components'
+import { noop } from '@/utils'
 import type { DemoMeta } from '@demo'
 
 export const meta: DemoMeta = { title: 'Radio', category: 'components', tags: ['input'] }
-
-const noop = () => undefined
 
 export function Demo() {
 	return (

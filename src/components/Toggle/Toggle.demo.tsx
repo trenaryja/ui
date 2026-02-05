@@ -1,9 +1,8 @@
 import { Field, Fieldset, Toggle } from '@/components'
+import { noop } from '@/utils'
 import type { DemoMeta } from '@demo'
 
 export const meta: DemoMeta = { title: 'Toggle', category: 'components', tags: ['input'] }
-
-const noop = () => undefined
 
 export function Demo() {
 	return (

@@ -120,3 +120,6 @@ export const joinTyped = <const A extends readonly string[], const B extends rea
  */
 export const boolMap = <T>(value: boolean | null | undefined, [onTrue, onFalse, onNullOrUndefined]: [T, T, T]) =>
 	value === true ? onTrue : value === false ? onFalse : onNullOrUndefined
+
+/** A no-op function that does nothing. Useful for default callbacks and placeholders. */
+export const noop = () => undefined
