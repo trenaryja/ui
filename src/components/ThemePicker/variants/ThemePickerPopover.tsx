@@ -4,6 +4,7 @@ import { useNativePopover, useTheme } from '@/hooks'
 import { cn } from '@/utils'
 import { useState } from 'react'
 import { LuPalette } from 'react-icons/lu'
+import { Input } from '../..'
 import type { ThemePickerPopoverProps } from '../ThemePicker.types'
 import { filterThemes } from '../ThemePicker.utils'
 
@@ -30,9 +31,9 @@ export const ThemePickerPopover = ({
 				{...contentProps}
 				className={cn('dropdown shadow p-2 border border-current/20 rounded-box frosted-glass', classNames?.popover)}
 			>
-				<div className={cn('grid gap-2 grid-rows-[auto_1fr]', classNames?.content)}>
+				<div className={cn('grid gap-2 grid-rows-[auto_1fr] overflow-hidden content-start', classNames?.content)}>
 					{showSearch && (
-						<input
+						<Input
 							type='search'
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
@@ -41,7 +42,7 @@ export const ThemePickerPopover = ({
 					)}
 
 					{filteredThemes.length > 0 && (
-						<div className={cn('grid gap-2 max-h-60 p-2 overflow-y-fade no-scrollbar', classNames?.list)}>
+						<div className={cn('grid gap-2 max-h-60 p-2 overflow-fade no-scrollbar', classNames?.list)}>
 							{filteredThemes.map((themeName) => (
 								<button
 									key={themeName}

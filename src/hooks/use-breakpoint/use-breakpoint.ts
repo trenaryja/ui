@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import * as R from 'remeda'
 import defaultTheme from 'tailwindcss/defaultTheme'
 
@@ -52,23 +52,17 @@ export const useBreakpoint = <const T extends Breakpoints = DefaultBreakpoints>(
 		}
 	}, [sorted])
 
-	const isAtLeast = useCallback(
-		(name: BreakpointName<T>) => {
-			const a = ranked.get(currentBreakpoint)
-			const b = ranked.get(name)
-			return a !== undefined && b !== undefined && a >= b
-		},
-		[currentBreakpoint, ranked],
-	)
+	const isAtLeast = (name: BreakpointName<T>) => {
+		const a = ranked.get(currentBreakpoint)
+		const b = ranked.get(name)
+		return a !== undefined && b !== undefined && a >= b
+	}
 
-	const isBelow = useCallback(
-		(name: BreakpointName<T>) => {
-			const a = ranked.get(currentBreakpoint)
-			const b = ranked.get(name)
-			return a !== undefined && b !== undefined && a < b
-		},
-		[currentBreakpoint, ranked],
-	)
+	const isBelow = (name: BreakpointName<T>) => {
+		const a = ranked.get(currentBreakpoint)
+		const b = ranked.get(name)
+		return a !== undefined && b !== undefined && a < b
+	}
 
 	return {
 		breakpoint: currentBreakpoint,
