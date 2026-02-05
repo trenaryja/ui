@@ -2,7 +2,7 @@ import type { ModalDismissOption } from '@/components'
 import { Modal, MODAL_DISMISS_OPTIONS } from '@/components'
 import { cn, noop } from '@/utils'
 import type { DemoMeta } from '@demo'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'Modal', category: 'components' }
 
@@ -20,10 +20,7 @@ export const Demo = () => {
 
 	const isDismissable = dismiss.length > 0
 
-	const modalProps = useMemo(
-		() => (isControlled ? { open, onOpenChange: setOpen } : { defaultOpen: false, onOpenChange: noop }),
-		[isControlled, open],
-	)
+	const modalProps = isControlled ? { open, onOpenChange: setOpen } : { defaultOpen: false, onOpenChange: noop }
 
 	return (
 		<div className='demo'>

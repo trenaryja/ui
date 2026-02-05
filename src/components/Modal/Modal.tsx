@@ -5,7 +5,7 @@ import type { ClassNames } from '@/types'
 import { cn } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
 import type { ButtonHTMLAttributes, ReactElement, ReactNode } from 'react'
-import { cloneElement, useId, useMemo } from 'react'
+import { cloneElement, useId } from 'react'
 import { LuX } from 'react-icons/lu'
 import { MODAL_DISMISS_OPTIONS, resolveDismissOptions } from './Modal.utils'
 
@@ -57,7 +57,7 @@ export const Modal = ({
 		onChange: onOpenChange,
 	})
 
-	const dismissList = useMemo(() => resolveDismissOptions(dismissOptions), [dismissOptions])
+	const dismissList = resolveDismissOptions(dismissOptions)
 
 	const { closeNative, onCancel, onClose, openNative } = useNativeDialog({
 		dialogId,
@@ -66,7 +66,7 @@ export const Modal = ({
 		setOpen,
 	})
 
-	const api = useMemo<ModalApi>(() => ({ close: () => setOpen(false), open: () => setOpen(true) }), [setOpen])
+	const api: ModalApi = { close: () => setOpen(false), open: () => setOpen(true) }
 
 	const triggerEl = trigger
 		? cloneElement(trigger, {
