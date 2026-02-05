@@ -17,7 +17,7 @@ export type ModalApi = {
 	open: () => void
 }
 
-export const modalClassNames = ['backdrop', 'backdropButton', 'box', 'closeButton', 'closeIcon', 'dialog']
+export const modalClassNames = ['backdrop', 'backdropButton', 'box', 'closeButton', 'closeIcon', 'dialog'] as const
 
 export type ModalClassNames = (typeof modalClassNames)[number]
 
@@ -111,13 +111,15 @@ export const Modal = ({
 					{typeof children === 'function' ? children(api) : children}
 				</div>
 
-				{dismissList.includes('outsideClick') && (
+				{dismissList.includes('outsideClick') ? (
 					<form
 						className={cn('modal-backdrop', { 'backdrop-blur': backdropBlur }, classNames?.backdrop)}
 						method='dialog'
 					>
 						<button aria-label='Close' className={cn(classNames?.backdropButton)} type='submit' />
 					</form>
+				) : (
+					<div className={cn('modal-backdrop', { 'backdrop-blur': backdropBlur }, classNames?.backdrop)} />
 				)}
 			</dialog>
 		</>

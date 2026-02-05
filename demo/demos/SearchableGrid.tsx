@@ -56,6 +56,7 @@ export function SearchableGrid<TItem, TFamily extends string, TCopyKey extends s
 	const clipboard = useClipboard({ timeout: clipboardTimeout })
 	const [lastCopiedId, setLastCopiedId] = useState<string | null>(null)
 	const [activeFamilies, setActiveFamilies] = useState<TFamily[]>([])
+	const [familySearch, setFamilySearch] = useState('')
 
 	// Filter by family
 	const familyFiltered = activeFamilies.length
@@ -107,21 +108,34 @@ export function SearchableGrid<TItem, TFamily extends string, TCopyKey extends s
 							{activeFamilies.length > 0 && <span className='absolute size-2 rounded-full bg-primary top-0 right-0' />}
 						</button>
 					}
+					className='h-[50vh] overflow-hidden'
+					classNames={{ box: 'grid grid-rows-[auto_1fr] gap-4' }}
 				>
-					<BalancedGrid pack className='gap-2' maxCols={3}>
-						{R.entries(families).map(([key, fam]) => (
-							<button
-								key={key}
-								type='button'
-								onClick={() => toggleFamily(key)}
-								className={cn('btn btn-sm flex-col gap-2 h-auto py-1', {
-									'btn-primary': activeFamilies.includes(key),
-								})}
-							>
-								{fam.sample}
-								<div className='font-mono truncate w-full'>{fam.label}</div>
-							</button>
-						))}
+					<Input
+						autoFocus
+						type='search'
+						placeholder='Search families...'
+						value={familySearch}
+						onChange={(e) => setFamilySearch(e.target.value)}
+						className='w-full'
+					/>
+
+					<BalancedGrid pack className='gap-2 overflow-y-fade no-scrollbar content-start' maxCols={3}>
+						{R.entries(families)
+							.filter(([, fam]) => fam.label.toLowerCase().includes(familySearch.toLowerCase()))
+							.map(([key, fam]) => (
+								<button
+									key={key}
+									type='button'
+									onClick={() => toggleFamily(key)}
+									className={cn('btn btn-sm flex-col gap-2 h-auto py-1', {
+										'btn-primary': activeFamilies.includes(key),
+									})}
+								>
+									{fam.sample}
+									<div className='font-mono truncate w-full'>{fam.label}</div>
+								</button>
+							))}
 					</BalancedGrid>
 				</Modal>
 			</div>
@@ -151,5 +165,4 @@ export function SearchableGrid<TItem, TFamily extends string, TCopyKey extends s
 	)
 }
 
-// TODO: Add search to filter Modal
 // TODO: store filter state in url (make this a hook)
