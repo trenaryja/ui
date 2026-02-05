@@ -1,8 +1,10 @@
 import { cn, isIn } from '@/utils'
 import type { ComponentProps } from 'react'
 
-export const BaseInput = ({ className, readOnly, tabIndex, ...props }: ComponentProps<'input'>) => (
+export const BaseInput = ({ autoFocus, className, readOnly, tabIndex, ...props }: ComponentProps<'input'>) => (
 	<input
+		autoFocus={autoFocus}
+		{...(autoFocus && { autofocus: '' })} // Also set HTML attribute for native dialog autofocus detection
 		className={cn(
 			readOnly && {
 				'pointer-events-none cursor-default': isIn(props.type, ['checkbox', 'toggle', 'range', 'radio']),

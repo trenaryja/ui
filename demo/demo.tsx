@@ -1,8 +1,8 @@
 import { Input, ThemePicker } from '@/components'
 import { ThemeProvider } from '@/hooks'
 import { cn } from '@/utils'
-import { useHash } from '@mantine/hooks'
-import { StrictMode, useState } from 'react'
+import { useHash, useHotkeys } from '@mantine/hooks'
+import { StrictMode, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { LuPanelLeft } from 'react-icons/lu'
 import { categories, demos, demosByCategory } from './meta'
@@ -14,6 +14,9 @@ const App = () => {
 	const [hash] = useHash()
 	const route = hash.startsWith('#/') ? hash.slice(2) : hash.slice(1)
 	const [searchQuery, setSearchQuery] = useState('')
+	const searchRef = useRef<HTMLInputElement>(null)
+
+	useHotkeys([['mod+k', () => searchRef.current?.focus()]])
 
 	const currentDemo = demos.find((d) => d.id === route)
 	const PageContent = currentDemo ? <currentDemo.Demo /> : <ReadMe />
@@ -24,6 +27,7 @@ const App = () => {
 		return categoryDemos.filter(
 			(demo) =>
 				demo.meta.title.toLowerCase().includes(query) ||
+				demo.meta.category.toLowerCase().includes(query) ||
 				demo.meta.tags?.some((tag) => tag.toLowerCase().includes(query)),
 		)
 	}
@@ -41,6 +45,7 @@ const App = () => {
 
 					<div className='px-4'>
 						<Input
+							ref={searchRef}
 							type='search'
 							placeholder='Search...'
 							className='input'

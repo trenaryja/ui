@@ -1,5 +1,8 @@
 import { attempt } from '@/utils'
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+
+const focusAutofocus = (el: HTMLElement) =>
+	requestAnimationFrame(() => el.querySelector<HTMLElement>('[autofocus]')?.focus())
 
 export type UseNativeDialogOptions = {
 	dialogId: string
@@ -9,63 +12,58 @@ export type UseNativeDialogOptions = {
 }
 
 export const useNativeDialog = ({ dialogId, hasEscapeKey, open, setOpen }: UseNativeDialogOptions) => {
-	const getDialog = useCallback(() => {
+	const lastCloseWasCancelRef = useRef(false)
+
+	const getDialog = () => {
 		if (typeof document === 'undefined') return null
 		const el = document.getElementById(dialogId)
 		return el instanceof HTMLDialogElement ? el : null
-	}, [dialogId])
+	}
 
-	const openRef = useRef(open)
-	useEffect(() => {
-		openRef.current = open
-	}, [open])
-
-	const hasEscapeKeyRef = useRef(hasEscapeKey)
-	useEffect(() => {
-		hasEscapeKeyRef.current = hasEscapeKey
-	}, [hasEscapeKey])
-
-	const lastCloseWasCancelRef = useRef(false)
-
-	const openNative = useCallback(() => {
+	const openNative = () => {
 		const el = getDialog()
 		if (!el || el.open) return
 		attempt(() => el.showModal())
-	}, [getDialog])
+		focusAutofocus(el)
+	}
 
-	const closeNative = useCallback(() => {
+	const closeNative = () => {
 		const el = getDialog()
 		if (!el || !el.open) return
 		el.close()
-	}, [getDialog])
+	}
 
-	useEffect(() => {
-		const el = getDialog()
-		if (!el) return
-		if (open && !el.open) return attempt(() => el.showModal())
-		if (!open && el.open) el.close()
-	}, [getDialog, open])
-
-	const onCancel = useCallback((e: React.SyntheticEvent<HTMLDialogElement>) => {
+	const onCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
 		lastCloseWasCancelRef.current = true
-		if (hasEscapeKeyRef.current) return
+		if (hasEscapeKey) return
 		e.preventDefault()
 		e.stopPropagation()
-	}, [])
+	}
 
-	const onClose = useCallback(() => {
+	const onClose = () => {
 		const wasCancel = lastCloseWasCancelRef.current
 		lastCloseWasCancelRef.current = false
 
 		setOpen(false)
 
-		if (hasEscapeKeyRef.current) return
+		if (hasEscapeKey) return
 		if (!wasCancel) return
-		if (!openRef.current) return
+		if (!open) return
 
 		openNative()
 		setOpen(true)
-	}, [openNative, setOpen])
+	}
+
+	useEffect(() => {
+		const el = document.getElementById(dialogId)
+		if (!(el instanceof HTMLDialogElement)) return
+		if (open && !el.open) {
+			attempt(() => el.showModal())
+			focusAutofocus(el)
+			return
+		}
+		if (!open && el.open) el.close()
+	}, [dialogId, open])
 
 	return { closeNative, onCancel, onClose, openNative }
 }
