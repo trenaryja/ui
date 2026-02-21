@@ -22,6 +22,9 @@ export type FunctionalClassName<T> = ((val: T) => string | undefined) | string |
 export const addOpacityToOklch = (oklch: string | undefined, opacity: number) =>
 	`${oklch?.split(')')[0]} / ${opacity / 100})`
 
+/** Integer luminance from RGB (BT.601 approximation: 0.21R + 0.72G + 0.07B) */
+export const rgbToLuma = (r: number, g: number, b: number) => (54 * r + 184 * g + 18 * b) >> 8
+
 export const isDark = (color: string) => {
 	const c = chroma(color)
 	if (!chroma.valid(c)) return false

@@ -33,6 +33,7 @@ export const Field = ({
 	className,
 	classNames,
 	children,
+	...rest
 }: FieldProps) => {
 	const slotData = {
 		label: label ? { content: label, placement: labelPlacement } : null,
@@ -83,7 +84,7 @@ export const Field = ({
 	}
 
 	return (
-		<Fieldset className={cn(className)} style={style}>
+		<Fieldset className={cn(className)} style={style} {...rest}>
 			{[...groups.entries()].map(([placement, slots]) => renderGroup(placement, slots))}
 			<div className={cn(classNames?.control)} style={{ gridArea: 'ctrl' }}>
 				{children}

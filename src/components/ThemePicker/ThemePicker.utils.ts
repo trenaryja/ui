@@ -16,19 +16,13 @@ export const getNextToggleTheme = <T extends readonly string[]>(options: {
 	const { currentTheme, systemTheme, defaultLight, defaultDark } = options
 
 	// If current is system, toggle to opposite of system preference
-	if (currentTheme === 'system' && systemTheme) {
-		return systemTheme === 'dark' ? defaultLight : defaultDark
-	}
+	if (currentTheme === 'system' && systemTheme) return systemTheme === 'dark' ? defaultLight : defaultDark
 
 	// If current is light-ish, go to dark
-	if (currentTheme === defaultLight || currentTheme === 'light') {
-		return defaultDark
-	}
+	if (currentTheme === defaultLight || currentTheme === 'light') return defaultDark
 
 	// If current is dark-ish, go to light
-	if (currentTheme === defaultDark || currentTheme === 'dark') {
-		return defaultLight
-	}
+	if (currentTheme === defaultDark || currentTheme === 'dark') return defaultLight
 
 	// For any other theme, toggle based on system preference
 	return systemTheme === 'dark' ? defaultLight : defaultDark
@@ -48,11 +42,8 @@ export const resolveThemeMode = (
 	if (theme === 'system') return 'system'
 	if (!theme || !systemTheme) return 'system'
 
-	// Resolve actual theme value
-	const resolved = theme === 'system' ? systemTheme : theme
-
 	// Check if it's a known light/dark value
-	if (resolved === 'light' || resolved === 'dark') return resolved
+	if (theme === 'light' || theme === 'dark') return theme
 
 	// Default to system for custom themes
 	return 'system'
@@ -66,7 +57,7 @@ export const resolveThemeMode = (
  * @returns Filtered array of theme names
  */
 export const filterThemes = (themes: readonly string[], query: string): readonly string[] => {
-	if (!query.trim()) return themes
-	const normalized = query.toLowerCase().trim()
+	const normalized = query.trim().toLowerCase()
+	if (!normalized) return themes
 	return themes.filter((theme) => theme.toLowerCase().includes(normalized))
 }

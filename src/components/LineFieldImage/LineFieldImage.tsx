@@ -30,9 +30,7 @@ export const LineFieldImage = ({
 		const img = new Image()
 		img.crossOrigin = 'Anonymous'
 
-		img.onload = () => {
-			processImageToLines(img, cellSize, setImgData)
-		}
+		img.onload = () => setImgData(processImageToLines(img, cellSize))
 
 		img.src = src
 	}, [src, cellSize])
@@ -48,7 +46,7 @@ export const LineFieldImage = ({
 		>
 			<svg
 				className={cn('stroke-base-content size-full', className)}
-				dangerouslySetInnerHTML={{ __html: `<g>${imgData.lines}</g>` }}
+				dangerouslySetInnerHTML={{ __html: imgData.lines }}
 				preserveAspectRatio='xMidYMid meet'
 				strokeLinecap='square'
 				strokeWidth={effectiveStroke}

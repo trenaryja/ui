@@ -10,7 +10,7 @@ export const Select = ({
 }: ComponentProps<'select'> & { readOnly?: boolean; nativeDropdown?: boolean }) => (
 	<select
 		className={cn('select', { 'pointer-events-none bg-none': readOnly, 'appearance-none': nativeDropdown }, className)}
-		tabIndex={(tabIndex ?? readOnly) ? -1 : undefined}
+		tabIndex={readOnly ? -1 : tabIndex}
 		{...props}
 	/>
 )

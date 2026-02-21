@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { characterRamps } from '@/utils'
+import { characterRamps, rgbToLuma } from '@/utils'
 
 const getFontDimensions = (ref: HTMLPreElement | null) => {
 	if (!ref) return { fontWidth: 0, fontHeight: 0 }
@@ -86,7 +86,7 @@ const processPixels = ({
 
 	for (let y = 0; y < height; y++) {
 		for (let x = 0; x < width; x++) {
-			const gray = (21 * data[dataIndex] + 72 * data[dataIndex + 1] + 7 * data[dataIndex + 2]) >> 8
+			const gray = rgbToLuma(data[dataIndex], data[dataIndex + 1], data[dataIndex + 2])
 			chars[charIndex++] = lookupTable[gray]
 			dataIndex += 4
 		}
