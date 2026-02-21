@@ -1,9 +1,8 @@
-import { lcm } from '@/utils'
-import type { CSSProperties } from 'react'
+import { css, lcm } from '@/utils'
 
 export const balanceGridItems = <T>(items: T[], maxCols: number, pack?: boolean) => {
 	const n = items.length
-	if (n <= 1 || maxCols < 2) return { leftoverCount: 0, lastRowIndex: n, style: { '--grid-cols': 1 } as CSSProperties }
+	if (n <= 1 || maxCols < 2) return { leftoverCount: 0, lastRowIndex: n, style: css({ '--grid-cols': 1 }) }
 
 	const candidates = []
 
@@ -50,11 +49,11 @@ export const balanceGridItems = <T>(items: T[], maxCols: number, pack?: boolean)
 	return {
 		leftoverCount,
 		lastRowIndex,
-		style: {
+		style: css({
 			'--grid-cols': totalCols,
 			'--grid-normal-span': normalSpan,
 			'--grid-last-row-span': lastRowSpan,
 			'--grid-last-row-col-start': lastRowColStart,
-		} as CSSProperties,
+		}),
 	}
 }

@@ -16,20 +16,41 @@ import {
 } from '@/components'
 import type { DemoMeta } from '@demo'
 import { toastPositionIcons } from '@demo'
+import type { Dispatch } from 'react'
 import { useReducer } from 'react'
 import * as Lu from 'react-icons/lu'
 import * as R from 'remeda'
 import type { ExternalToast } from 'sonner'
-import type { OverrideProperties } from 'type-fest'
 
 export const meta: DemoMeta = { title: 'Toaster', category: 'components' }
 
-const initialState = {
+type ToastState = {
+	expand: boolean
+	position: ToastPosition
+	visibleToasts: number
+	closeButton: boolean
+	title: string
+	description: string
+	hasDescription: boolean
+	duration: number
+	overridePosition: boolean
+	dismissible: boolean
+	hasAction: boolean
+	actionLabel: string
+	hasCancel: boolean
+	cancelLabel: string
+	toastCloseButton: boolean | undefined
+	toastPosition: ToastPosition
+	icon: keyof typeof Lu | undefined
+}
+
+type ToastAction = Partial<ToastState>
+
+const initialState: ToastState = {
 	expand: false,
-	position: 'bottom-right' as const satisfies ToastPosition,
+	position: 'bottom-right',
 	visibleToasts: 3,
 	closeButton: false,
-
 	title: 'Hello World',
 	description: 'This is a description',
 	hasDescription: false,
@@ -40,16 +61,12 @@ const initialState = {
 	actionLabel: 'Action',
 	hasCancel: false,
 	cancelLabel: 'Cancel',
-	toastCloseButton: undefined as boolean | undefined,
-	toastPosition: 'top-center' as const satisfies ToastPosition,
-	icon: undefined as keyof typeof Lu | undefined,
+	toastCloseButton: undefined,
+	toastPosition: 'top-center',
+	icon: undefined,
 }
 
-type ToastState = OverrideProperties<typeof initialState, { position?: ToastPosition; toastPosition?: ToastPosition }>
-
-type ToastAction = Partial<ToastState>
-
-const GlobalSettings = ({ state, dispatch }: { state: ToastState; dispatch: React.Dispatch<ToastAction> }) => (
+const GlobalSettings = ({ state, dispatch }: { state: ToastState; dispatch: Dispatch<ToastAction> }) => (
 	<Fieldset legend='Global Settings'>
 		<div className='grid grid-cols-2 gap-2'>
 			<Field label='Expand by default'>
@@ -76,7 +93,7 @@ const GlobalSettings = ({ state, dispatch }: { state: ToastState; dispatch: Reac
 					aria-label={toastPositionIcons[p]}
 					value={p}
 					checked={state.position === p}
-					onChange={(e) => dispatch({ position: e.target.value as ToastPosition })}
+					onChange={() => dispatch({ position: p })}
 					className='font-mono'
 				/>
 			))}
@@ -84,7 +101,7 @@ const GlobalSettings = ({ state, dispatch }: { state: ToastState; dispatch: Reac
 	</Fieldset>
 )
 
-const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: React.Dispatch<ToastAction> }) => (
+const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: Dispatch<ToastAction> }) => (
 	<Fieldset legend='Per-toast settings'>
 		<Field label='Title'>
 			<Input value={state.title} onChange={(e) => dispatch({ title: e.target.value })} />
@@ -144,7 +161,7 @@ const ToastSettings = ({ state, dispatch }: { state: ToastState; dispatch: React
 						aria-label={toastPositionIcons[p]}
 						value={p}
 						checked={state.toastPosition === p}
-						onChange={(e) => dispatch({ toastPosition: e.target.value as ToastPosition })}
+						onChange={() => dispatch({ toastPosition: p })}
 					/>
 				))}
 			</Field>

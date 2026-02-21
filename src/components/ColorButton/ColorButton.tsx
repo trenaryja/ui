@@ -4,10 +4,10 @@ import { useTheme } from '@/hooks'
 import type { DaisyThemeColor, TailwindColor } from '@/utils'
 import { cn, daisyThemeMap, isDaisyThemeColor, isDaisyThemeName } from '@/utils'
 import { useMounted } from '@mantine/hooks'
-import * as React from 'react'
+import type { ComponentProps } from 'react'
 import { DaisyColorButton, TailwindColorButton } from './ColorButton.utils'
 
-export type ColorButtonProps = React.ComponentProps<'button'> & {
+export type ColorButtonProps = ComponentProps<'button'> & {
 	color?: DaisyThemeColor | TailwindColor
 	darkModeColor?: DaisyThemeColor | TailwindColor
 }

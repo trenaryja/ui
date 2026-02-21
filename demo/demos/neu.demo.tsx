@@ -1,7 +1,6 @@
 import { Range } from '@/components'
-import { cn } from '@/utils'
+import { cn, css } from '@/utils'
 import type { DemoMeta } from '@demo'
-import type { CSSProperties } from 'react'
 import { useEffect, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'neu', category: 'classes' }
@@ -29,20 +28,20 @@ export const Demo = () => {
 		return () => cancelAnimationFrame(frame)
 	}, [spinning])
 
-	const neuVars = {
+	const neuVars = css({
 		'--neu-distance': `${distance}px`,
 		'--neu-blur': `${blur}px`,
 		'--neu-intensity': `${intensity}%`,
 		'--neu-angle': `${angle}deg`,
 		'--neu-curve': `${curve}%`,
-	} as CSSProperties
+	})
 
-	const liveStyle = {
+	const liveStyle = css({
 		...neuVars,
 		borderRadius: `${radius}%`,
 		width: `${size}px`,
 		height: `${size}px`,
-	} as CSSProperties
+	})
 
 	return (
 		<main className='grid lg:grid-cols-2 gap-10 full-bleed'>
