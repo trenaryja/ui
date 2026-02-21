@@ -11,3 +11,5 @@ export type DirectionPlacement = (typeof directionPlacements)[number]
 
 export const placementOptions = joinTyped(directionPlacements, flexPlacements, '-')
 export type Placement = (typeof placementOptions)[number]
+
+export const splitPlacement = (p: Placement) => p.split('-') as [DirectionPlacement, FlexPlacement]

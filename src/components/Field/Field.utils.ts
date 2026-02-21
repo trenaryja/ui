@@ -1,6 +1,5 @@
-import type { DirectionPlacement, FlexPlacement, Placement } from '@/utils'
-import { flexPlacements } from '@/utils'
-import type { CSSProperties } from 'react'
+import type { FlexPlacement, Placement } from '@/utils'
+import { css, flexPlacements, splitPlacement } from '@/utils'
 
 export const fieldSlots = ['label', 'hint', 'error'] as const
 export type FieldSlot = (typeof fieldSlots)[number]
@@ -15,11 +14,11 @@ export const placementToArea = (p: Placement) => p.replace('-', '_')
 
 export const buildGrid = (placements: Placement[]) => {
 	if (placements.length === 0)
-		return {
+		return css({
 			gridTemplateAreas: '"ctrl"',
 			gridTemplateColumns: 'minmax(0,1fr)',
 			gridTemplateRows: 'auto',
-		} satisfies CSSProperties
+		})
 
 	const hasTop = placements.some((p) => p.startsWith('top'))
 	const hasBottom = placements.some((p) => p.startsWith('bottom'))
@@ -46,23 +45,23 @@ export const buildGrid = (placements: Placement[]) => {
 	if (hasTop) {
 		const row: string[] = []
 		if (hasLeft) row.push('.')
-		hSubs.forEach((h) => row.push(getArea(`top-${h}` as Placement)))
+		hSubs.forEach((h) => row.push(getArea(`top-${h}`)))
 		if (hasRight) row.push('.')
 		rows.push(row)
 	}
 
 	vSubs.forEach((v) => {
 		const row: string[] = []
-		if (hasLeft) row.push(getArea(`left-${v}` as Placement))
+		if (hasLeft) row.push(getArea(`left-${v}`))
 		hSubs.forEach(() => row.push('ctrl'))
-		if (hasRight) row.push(getArea(`right-${v}` as Placement))
+		if (hasRight) row.push(getArea(`right-${v}`))
 		rows.push(row)
 	})
 
 	if (hasBottom) {
 		const row: string[] = []
 		if (hasLeft) row.push('.')
-		hSubs.forEach((h) => row.push(getArea(`bottom-${h}` as Placement)))
+		hSubs.forEach((h) => row.push(getArea(`bottom-${h}`)))
 		if (hasRight) row.push('.')
 		rows.push(row)
 	}
@@ -77,11 +76,11 @@ export const buildGrid = (placements: Placement[]) => {
 	vSubs.forEach(() => rowSizes.push('auto'))
 	if (hasBottom) rowSizes.push('auto')
 
-	return {
+	return css({
 		gridTemplateAreas: rows.map((r) => `"${r.join(' ')}"`).join(' '),
 		gridTemplateColumns: colSizes.join(' '),
 		gridTemplateRows: rowSizes.join(' '),
-	} satisfies CSSProperties
+	})
 }
 
 const gridAlignMap = {
@@ -91,7 +90,7 @@ const gridAlignMap = {
 } satisfies Record<FlexPlacement, { self: string; justify: string }>
 
 export const getGridAlignment = (p: Placement) => {
-	const [dir, flex] = p.split('-') as [DirectionPlacement, FlexPlacement]
+	const [dir, flex] = splitPlacement(p)
 	const { self, justify } = gridAlignMap[flex]
 	return dir === 'top' || dir === 'bottom'
 		? `${gridAlignMap[dir === 'top' ? 'end' : 'start'].self} ${justify}`
@@ -99,7 +98,7 @@ export const getGridAlignment = (p: Placement) => {
 }
 
 export const getItemsAlign = (p: Placement) => {
-	const [dir, flex] = p.split('-') as [DirectionPlacement, FlexPlacement]
+	const [dir, flex] = splitPlacement(p)
 	if (dir === 'top' || dir === 'bottom') return `items-${flex}`
 	return dir === 'left' ? 'items-end' : 'items-start'
 }

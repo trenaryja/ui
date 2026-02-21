@@ -3,7 +3,6 @@ import { getDuration } from '@/utils'
 import { useEffect, useState } from 'react'
 
 export type UseDurationOptions<T extends readonly DurationUnit[]> = {
-	/** Diff computed as targetDate - now */
 	readonly targetDate: Date
 	readonly units: T
 	readonly intervalMs?: number

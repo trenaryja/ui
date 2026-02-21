@@ -1,4 +1,4 @@
-import { directionPlacements, flexPlacements, joinTyped } from '@/utils'
+import { css, directionPlacements, flexPlacements, joinTyped } from '@/utils'
 import { useId } from 'react'
 
 export const popoverPositions = joinTyped(directionPlacements, flexPlacements, ' ')
@@ -21,15 +21,15 @@ export const useNativePopover = (options?: UseNativePopoverOptions) => {
 	return {
 		triggerProps: {
 			popoverTarget: popoverId,
-			style: { anchorName } as React.CSSProperties,
+			style: { anchorName },
 		},
 		contentProps: {
 			popover: options?.mode ?? 'auto',
 			id: popoverId,
-			style: {
+			style: css({
 				positionAnchor: anchorName,
 				positionArea: options?.position ?? 'bottom center',
-			} as React.CSSProperties,
+			}),
 		},
 		open: () => getPopoverElement()?.showPopover(),
 		close: () => getPopoverElement()?.hidePopover(),

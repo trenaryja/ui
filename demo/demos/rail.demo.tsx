@@ -1,6 +1,7 @@
 import { Fieldset } from '@/components'
 import { cn } from '@/utils'
 import type { DemoMeta } from '@demo'
+import type { ComponentType } from 'react'
 import {
 	LuHouse,
 	LuMail,
@@ -21,8 +22,8 @@ const NavItem = ({
 	htmlFor,
 	className,
 }: {
-	icon: React.ComponentType<{ className?: string }>
-	iconOpen?: React.ComponentType<{ className?: string }>
+	icon: ComponentType<{ className?: string }>
+	iconOpen?: ComponentType<{ className?: string }>
 	label?: string
 	htmlFor?: string
 	className?: string
@@ -161,7 +162,7 @@ const CustomContentExample = () => (
 				</nav>
 			</aside>
 			<main className='flex-1 p-4 bg-base-100'>
-				<p className='text-sm opacity-60'>Avatars, images, badges - anything works as the visible part.</p>
+				<p className='text-sm opacity-60'>Avatars, images, badges - anything works</p>
 			</main>
 		</div>
 	</Fieldset>

@@ -1,9 +1,9 @@
 import type { DaisyThemeColor, TailwindColor } from '@/utils'
-import { cn, daisyThemeColors, daisyThemeMap, makeTypeGuard, tailwindPaletteMap } from '@/utils'
-import * as React from 'react'
+import { cn, css, daisyThemeColors, daisyThemeMap, makeTypeGuard, tailwindPaletteMap } from '@/utils'
+import type { ComponentProps } from 'react'
 import { Button } from '../Button/Button'
 
-type BaseButtonProps = Omit<React.ComponentProps<'button'>, 'color'>
+type BaseButtonProps = Omit<ComponentProps<'button'>, 'color'>
 
 type TailwindColorButtonProps = BaseButtonProps & { color: TailwindColor }
 
@@ -42,7 +42,7 @@ export const DaisyColorButton = ({ color, className, disabled, ...props }: Daisy
 		<Button
 			className={cn(className)}
 			disabled={disabled}
-			style={{ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg } as React.CSSProperties}
+			style={css({ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg })}
 			{...props}
 		/>
 	)
@@ -58,7 +58,7 @@ export const TailwindColorButton = ({ color, className, disabled, ...props }: Ta
 		<Button
 			className={cn(className)}
 			disabled={disabled}
-			style={{ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg } as React.CSSProperties}
+			style={css({ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg })}
 			{...props}
 		/>
 	)

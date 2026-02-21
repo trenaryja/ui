@@ -1,4 +1,5 @@
 import { attempt } from '@/utils'
+import type { SyntheticEvent } from 'react'
 import { useEffect, useRef } from 'react'
 
 const focusAutofocus = (el: HTMLElement) =>
@@ -33,7 +34,7 @@ export const useNativeDialog = ({ dialogId, hasEscapeKey, open, setOpen }: UseNa
 		el.close()
 	}
 
-	const onCancel = (e: React.SyntheticEvent<HTMLDialogElement>) => {
+	const onCancel = (e: SyntheticEvent<HTMLDialogElement>) => {
 		lastCloseWasCancelRef.current = true
 		if (hasEscapeKey) return
 		e.preventDefault()
