@@ -11,7 +11,7 @@ export const TextArea = ({ className, readOnly, tabIndex, ...props }: ComponentP
 			className,
 		)}
 		readOnly={readOnly}
-		tabIndex={(tabIndex ?? readOnly) ? -1 : undefined}
+		tabIndex={readOnly ? -1 : tabIndex}
 		{...props}
 	/>
 )

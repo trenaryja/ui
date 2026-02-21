@@ -13,7 +13,7 @@ export const BaseInput = ({ autoFocus, className, readOnly, tabIndex, ...props }
 			className,
 		)}
 		readOnly={readOnly}
-		tabIndex={(tabIndex ?? readOnly) ? -1 : undefined}
+		tabIndex={readOnly ? -1 : tabIndex}
 		{...props}
 	/>
 )

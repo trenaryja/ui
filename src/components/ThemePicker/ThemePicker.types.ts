@@ -18,10 +18,9 @@ export type ThemePickerPopoverProps = Base &
 	Trigger & { position?: PopoverPosition; showSearch?: boolean }
 
 export type ThemePickerModalProps = Base &
-	ClassNames<'button' | 'card' | 'defaultTrigger' | 'grid' | 'list' | 'search'> &
+	ClassNames<'button' | 'defaultTrigger' | 'list' | 'search'> &
 	Trigger & {
 		modalProps?: Partial<Omit<ModalProps, 'children' | 'trigger'>>
-		showPreview?: boolean
 		showSearch?: boolean
 	}
 
