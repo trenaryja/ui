@@ -1,3 +1,4 @@
+import { Field, Fieldset, Toggle } from '@/components'
 import { useUnsavedChangesPrompt } from '@/hooks'
 import type { DemoMeta } from '@demo'
 import { useState } from 'react'
@@ -11,14 +12,13 @@ export const Demo = () => {
 
 	return (
 		<div className='demo place-items-center'>
-			<fieldset className='grid gap-4 w-full place-items-center'>
-				<label className='flex items-center gap-2'>
-					<input checked={isDirty} className='toggle' type='checkbox' onChange={(e) => setIsDirty(e.target.checked)} />
-					<span className='text-sm'>pretend there are unsaved changes</span>
-				</label>
+			<Fieldset className='grid gap-4 w-full place-items-center'>
+				<Field label='pretend there are unsaved changes' labelPlacement='right-center'>
+					<Toggle checked={isDirty} onChange={(e) => setIsDirty(e.target.checked)} />
+				</Field>
 
 				<div className='alert alert-soft'>Try refreshing the page, closing the tab, or navigating away</div>
-			</fieldset>
+			</Fieldset>
 		</div>
 	)
 }

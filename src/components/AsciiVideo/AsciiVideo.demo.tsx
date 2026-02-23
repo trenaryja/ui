@@ -1,4 +1,4 @@
-import { AsciiVideo } from '@/components'
+import { AsciiVideo, Field, Fieldset, Input, Range, Select, Toggle } from '@/components'
 import { characterRamps } from '@/utils'
 import type { DemoMeta } from '@demo'
 import { useState } from 'react'
@@ -20,55 +20,49 @@ export const Demo = () => {
 	const [src, setSrc] = useState(srcs[0])
 	const [ramp, setRamp] = useState<string>(characterRamps[0])
 	const [reverseRamp, setReverseRamp] = useState(false)
+	const [maxWidthEnabled, setMaxWidthEnabled] = useState(true)
 	const [maxWidth, setMaxWidth] = useState(200)
 
 	return (
 		<div className='demo'>
-			<fieldset className='grid gap-4 w-full max-w-md p-4'>
-				<label className='flex flex-col gap-1 w-full'>
-					<span className='text-sm text-center'>Select Video</span>
-					<select className='select w-full' value={src} onChange={(e) => setSrc(e.target.value)}>
+			<Fieldset className='size-full max-w-xs'>
+				<Field label='Select Video'>
+					<Select value={src} onChange={(e) => setSrc(e.target.value)}>
 						{srcs.map((s, i) => (
 							<option key={s} value={s}>
 								Video {i + 1}
 							</option>
 						))}
-					</select>
-				</label>
+					</Select>
+				</Field>
 
-				<label className='flex flex-col gap-1 w-full'>
-					<span className='text-sm text-center'>Or enter custom Video URL</span>
-					<input className='input w-full' value={src} onChange={(e) => setSrc(e.target.value)} />
-				</label>
+				<Field label='Or enter custom Video URL'>
+					<Input value={src} onChange={(e) => setSrc(e.target.value)} />
+				</Field>
 
-				<label className='flex flex-col gap-1 w-full'>
-					<span className='text-sm text-center'>Character ramp</span>
-					<input className='input w-full font-mono' value={ramp} onChange={(e) => setRamp(e.target.value)} />
-				</label>
+				<Field label='Character ramp'>
+					<Input value={ramp} onChange={(e) => setRamp(e.target.value)} />
+				</Field>
 
-				<label className='flex items-center gap-2'>
-					<input
-						checked={reverseRamp}
-						className='toggle'
-						type='checkbox'
-						onChange={(e) => setReverseRamp(e.target.checked)}
-					/>
-					<span className='text-sm'>Reverse character ramp</span>
-				</label>
+				<Field label='Reverse character ramp' labelPlacement='right-center'>
+					<Toggle checked={reverseRamp} onChange={(e) => setReverseRamp(e.target.checked)} />
+				</Field>
 
-				<div className='flex flex-col gap-1 w-full'>
-					<input
-						className='range w-full'
-						max={200}
-						min={1}
-						type='range'
-						value={maxWidth}
-						onChange={(e) => setMaxWidth(e.target.valueAsNumber)}
-					/>
-				</div>
-			</fieldset>
+				<Field label={`Limit max width${maxWidthEnabled ? ` (${maxWidth} chars)` : ''}`} labelPlacement='right-center'>
+					<Toggle checked={maxWidthEnabled} onChange={(e) => setMaxWidthEnabled(e.target.checked)} />
+				</Field>
 
-			<AsciiVideo characterRamp={ramp} maxWidth={maxWidth} reverseRamp={reverseRamp} src={src} />
+				{maxWidthEnabled && (
+					<Range max={200} min={1} value={maxWidth} onChange={(e) => setMaxWidth(e.target.valueAsNumber)} />
+				)}
+			</Fieldset>
+
+			<AsciiVideo
+				characterRamp={ramp}
+				maxWidth={maxWidthEnabled ? maxWidth : undefined}
+				reverseRamp={reverseRamp}
+				src={src}
+			/>
 		</div>
 	)
 }

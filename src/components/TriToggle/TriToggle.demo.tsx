@@ -11,32 +11,27 @@ export function Demo() {
 			</Fieldset>
 
 			<Fieldset legend='States' className='fieldset-flex-examples'>
-				<Field label='Null' labelPlacement='right-center'>
-					<TriToggle value={null} />
-				</Field>
 				<Field label='False' labelPlacement='right-center'>
 					<TriToggle value={false} />
 				</Field>
 				<Field label='True' labelPlacement='right-center'>
 					<TriToggle value />
 				</Field>
+				<Field label='Null' labelPlacement='right-center'>
+					<TriToggle value={null} />
+				</Field>
 			</Fieldset>
 
 			<Fieldset legend='Modifiers' className='grid grid-cols-[auto_repeat(3,1fr)] gap-x-6 gap-y-3 items-center'>
 				<div className='text-sm opacity-60'>Disabled</div>
-				<TriToggle disabled value={null} className='justify-self-center' />
 				<TriToggle disabled value={false} className='justify-self-center' />
 				<TriToggle disabled value className='justify-self-center' />
+				<TriToggle disabled value={null} className='justify-self-center' />
 
 				<div className='text-sm opacity-60'>ReadOnly</div>
-				<TriToggle readOnly value={null} className='justify-self-center' />
 				<TriToggle readOnly value={false} className='justify-self-center' />
 				<TriToggle readOnly value className='justify-self-center' />
-
-				<div className='text-sm opacity-60'>Required</div>
-				<TriToggle required defaultValue={null} className='justify-self-center' />
-				<TriToggle required defaultValue={false} className='justify-self-center' />
-				<TriToggle required defaultValue className='justify-self-center' />
+				<TriToggle readOnly value={null} className='justify-self-center' />
 			</Fieldset>
 
 			<Fieldset legend='Sizes' className='fieldset-flex-examples'>

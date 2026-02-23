@@ -1,111 +1,53 @@
-import { AsciiImage } from '@/components'
+import { AsciiImage, Button, Field, Fieldset, Input, Range, Toggle } from '@/components'
 import { characterRamps, cn } from '@/utils'
 import type { DemoMeta } from '@demo'
-import { picsum } from '@demo'
-import { useEffect, useState } from 'react'
+import { usePicsumImage } from '@demo'
+import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'AsciiImage', category: 'components' }
 
 export const Demo = () => {
-	const [src, setSrc] = useState('')
+	const { src, setSrc, loading, fetchRandom } = usePicsumImage()
 	const [ramp, setRamp] = useState<string>(characterRamps[0])
 	const [reverseRamp, setReverseRamp] = useState(false)
 	const [showImage, setShowImage] = useState(false)
 	const [clipText, setClipText] = useState(false)
 	const [maxWidthEnabled, setMaxWidthEnabled] = useState(false)
 	const [maxWidth, setMaxWidth] = useState(100)
-	const [loading, setLoading] = useState(true)
-
-	const fetchRandom = async () => {
-		setLoading(true)
-		const newSrc = await picsum()
-		setSrc(newSrc)
-		setLoading(false)
-	}
-
-	useEffect(() => {
-		let cancelled = false
-		picsum().then((newSrc) => {
-			if (!cancelled) {
-				setSrc(newSrc)
-				setLoading(false)
-			}
-		})
-
-		return () => {
-			cancelled = true
-		}
-	}, [])
 
 	return (
-		<div className='demo pt-10 full-bleed'>
-			<fieldset className='grid gap-4 w-full max-w-md p-4' disabled={loading}>
-				<label className='flex flex-col gap-1 w-full'>
-					<span className='text-sm text-center'>Image URL</span>
-					<input className='input w-full' value={src} onChange={(e) => setSrc(e.target.value)} />
-				</label>
+		<div className='demo'>
+			<Fieldset className='max-w-xs size-full' disabled={loading}>
+				<Field label='Image URL'>
+					<Input value={src} onChange={(e) => setSrc(e.target.value)} />
+				</Field>
 
-				<label className='flex flex-col gap-1 w-full'>
-					<span className='text-sm text-center'>Character ramp</span>
-					<input className='input w-full font-mono' value={ramp} onChange={(e) => setRamp(e.target.value)} />
-				</label>
+				<Field label='Character ramp'>
+					<Input value={ramp} onChange={(e) => setRamp(e.target.value)} />
+				</Field>
 
-				<label className='flex items-center gap-2'>
-					<input
-						checked={reverseRamp}
-						className='toggle'
-						type='checkbox'
-						onChange={(e) => setReverseRamp(e.target.checked)}
-					/>
-					<span className='text-sm'>Reverse character ramp</span>
-				</label>
+				<Field label='Reverse character ramp' labelPlacement='right-center'>
+					<Toggle checked={reverseRamp} onChange={(e) => setReverseRamp(e.target.checked)} />
+				</Field>
 
-				<label className='flex items-center gap-2'>
-					<input
-						checked={showImage}
-						className='toggle'
-						type='checkbox'
-						onChange={(e) => setShowImage(e.target.checked)}
-					/>
-					<span className='text-sm'>Show image</span>
-				</label>
+				<Field label='Show image' labelPlacement='right-center'>
+					<Toggle checked={showImage} onChange={(e) => setShowImage(e.target.checked)} />
+				</Field>
 
-				<label className='flex items-center gap-2'>
-					<input
-						checked={clipText}
-						className='toggle'
-						type='checkbox'
-						onChange={(e) => setClipText(e.target.checked)}
-					/>
-					<span className='text-sm'>Clip text (requires show image)</span>
-				</label>
+				<Field label='Clip text (requires show image)' labelPlacement='right-center'>
+					<Toggle checked={clipText} onChange={(e) => setClipText(e.target.checked)} />
+				</Field>
 
-				<label className='flex items-center gap-2'>
-					<input
-						checked={maxWidthEnabled}
-						className='toggle'
-						type='checkbox'
-						onChange={(e) => setMaxWidthEnabled(e.target.checked)}
-					/>
-					<span className='text-sm'>Limit max width{maxWidthEnabled ? ` (${maxWidth} characters)` : ''}</span>
-				</label>
+				<Field label={`Limit max width${maxWidthEnabled ? ` (${maxWidth} chars)` : ''}`} labelPlacement='right-center'>
+					<Toggle checked={maxWidthEnabled} onChange={(e) => setMaxWidthEnabled(e.target.checked)} />
+				</Field>
 
 				{maxWidthEnabled && (
-					<input
-						className='range w-full'
-						disabled={!maxWidthEnabled}
-						max={200}
-						min={1}
-						type='range'
-						value={maxWidth}
-						onChange={(e) => setMaxWidth(e.target.valueAsNumber)}
-					/>
+					<Range max={200} min={1} value={maxWidth} onChange={(e) => setMaxWidth(e.target.valueAsNumber)} />
 				)}
 
-				<button className='btn' type='button' onClick={fetchRandom}>
-					{loading ? 'Loading...' : 'New Random Image'}
-				</button>
-			</fieldset>
+				<Button onClick={fetchRandom}>{loading ? 'Loading...' : 'New Random Image'}</Button>
+			</Fieldset>
 
 			{src && (
 				<AsciiImage

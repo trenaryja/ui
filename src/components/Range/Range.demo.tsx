@@ -11,13 +11,13 @@ export function Demo() {
 			</Fieldset>
 
 			<Fieldset legend='Modifiers' className='fieldset-flex-examples flex-col'>
-				<div className='flex items-center gap-4'>
-					<span className='text-sm opacity-60 w-20'>Disabled</span>
-					<Range disabled className='flex-1' />
+				<div className='flex gap-2 items-center justify-center self-stretch'>
+					<span className='font-mono'>Disabled</span>
+					<Range disabled />
 				</div>
-				<div className='flex items-center gap-4'>
-					<span className='text-sm opacity-60 w-20'>ReadOnly</span>
-					<Range readOnly className='flex-1' />
+				<div className='flex gap-2 items-center justify-center self-stretch'>
+					<span className='font-mono'>ReadOnly</span>
+					<Range readOnly />
 				</div>
 			</Fieldset>
 

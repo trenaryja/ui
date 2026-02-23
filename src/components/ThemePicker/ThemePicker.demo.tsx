@@ -1,8 +1,6 @@
-'use client'
-
 import { useTheme } from '@/hooks'
 import type { DemoMeta } from '@demo'
-import { ThemePicker } from './ThemePicker'
+import { ThemePicker } from '@/components'
 
 export const meta: DemoMeta = { title: 'ThemePicker', category: 'components' }
 

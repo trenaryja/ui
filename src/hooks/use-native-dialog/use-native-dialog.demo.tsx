@@ -1,5 +1,3 @@
-'use client'
-
 import { Button, Field, Fieldset, Toggle } from '@/components'
 import { useNativeDialog } from '@/hooks'
 import type { DemoMeta } from '@demo'

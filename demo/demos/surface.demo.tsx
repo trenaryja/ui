@@ -20,9 +20,9 @@ const surfaceVariants = [
 ] as const
 
 const SurfaceCard = ({ title, className }: { title: string; className?: string }) => (
-	<div className={cn('surface p-4', className)}>
-		<h3 className='text-xl font-bold'>{title}</h3>
-		<p>A dimensional panel with depth, shadows, and noise texture.</p>
+	<div className={cn('surface p-4 grid gap-2', className)}>
+		<h3 className='text-lg font-bold'>{title}</h3>
+		<p className='text-sm'>A dimensional panel with depth, shadows, and noise texture.</p>
 		<div className='flex gap-2'>
 			<button type='button' className='btn btn-sm'>
 				Button

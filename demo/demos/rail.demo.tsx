@@ -120,60 +120,11 @@ const ComposabilityExample = () => (
 	</Fieldset>
 )
 
-const CustomContentExample = () => (
-	<Fieldset legend='Custom Content'>
-		<p className='text-sm opacity-60 mb-4'>Rail items can be anything - initials, images, or custom components.</p>
-		<div className='rail h-64 border border-base-300 rounded-box overflow-hidden'>
-			<input type='checkbox' className='rail-toggle' id='rail-custom' />
-			<aside className='flex flex-col bg-base-200 h-full'>
-				<nav className='flex flex-col gap-1 p-2'>
-					<NavItem icon={LuPanelLeftOpen} iconOpen={LuPanelLeftClose} htmlFor='rail-custom' />
-					<button
-						type='button'
-						className='flex items-center gap-3 rounded-btn px-2 py-2 hover:bg-base-300 transition-colors'
-					>
-						<div className='avatar placeholder'>
-							<div className='bg-primary text-primary-content w-8 rounded-full'>
-								<span className='text-sm'>JT</span>
-							</div>
-						</div>
-						<span className='is-rail-close:w-0 is-rail-close:opacity-0 overflow-hidden whitespace-nowrap transition-all duration-300'>
-							Justin Trenary
-						</span>
-					</button>
-					<button
-						type='button'
-						className='flex items-center gap-3 rounded-btn px-2 py-2 hover:bg-base-300 transition-colors'
-					>
-						<div className='w-8 h-8 rounded bg-linear-to-br from-primary to-secondary shrink-0' />
-						<span className='is-rail-close:w-0 is-rail-close:opacity-0 overflow-hidden whitespace-nowrap transition-all duration-300'>
-							Project Alpha
-						</span>
-					</button>
-					<button
-						type='button'
-						className='flex items-center gap-3 rounded-btn px-2 py-2 hover:bg-base-300 transition-colors'
-					>
-						<div className='badge badge-error w-8 justify-center shrink-0'>5</div>
-						<span className='is-rail-close:w-0 is-rail-close:opacity-0 overflow-hidden whitespace-nowrap transition-all duration-300'>
-							Notifications
-						</span>
-					</button>
-				</nav>
-			</aside>
-			<main className='flex-1 p-4 bg-base-100'>
-				<p className='text-sm opacity-60'>Avatars, images, badges - anything works</p>
-			</main>
-		</div>
-	</Fieldset>
-)
-
 export function Demo() {
 	return (
 		<div className='demo full-bleed-container *:w-full'>
 			<DefaultExample />
 			<ComposabilityExample />
-			<CustomContentExample />
 		</div>
 	)
 }

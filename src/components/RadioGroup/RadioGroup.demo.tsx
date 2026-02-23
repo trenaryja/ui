@@ -1,71 +1,55 @@
-import { Field, Fieldset, RadioGroup } from '@/components'
+import { Field, Fieldset, RadioGroup, Toggle } from '@/components'
 import type { DemoMeta } from '@demo'
+import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'RadioGroup', category: 'components', tags: ['input'] }
 
+const options = ['Small', 'Medium', 'Large']
+
 export function Demo() {
+	const [allowDeselect, setAllowDeselect] = useState(false)
+
 	return (
 		<div className='demo'>
-			<Fieldset legend='String Options' className='fieldset-flex-examples'>
-				<RadioGroup options={['Small', 'Medium', 'Large']} defaultValue='Small' />
-			</Fieldset>
-
-			<Fieldset legend='Object Options' className='fieldset-flex-examples'>
-				<RadioGroup
-					options={[
-						{ value: 'sm', label: 'Small' },
-						{ value: 'md', label: 'Medium' },
-						{ value: 'lg', label: 'Large' },
-					]}
-					defaultValue='sm'
-				/>
-			</Fieldset>
-
-			<Fieldset legend='Disabled Option' className='fieldset-flex-examples'>
-				<RadioGroup
-					options={[
-						{ value: 'free', label: 'Free' },
-						{ value: 'pro', label: 'Pro' },
-						{ value: 'enterprise', label: 'Enterprise', disabled: true },
-					]}
-					defaultValue='free'
-				/>
-			</Fieldset>
-
-			<Fieldset legend='Disabled Group' className='fieldset-flex-examples'>
-				<RadioGroup options={['Yes', 'No', 'Maybe']} defaultValue='Yes' disabled />
-			</Fieldset>
-
-			<Fieldset legend='ReadOnly' className='fieldset-flex-examples'>
-				<RadioGroup options={['Yes', 'No', 'Maybe']} defaultValue='Yes' readOnly />
-			</Fieldset>
-
-			<Fieldset legend='With Field' className='fieldset-flex-examples'>
-				<Field label='Priority'>
-					<RadioGroup options={['Low', 'Medium', 'High']} defaultValue='Low' />
+			<Fieldset>
+				<Field label='Allow Deselect' labelPlacement='right-center'>
+					<Toggle checked={allowDeselect} onChange={(e) => setAllowDeselect(e.target.checked)} />
 				</Field>
 			</Fieldset>
 
-			<Fieldset legend='Button Variant' className='fieldset-flex-examples'>
-				<RadioGroup variant='btn' options={['Small', 'Medium', 'Large']} defaultValue='Small' />
-			</Fieldset>
+			<Field label='Default'>
+				<RadioGroup options={options} defaultValue='Small' allowDeselect={allowDeselect} />
+			</Field>
 
-			<Fieldset legend='Button Variant (Join)' className='fieldset-flex-examples'>
+			<Field label='Disabled Option'>
+				<RadioGroup
+					options={options.map((o) => (o === 'Large' ? { value: o, label: o, disabled: true } : o))}
+					defaultValue='Small'
+					allowDeselect={allowDeselect}
+				/>
+			</Field>
+
+			<Field label='Disabled Group'>
+				<RadioGroup options={options} defaultValue='Small' disabled allowDeselect={allowDeselect} />
+			</Field>
+
+			<Field label='ReadOnly'>
+				<RadioGroup options={options} defaultValue='Small' readOnly allowDeselect={allowDeselect} />
+			</Field>
+
+			<Field label='Button Variant'>
+				<RadioGroup variant='btn' options={options} defaultValue='Small' allowDeselect={allowDeselect} />
+			</Field>
+
+			<Field label='Button Variant (Join)'>
 				<RadioGroup
 					variant='btn'
-					options={['Small', 'Medium', 'Large']}
+					options={options}
 					defaultValue='Small'
+					allowDeselect={allowDeselect}
 					classNames={{ container: 'join', item: 'join-item' }}
 				/>
-			</Fieldset>
-
-			<Fieldset legend='Allow Deselect' className='fieldset-flex-examples'>
-				<RadioGroup options={['Yes', 'No', 'Maybe']} defaultValue='Yes' allowDeselect />
-			</Fieldset>
-
-			<Fieldset legend='Allow Deselect (btn)' className='fieldset-flex-examples'>
-				<RadioGroup variant='btn' options={['S', 'M', 'L']} defaultValue='S' allowDeselect />
-			</Fieldset>
+			</Field>
 		</div>
 	)
 }

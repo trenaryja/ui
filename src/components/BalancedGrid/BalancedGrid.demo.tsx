@@ -1,4 +1,4 @@
-import { BalancedGrid } from '@/components'
+import { BalancedGrid, Field, Fieldset, Range, Toggle } from '@/components'
 import type { DemoMeta } from '@demo'
 import { useState } from 'react'
 
@@ -10,29 +10,18 @@ export const Demo = () => {
 	const [pack, setPack] = useState(false)
 
 	return (
-		<main className='demo'>
-			<fieldset className='fieldset size-full place-items-center'>
-				<p className='label'>Pack last row</p>
-				<input checked={pack} className='toggle' type='checkbox' onChange={(e) => setPack(e.target.checked)} />
-				<p className='label'>Item count: {itemCount}</p>
-				<input
-					className='range'
-					max={25}
-					min={1}
-					type='range'
-					value={itemCount}
-					onChange={(e) => setItemCount(e.target.valueAsNumber)}
-				/>
-				<p className='label'>Max # of columns: {maxCols}</p>
-				<input
-					className='range'
-					max={10}
-					min={1}
-					type='range'
-					value={maxCols}
-					onChange={(e) => setMaxCols(e.target.valueAsNumber)}
-				/>
-			</fieldset>
+		<div className='demo'>
+			<Fieldset className='max-w-xs size-full'>
+				<Field label='Pack last row'>
+					<Toggle checked={pack} onChange={(e) => setPack(e.target.checked)} />
+				</Field>
+				<Field label={`Item count: ${itemCount}`}>
+					<Range max={25} min={1} value={itemCount} onChange={(e) => setItemCount(e.target.valueAsNumber)} />
+				</Field>
+				<Field label={`Max # of columns: ${maxCols}`}>
+					<Range max={10} min={1} value={maxCols} onChange={(e) => setMaxCols(e.target.valueAsNumber)} />
+				</Field>
+			</Fieldset>
 			<BalancedGrid className='gap-2 place-items-center w-full' pack={pack} maxCols={maxCols}>
 				{[...Array(itemCount).keys()].map((i) => (
 					<div className='surface grid place-items-center h-20 w-full' key={i}>
@@ -40,6 +29,6 @@ export const Demo = () => {
 					</div>
 				))}
 			</BalancedGrid>
-		</main>
+		</div>
 	)
 }

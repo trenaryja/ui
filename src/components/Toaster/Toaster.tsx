@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import type { ToasterProps as SonnerProps } from 'sonner'
 import { Toaster as Sonner } from 'sonner'
 import type { OverrideProperties } from 'type-fest'
@@ -14,7 +15,10 @@ export const toastPositions = [
 ] as const satisfies SonnerProps['position'][]
 export type ToastPosition = (typeof toastPositions)[number]
 
-export type ToasterProps = OverrideProperties<SonnerProps, { position?: ToastPosition }>
+export type ToasterProps = OverrideProperties<SonnerProps, { position?: ToastPosition }> & {
+	/** Element to portal into. Defaults to `document.body`. Pass `null` to render in place. */
+	container?: Element | null
+}
 
 const defaultToastOptions = {
 	unstyled: true,
@@ -33,6 +37,7 @@ const defaultToastOptions = {
 	className: 'alert group w-full',
 } as const satisfies SonnerProps['toastOptions']
 
-export const Toaster = ({ toastOptions, ...props }: ToasterProps) => (
-	<Sonner toastOptions={{ ...defaultToastOptions, ...toastOptions }} {...props} />
-)
+export const Toaster = ({ toastOptions, container = document.body, ...props }: ToasterProps) => {
+	const toaster = <Sonner toastOptions={{ ...defaultToastOptions, ...toastOptions }} {...props} />
+	return container ? createPortal(toaster, container) : toaster
+}

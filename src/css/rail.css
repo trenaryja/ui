@@ -1,19 +1,19 @@
-.rail {
+@utility rail {
 	display: flex;
 	flex-direction: row;
 	interpolate-size: allow-keywords;
+
+	& > .rail-toggle {
+		appearance: none;
+		opacity: 0;
+		width: 0;
+		height: 0;
+		position: absolute;
+		pointer-events: none;
+	}
 }
 
-.rail > .rail-toggle {
-	appearance: none;
-	opacity: 0;
-	width: 0;
-	height: 0;
-	position: absolute;
-	pointer-events: none;
-}
-
-.rail-end {
+@utility rail-end {
 	flex-direction: row-reverse;
 }
 
