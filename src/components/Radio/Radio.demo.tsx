@@ -21,14 +21,16 @@ export function Demo() {
 				</Field>
 			</Fieldset>
 
-			<Fieldset legend='Modifiers' className='grid grid-cols-[auto_repeat(2,1fr)] gap-x-6 gap-y-3 items-center'>
-				<div className='text-sm opacity-60'>Disabled</div>
-				<Radio disabled checked={false} onChange={noop} className='justify-self-center' />
-				<Radio disabled checked onChange={noop} className='justify-self-center' />
+			<Fieldset legend='Modifiers' className='fieldset-flex-examples'>
+				<div className='grid grid-cols-[auto_repeat(2,1fr)] gap-2 items-center'>
+					<div className='text-sm opacity-60'>Disabled</div>
+					<Radio disabled checked={false} onChange={noop} className='justify-self-center' />
+					<Radio disabled checked onChange={noop} className='justify-self-center' />
 
-				<div className='text-sm opacity-60'>ReadOnly</div>
-				<Radio readOnly checked={false} className='justify-self-center' />
-				<Radio readOnly checked className='justify-self-center' />
+					<div className='text-sm opacity-60'>ReadOnly</div>
+					<Radio readOnly checked={false} className='justify-self-center' />
+					<Radio readOnly checked className='justify-self-center' />
+				</div>
 			</Fieldset>
 
 			<Fieldset legend='Sizes' className='fieldset-flex-examples'>

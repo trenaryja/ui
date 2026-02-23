@@ -3,11 +3,39 @@ import { Checkbox, Input, Radio, RadioGroup, Range, Select, TextArea, Toggle, Tr
 import type { Arrow } from '@/utils'
 import { durationUnits, joinTyped } from '@/utils'
 import type { JSXElementConstructor, ReactElement, ReactNode } from 'react'
-import { createElement } from 'react'
+import { createElement, useEffect, useState } from 'react'
 
 export * from './meta'
 
 export const picsum = async (size = 500) => await fetch(`https://picsum.photos/${size}`).then((res) => res.url)
+
+export const usePicsumImage = (size?: number) => {
+	const [src, setSrc] = useState('')
+	const [loading, setLoading] = useState(true)
+
+	const fetchRandom = async () => {
+		setLoading(true)
+		const newSrc = await picsum(size)
+		setSrc(newSrc)
+		setLoading(false)
+	}
+
+	useEffect(() => {
+		let cancelled = false
+		picsum(size).then((newSrc) => {
+			if (!cancelled) {
+				setSrc(newSrc)
+				setLoading(false)
+			}
+		})
+
+		return () => {
+			cancelled = true
+		}
+	}, [size])
+
+	return { src, setSrc, loading, fetchRandom }
+}
 
 export const nest = <P,>(n: number, el: ReactElement<P>): ReactElement<P> => {
 	if (n <= 1) return el

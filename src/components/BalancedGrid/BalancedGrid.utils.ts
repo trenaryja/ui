@@ -1,4 +1,5 @@
 import { css, lcm } from '@/utils'
+import * as R from 'remeda'
 
 export const balanceGridItems = <T>(items: T[], maxCols: number, pack?: boolean) => {
 	const n = items.length
@@ -12,7 +13,11 @@ export const balanceGridItems = <T>(items: T[], maxCols: number, pack?: boolean)
 		candidates.push({ cols, rows, emptyCells })
 	}
 
-	const [{ cols }] = candidates.sort((a, b) => (a.rows !== b.rows ? a.rows - b.rows : a.emptyCells - b.emptyCells))
+	const [{ cols }] = R.sortBy(
+		candidates,
+		(a) => a.rows,
+		(a) => a.emptyCells,
+	)
 	const leftoverCount = n % cols
 	const lastRowIndex = n - (leftoverCount === 0 ? cols : leftoverCount)
 

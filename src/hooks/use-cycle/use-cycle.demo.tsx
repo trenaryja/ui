@@ -1,4 +1,4 @@
-import { BalancedGrid, Button } from '@/components'
+import { BalancedGrid, Button, Field, Fieldset, Range, Toggle } from '@/components'
 import { useCycle as useCycleHook } from '@/hooks'
 import { cn } from '@/utils'
 import type { DemoMeta } from '@demo'
@@ -21,54 +21,39 @@ export const Demo = () => {
 	})
 
 	return (
-		<div className='demo place-items-center'>
-			<fieldset className='grid gap-4 w-full place-items-center'>
-				<span className='text-sm text-center'>Item Count: {items.length}</span>
-				<input
-					className='range'
-					max={playingCards.length}
-					min={0}
-					type='range'
-					value={count}
-					onChange={(e) => setCount(e.target.valueAsNumber)}
-				/>
+		<div className='demo'>
+			<Fieldset>
+				<Field label={`Item Count: ${items.length}`}>
+					<Range max={playingCards.length} min={0} value={count} onChange={(e) => setCount(e.target.valueAsNumber)} />
+				</Field>
 
-				<label className='flex items-center gap-2'>
-					<input checked={wrap} className='toggle' type='checkbox' onChange={(e) => setWrap(e.target.checked)} />
-					<span className='text-sm'>wrap</span>
-				</label>
+				<Field label='wrap' labelPlacement='right-center'>
+					<Toggle checked={wrap} onChange={(e) => setWrap(e.target.checked)} />
+				</Field>
 
-				<label className='flex items-center gap-2'>
-					<input
-						checked={idleResetEnabled}
-						className='toggle'
-						type='checkbox'
-						onChange={(e) => setIdleResetEnabled(e.target.checked)}
-					/>
-					<span className='text-sm'>reset when idle {idleResetEnabled ? ` (${idleResetMs}ms)` : ''}</span>
-				</label>
+				<Field label={`reset when idle${idleResetEnabled ? ` (${idleResetMs}ms)` : ''}`} labelPlacement='right-center'>
+					<Toggle checked={idleResetEnabled} onChange={(e) => setIdleResetEnabled(e.target.checked)} />
+				</Field>
 
 				{idleResetEnabled && (
-					<input
-						className='range'
+					<Range
 						max={3000}
 						min={50}
 						step={50}
-						type='range'
 						value={idleResetMs}
 						onChange={(e) => setIdleResetMs(e.target.valueAsNumber)}
 					/>
 				)}
-			</fieldset>
+			</Fieldset>
 
 			<div className='stats'>
 				<div className='stat'>
 					<div className='stat-title'>index</div>
-					<div className='stat-value font-mono'>{cycle.index}</div>
+					<div className='stat-value'>{cycle.index}</div>
 				</div>
 				<div className='stat'>
 					<div className='stat-title'>value</div>
-					<div className='stat-value font-mono'>{cycle.value}</div>
+					<div className='stat-value'>{cycle.value}</div>
 				</div>
 			</div>
 
@@ -88,14 +73,13 @@ export const Demo = () => {
 
 			<BalancedGrid pack className='w-fit gap-2' maxCols={4}>
 				{items.map((item, i) => (
-					<button
-						className={cn('btn btn-lg', { 'btn-soft': i === cycle.index })}
+					<Button
+						className={cn('btn-lg', { 'btn-soft': i === cycle.index })}
 						key={item}
-						type='button'
 						onClick={() => cycle.setIndex(i)}
 					>
 						{item}
-					</button>
+					</Button>
 				))}
 			</BalancedGrid>
 		</div>

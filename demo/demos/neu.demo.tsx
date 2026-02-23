@@ -1,4 +1,4 @@
-import { Range } from '@/components'
+import { Field, Fieldset, Range, Toggle } from '@/components'
 import { cn, css } from '@/utils'
 import type { DemoMeta } from '@demo'
 import { useEffect, useState } from 'react'
@@ -39,25 +39,40 @@ export const Demo = () => {
 	const liveStyle = css({
 		...neuVars,
 		borderRadius: `${radius}%`,
-		width: `${size}px`,
-		height: `${size}px`,
+		width: `min(${size}px, 100%)`,
+		aspectRatio: '1',
 	})
 
 	return (
-		<main className='grid lg:grid-cols-2 gap-10 full-bleed'>
-			<section className='grid grid-cols-2 gap-10 place-items-center *:grid *:place-items-center'>
-				<div className='neu' style={liveStyle}>
-					Normal
-				</div>
-				<div className='neu neu-inset' style={liveStyle}>
-					Inset
-				</div>
-				<div className='neu neu-concave' style={liveStyle}>
-					Concave
-				</div>
-				<div className='neu neu-convex' style={liveStyle}>
-					Convex
-				</div>
+		<div className='demo p-10 full-bleed md:grid-cols-2 *:size-full'>
+			<Fieldset className='max-w-xs'>
+				<Field label={`Border Radius: ${radius}%`}>
+					<Range max={50} value={radius} onChange={(e) => setRadius(e.target.valueAsNumber)} />
+				</Field>
+				<Field label={`Size: ${size}px`}>
+					<Range max={300} min={50} value={size} onChange={(e) => setSize(e.target.valueAsNumber)} />
+				</Field>
+				<Field label={`Distance: ${distance}px`}>
+					<Range max={50} value={distance} onChange={(e) => setDistance(e.target.valueAsNumber)} />
+				</Field>
+				<Field label={`Blur: ${blur}px`}>
+					<Range value={blur} onChange={(e) => setBlur(e.target.valueAsNumber)} />
+				</Field>
+				<Field label={`Intensity: ${intensity}%`}>
+					<Range value={intensity} onChange={(e) => setIntensity(e.target.valueAsNumber)} />
+				</Field>
+				<Field label={`Curve: ${curve}%`}>
+					<Range value={curve} onChange={(e) => setCurve(e.target.valueAsNumber)} />
+				</Field>
+				<Field label={`Angle: ${angle}°`}>
+					<Range disabled={spinning} max={360} value={angle} onChange={(e) => setAngle(e.target.valueAsNumber)} />
+				</Field>
+				<Field label='Spin'>
+					<Toggle checked={spinning} onChange={(e) => setSpinning(e.target.checked)} />
+				</Field>
+			</Fieldset>
+
+			<div className='grid grid-cols-2 gap-10 place-items-center *:grid *:place-items-center'>
 				<Range
 					style={neuVars}
 					className={cn(
@@ -74,33 +89,19 @@ export const Demo = () => {
 						'[--range-p:0]',
 					)}
 				/>
-			</section>
-
-			<section className='grid grid-cols-[auto_1fr] *:not-last:w-full gap-4 '>
-				<span>Border Radius: {radius}%</span>
-				<Range max={50} min={0} value={radius} onChange={(e) => setRadius(e.target.valueAsNumber)} />
-
-				<span>Size: {size}px</span>
-				<Range max={300} min={50} value={size} onChange={(e) => setSize(e.target.valueAsNumber)} />
-
-				<span>Distance: {distance}px</span>
-				<Range max={50} min={0} value={distance} onChange={(e) => setDistance(e.target.valueAsNumber)} />
-
-				<span>Blur: {blur}px</span>
-				<Range max={100} min={0} value={blur} onChange={(e) => setBlur(e.target.valueAsNumber)} />
-
-				<span>Intensity: {intensity}%</span>
-				<Range max={100} min={0} value={intensity} onChange={(e) => setIntensity(e.target.valueAsNumber)} />
-
-				<span>Curve: {curve}%</span>
-				<Range max={100} min={0} value={curve} onChange={(e) => setCurve(e.target.valueAsNumber)} />
-
-				<span>Angle: {angle}°</span>
-				<Range disabled={spinning} max={360} min={0} value={angle} onChange={(e) => setAngle(e.target.valueAsNumber)} />
-
-				<span>Spin</span>
-				<input checked={spinning} className='toggle' type='checkbox' onChange={(e) => setSpinning(e.target.checked)} />
-			</section>
-		</main>
+				<div className='neu' style={liveStyle}>
+					Normal
+				</div>
+				<div className='neu neu-inset' style={liveStyle}>
+					Inset
+				</div>
+				<div className='neu neu-concave' style={liveStyle}>
+					Concave
+				</div>
+				<div className='neu neu-convex' style={liveStyle}>
+					Convex
+				</div>
+			</div>
+		</div>
 	)
 }
