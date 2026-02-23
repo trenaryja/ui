@@ -24,7 +24,7 @@ export function Demo() {
 						value={placement}
 						onChange={setPlacement}
 						className='gap-2'
-						selectedClassName='btn-secondary'
+						classNames={{ selected: 'btn-secondary' }}
 					/>
 				</Fieldset>
 			</div>

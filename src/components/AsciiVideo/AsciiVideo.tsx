@@ -1,7 +1,7 @@
 'use client'
 
 import { useAscii } from '@/hooks'
-import { characterRamps, cn } from '@/utils'
+import { characterRamps, cn, noop } from '@/utils'
 import { useEffect, useRef, useState } from 'react'
 import type { AsciiImageProps } from '../AsciiImage/AsciiImage'
 
@@ -19,6 +19,8 @@ export const AsciiVideo = ({
 	const [isPlaying, setIsPlaying] = useState(true)
 	const videoRef = useRef<HTMLVideoElement>(null)
 	const { preRef, ascii, setAscii, processSource } = useAscii({ characterRamp, reverseRamp, maxHeight, maxWidth })
+	const processRef = useRef(processSource)
+	processRef.current = processSource
 
 	useEffect(() => {
 		videoRef.current ??= document.createElement('video')
@@ -33,7 +35,7 @@ export const AsciiVideo = ({
 				return
 			}
 
-			setAscii(processSource(video))
+			setAscii(processRef.current(video))
 			video.requestVideoFrameCallback(update)
 		}
 
@@ -43,14 +45,14 @@ export const AsciiVideo = ({
 		video.autoplay = true
 		video.playsInline = true
 		video.src = src
-		video.play()
+		video.play().catch(noop)
 		video.requestVideoFrameCallback(update)
 
 		return () => {
 			cancelled = true
 			video.pause()
 		}
-	}, [src, processSource, setAscii])
+	}, [src, setAscii])
 
 	const handlePlayPause = () => {
 		if (isPlaying) videoRef.current?.pause()
@@ -60,7 +62,7 @@ export const AsciiVideo = ({
 
 	return (
 		<pre
-			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role -- <pre> is the click-to-play/pause toggle
 			role='button'
 			tabIndex={0}
 			className={cn('bg-cover bg-no-repeat w-fit text-[.4rem] cursor-pointer', className)}

@@ -1,13 +1,9 @@
 import { cn } from '@/utils'
 import type { ComponentProps } from 'react'
 
-export const Select = ({
-	className,
-	readOnly,
-	tabIndex,
-	nativeDropdown,
-	...props
-}: ComponentProps<'select'> & { readOnly?: boolean; nativeDropdown?: boolean }) => (
+export type SelectProps = ComponentProps<'select'> & { readOnly?: boolean; nativeDropdown?: boolean }
+
+export const Select = ({ className, readOnly, tabIndex, nativeDropdown, ...props }: SelectProps) => (
 	<select
 		className={cn('select', { 'pointer-events-none bg-none': readOnly, 'appearance-none': nativeDropdown }, className)}
 		tabIndex={readOnly ? -1 : tabIndex}

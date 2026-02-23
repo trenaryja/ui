@@ -84,9 +84,9 @@ export const Field = ({
 	}
 
 	return (
-		<Fieldset className={cn(className)} style={style} {...rest}>
+		<Fieldset className={className} style={style} {...rest}>
 			{[...groups.entries()].map(([placement, slots]) => renderGroup(placement, slots))}
-			<div className={cn(classNames?.control)} style={{ gridArea: 'ctrl' }}>
+			<div className={classNames?.control} style={{ gridArea: 'ctrl' }}>
 				{children}
 			</div>
 		</Fieldset>

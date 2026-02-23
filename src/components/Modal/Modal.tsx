@@ -104,7 +104,7 @@ export const Modal = ({
 							type='button'
 							onClick={closeNative}
 						>
-							<LuX className={cn(classNames?.closeIcon)} />
+							<LuX className={classNames?.closeIcon} />
 						</button>
 					)}
 
@@ -116,7 +116,7 @@ export const Modal = ({
 						className={cn('modal-backdrop', { 'backdrop-blur': backdropBlur }, classNames?.backdrop)}
 						method='dialog'
 					>
-						<button aria-label='Close' className={cn(classNames?.backdropButton)} type='submit' />
+						<button aria-label='Close' className={classNames?.backdropButton} type='submit' />
 					</form>
 				) : (
 					<div className={cn('modal-backdrop', { 'backdrop-blur': backdropBlur }, classNames?.backdrop)} />

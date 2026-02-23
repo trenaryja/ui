@@ -56,15 +56,9 @@ export const useNativeDialog = ({ dialogId, hasEscapeKey, open, setOpen }: UseNa
 	}
 
 	useEffect(() => {
-		const el = document.getElementById(dialogId)
-		if (!(el instanceof HTMLDialogElement)) return
-		if (open && !el.open) {
-			attempt(() => el.showModal())
-			focusAutofocus(el)
-			return
-		}
-		if (!open && el.open) el.close()
-	}, [dialogId, open])
+		if (open) openNative()
+		else closeNative()
+	}, [closeNative, dialogId, open, openNative])
 
 	return { closeNative, onCancel, onClose, openNative }
 }

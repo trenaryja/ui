@@ -1,5 +1,6 @@
 'use client'
 
+import { Input } from '@/components'
 import { useTheme } from '@/hooks'
 import { cn } from '@/utils'
 import { useState } from 'react'
@@ -28,11 +29,11 @@ export const ThemePickerModal = ({
 			{...modalProps}
 		>
 			{showSearch && (
-				<input
+				<Input
 					type='search'
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
-					className={cn('input input-sm w-full', classNames?.search)}
+					className={cn('input-sm w-full', classNames?.search)}
 				/>
 			)}
 
@@ -46,7 +47,7 @@ export const ThemePickerModal = ({
 							className={cn('surface cursor-pointer p-2', { outline: theme === themeName }, classNames?.button)}
 							onClick={() => setTheme(themeName)}
 						>
-							<span>{themeName}</span>
+							<span className='font-bold text-lg'>{themeName}</span>
 							<div className='flex flex-wrap *:size-4 justify-center gap-1'>
 								<p title='base-100' className='bg-base-100 rounded-box' />
 								<p title='base-200' className='bg-base-200 rounded-box' />

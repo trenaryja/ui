@@ -35,14 +35,14 @@ export const ThemePickerToggle = ({
 		<button
 			type='button'
 			onClick={handleToggle}
-			className={cn('btn btn-ghost btn-square', className, classNames?.button)}
+			className={cn('btn btn-ghost btn-square', className)}
 			aria-label={`Switch to ${isLight ? 'dark' : 'light'} mode`}
 		>
 			<span className={cn('swap-rotate swap', { 'swap-active': !isLight })}>
 				<span className={cn('swap-on', classNames?.icon)}>{iconDark}</span>
 				<span className={cn('swap-off', classNames?.icon)}>{iconLight}</span>
 			</span>
-			{showLabel && <span className={cn(classNames?.label)}>{isLight ? 'Light' : 'Dark'}</span>}
+			{showLabel && <span className={classNames?.label}>{isLight ? 'Light' : 'Dark'}</span>}
 		</button>
 	)
 }
