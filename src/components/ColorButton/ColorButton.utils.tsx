@@ -9,26 +9,17 @@ type TailwindColorButtonProps = BaseButtonProps & { color: TailwindColor }
 
 type DaisyColorButtonProps = BaseButtonProps & { color: DaisyThemeColor }
 
-type DaisyButtonColor = Exclude<DaisyThemeColor, `${string}content` | `base${string}`>
+type DaisyRootColor = Exclude<DaisyThemeColor, `${string}content` | `base${string}`>
 
-export const isDaisyButtonColor = makeTypeGuard(
-	daisyThemeColors.filter((c): c is DaisyButtonColor => !c.includes('base') && !c.endsWith('content')),
+export const isDaisyRootColor = makeTypeGuard(
+	daisyThemeColors.filter((c): c is DaisyRootColor => !c.includes('base') && !c.endsWith('content')),
 )
 
-const daisyButtonColorMap: Record<DaisyButtonColor, `btn-${DaisyButtonColor}`> = {
-	primary: 'btn-primary',
-	secondary: 'btn-secondary',
-	accent: 'btn-accent',
-	neutral: 'btn-neutral',
-	info: 'btn-info',
-	success: 'btn-success',
-	warning: 'btn-warning',
-	error: 'btn-error',
-}
+const daisyButtonColor = (color: DaisyRootColor) => `btn-${color}` as const
 
 export const DaisyColorButton = ({ color, className, disabled, ...props }: DaisyColorButtonProps) => {
-	if (isDaisyButtonColor(color))
-		return <Button className={cn(daisyButtonColorMap[color], className)} disabled={disabled} {...props} />
+	if (isDaisyRootColor(color))
+		return <Button className={cn(daisyButtonColor(color), className)} disabled={disabled} {...props} />
 
 	const isBaseContent = color === 'base-content'
 	const isContentColor = color.endsWith('-content')
@@ -40,7 +31,7 @@ export const DaisyColorButton = ({ color, className, disabled, ...props }: Daisy
 		: `var(--color-${isContentColor ? baseName : `${baseName}-content`})`
 	return (
 		<Button
-			className={cn(className)}
+			className={className}
 			disabled={disabled}
 			style={css({ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg })}
 			{...props}
@@ -56,7 +47,7 @@ export const TailwindColorButton = ({ color, className, disabled, ...props }: Ta
 		: daisyThemeMap.light.theme['--color-base-content']
 	return (
 		<Button
-			className={cn(className)}
+			className={className}
 			disabled={disabled}
 			style={css({ '--btn-color': btnColor, '--btn-fg': disabled ? undefined : btnFg })}
 			{...props}

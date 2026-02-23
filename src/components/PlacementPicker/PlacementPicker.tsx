@@ -1,3 +1,4 @@
+import type { ClassNames } from '@/types'
 import type { Arrow, Placement } from '@/utils'
 import { cn } from '@/utils'
 
@@ -19,20 +20,19 @@ const horizontalPlacements: [Placement, Arrow][] = [
 	['right-end', '↘'],
 ]
 
-export type PlacementPickerProps = {
+export type PlacementPickerProps = ClassNames<'selected'> & {
 	value: Placement | undefined
 	onChange: (p: Placement | undefined) => void
 	force?: boolean
 	className?: string
-	selectedClassName?: string
 }
 
-export const PlacementPicker = ({ value, onChange, force, className, selectedClassName }: PlacementPickerProps) => {
+export const PlacementPicker = ({ value, onChange, force, className, classNames }: PlacementPickerProps) => {
 	const btn = (p: Placement, arrow: Arrow) => (
 		<button
 			type='button'
 			key={p}
-			className={cn('btn btn-circle btn-sm', p === value ? cn('btn-primary', selectedClassName) : 'btn-ghost')}
+			className={cn('btn btn-circle btn-sm', p === value ? cn('btn-primary', classNames?.selected) : 'btn-ghost')}
 			onClick={() => onChange(p)}
 			title={p}
 		>
@@ -53,7 +53,7 @@ export const PlacementPicker = ({ value, onChange, force, className, selectedCla
 						type='button'
 						className={cn(
 							'btn btn-circle btn-sm',
-							value === undefined ? cn('btn-primary', selectedClassName) : 'btn-ghost opacity-30',
+							value === undefined ? cn('btn-primary', classNames?.selected) : 'btn-ghost opacity-30',
 						)}
 						onClick={() => onChange(undefined)}
 						title='None'

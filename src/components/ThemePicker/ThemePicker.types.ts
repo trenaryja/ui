@@ -9,7 +9,7 @@ type Icons = { iconDark?: ReactNode; iconLight?: ReactNode }
 
 type Trigger = { trigger?: ReactElement<ButtonHTMLAttributes<HTMLButtonElement>> }
 
-export type ThemePickerToggleProps = Base & ClassNames<'button' | 'icon' | 'label'> & Icons & { showLabel?: boolean }
+export type ThemePickerToggleProps = Base & ClassNames<'icon' | 'label'> & Icons & { showLabel?: boolean }
 
 export type ThemePickerToggle3WayProps = Base & ClassNames<'icon' | 'toggle'> & Icons & { iconSystem?: ReactNode }
 

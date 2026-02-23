@@ -1,6 +1,6 @@
+import { AnimatedNumber, Field, Fieldset } from '@/components'
 import type { DemoMeta } from '@demo'
 import { useEffect, useState } from 'react'
-import { AnimatedNumber } from './AnimatedNumber'
 
 export const meta: DemoMeta = { title: 'AnimatedNumber', category: 'components' }
 
@@ -21,33 +21,39 @@ export function Demo() {
 
 	return (
 		<div className='demo'>
-			<h3>Basic Counter</h3>
-			<AnimatedNumber className='text-5xl' value={count} />
+			<Fieldset className='max-w-xs size-full'>
+				<Field label='Basic Counter'>
+					<AnimatedNumber className='text-5xl' value={count} />
+				</Field>
 
-			<h3>Currency (Intl.NumberFormat)</h3>
-			<div className='flex items-center gap-4'>
-				<AnimatedNumber className='text-4xl' value={price} format={{ style: 'currency', currency: 'USD' }} />
-				<button type='button' className='btn btn-sm' onClick={() => setPrice(Math.random() * 1000)}>
-					Randomize
-				</button>
-			</div>
+				<Field label='Currency (Intl.NumberFormat)'>
+					<div className='flex items-center gap-4'>
+						<AnimatedNumber className='text-4xl' value={price} format={{ style: 'currency', currency: 'USD' }} />
+						<button type='button' className='btn btn-sm' onClick={() => setPrice(Math.random() * 1000)}>
+							Randomize
+						</button>
+					</div>
+				</Field>
 
-			<h3>Continuous Mode</h3>
-			<div className='flex items-center gap-4'>
-				<AnimatedNumber className='text-4xl' value={progress} continuous suffix='%' />
-				<button type='button' className='btn btn-sm' onClick={() => setProgress(Math.floor(Math.random() * 100))}>
-					Random Progress
-				</button>
-			</div>
+				<Field label='Continuous Mode'>
+					<div className='flex items-center gap-4'>
+						<AnimatedNumber className='text-4xl' value={progress} continuous suffix='%' />
+						<button type='button' className='btn btn-sm' onClick={() => setProgress(Math.floor(Math.random() * 100))}>
+							Random Progress
+						</button>
+					</div>
+				</Field>
 
-			<h3>Timer (digits config)</h3>
-			<div className='flex items-center gap-4'>
-				<span className='text-4xl tabular-nums'>
-					<AnimatedNumber value={Math.floor(seconds / 10)} digits={{ 0: { max: 5 } }} />
-					<AnimatedNumber value={seconds % 10} />
-				</span>
-				<span className='text-base-content/60'>Wraps 59 → 00</span>
-			</div>
+				<Field label='Timer (digits config)'>
+					<div className='flex items-center gap-4'>
+						<span className='text-4xl tabular-nums'>
+							<AnimatedNumber value={Math.floor(seconds / 10)} digits={{ 0: { max: 5 } }} />
+							<AnimatedNumber value={seconds % 10} />
+						</span>
+						<span className='text-base-content/60'>Wraps 59 → 00</span>
+					</div>
+				</Field>
+			</Fieldset>
 		</div>
 	)
 }

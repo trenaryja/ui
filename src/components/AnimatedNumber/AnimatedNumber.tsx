@@ -51,7 +51,7 @@ const Digit = ({
 				}}
 			>
 				{[...range, ...range].map((d, i) => (
-					// eslint-disable-next-line @eslint-react/no-array-index-key
+					// eslint-disable-next-line @eslint-react/no-array-index-key -- fixed repeated digit sequence has no stable key
 					<span key={i} className='h-[1em] leading-[1em]'>
 						{d}
 					</span>
@@ -103,7 +103,7 @@ export const AnimatedNumber = ({
 
 		rafRef.current = requestAnimationFrame(animate)
 		return () => void (rafRef.current && cancelAnimationFrame(rafRef.current))
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	}, [value, continuous, animated, timing.duration])
 
 	useEffect(() => setPrevValue(value), [value])

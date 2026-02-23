@@ -37,7 +37,7 @@ export const ThemePickerPopover = ({
 							type='search'
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
-							className={cn('input input-sm min-w-32', classNames?.search)}
+							className={cn('input-sm min-w-32', classNames?.search)}
 						/>
 					)}
 
@@ -48,10 +48,9 @@ export const ThemePickerPopover = ({
 									key={themeName}
 									type='button'
 									data-theme={themeName === 'system' ? systemTheme : themeName}
-									className={cn('btn btn-wide btn-sm', classNames?.button)}
+									className={cn('btn btn-wide btn-sm', { outline: theme === themeName }, classNames?.button)}
 									onClick={() => setTheme(themeName)}
 								>
-									{theme === themeName ? '⦿ ' : ''}
 									{themeName}
 								</button>
 							))}
