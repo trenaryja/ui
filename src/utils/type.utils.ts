@@ -123,3 +123,9 @@ export const boolMap = <T>(value: boolean | null | undefined, [onTrue, onFalse, 
 
 /** A no-op function that does nothing. Useful for default callbacks and placeholders. */
 export const noop = () => undefined
+
+/** Returns a Promise that resolves after the specified number of milliseconds. */
+export const wait = (ms: number) =>
+	new Promise<void>((resolve) => {
+		setTimeout(resolve, ms)
+	})
