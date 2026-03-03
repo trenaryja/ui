@@ -5,6 +5,31 @@ import path from 'path'
 import * as R from 'remeda'
 import { distCssDir, generatedDir, generateTailwindConfig, log, srcCssDir } from './utils'
 
+const typographyColorModifiers = new Set([
+	'amber',
+	'blue',
+	'cyan',
+	'emerald',
+	'fuchsia',
+	'gray',
+	'green',
+	'indigo',
+	'lime',
+	'neutral',
+	'orange',
+	'pink',
+	'purple',
+	'red',
+	'rose',
+	'sky',
+	'slate',
+	'stone',
+	'teal',
+	'violet',
+	'yellow',
+	'zinc',
+])
+
 const setup = () => {
 	fs.rmSync(generatedDir, { recursive: true, force: true })
 	fs.mkdirSync(generatedDir, { recursive: true })
@@ -14,7 +39,9 @@ const generateProseCss = () => {
 	const proseClasses = [
 		'prose',
 		...['invert', 'sm', 'lg', 'xl', '2xl'].map((x) => `prose-${x}`),
-		...R.keys(tailwindColors).map((c) => `prose-${c}`),
+		...R.keys(tailwindColors)
+			.filter((c) => typographyColorModifiers.has(c))
+			.map((c) => `prose-${c}`),
 	]
 	const proseCss =
 		`@plugin '@tailwindcss/typography';\n` +
@@ -37,6 +64,7 @@ const generateBrowserCss = () => {
 
 	const browserCss =
 		`@import 'tailwindcss';\n` +
+		`@import 'tw-animate-css';\n` +
 		`@plugin 'daisyui' { themes: all; };\n` +
 		`@import '../../node_modules/daisyui/daisyui.css';\n` +
 		`@import '../css/index.css';\n` +

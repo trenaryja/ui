@@ -37,8 +37,8 @@ export const useRadioGroup = ({
 	onChange,
 	allowDeselect,
 }: UseRadioGroupParams) => {
-	const fallbackName = useId()
-	const name = nameProp ?? `radio-${fallbackName}`
+	const fallbackId = useId()
+	const name = nameProp ?? `radio-${fallbackId}`
 
 	const [value, setValue] = useUncontrolled<string | undefined>({
 		value: valueProp,
