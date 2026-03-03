@@ -48,3 +48,13 @@
 @utility grid-stack {
 	@apply grid *:row-start-1 *:col-start-1;
 }
+
+@utility timeout-bar {
+	@apply animate-out slide-out-to-left fill-mode-forwards absolute inset-x-0 bottom-0 h-1 bg-current;
+	animation-timing-function: linear;
+	animation-duration: 2000ms;
+}
+
+@utility has-timeout-bar {
+	@apply relative overflow-hidden;
+}
