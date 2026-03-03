@@ -47,8 +47,8 @@ export const Modal = ({
 	backdropBlur,
 	backdropTransparent,
 }: ModalProps) => {
-	const uid = useId()
-	const dialogId = id ?? uid
+	const fallbackId = useId()
+	const dialogId = id ?? fallbackId
 
 	const [isOpen, setOpen] = useUncontrolled<boolean>({
 		value: open,
