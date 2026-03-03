@@ -7,7 +7,7 @@ import type { ComponentProps, FocusEvent, MouseEvent, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../Button/Button'
 
-export const confirmButtonClassNames = ['confirm', 'default', 'pending'] as const
+export const confirmButtonClassNames = ['confirm', 'default', 'pending', 'timeoutBar'] as const
 export type ConfirmButtonClassNames = (typeof confirmButtonClassNames)[number]
 
 export const CONFIRM_BUTTON_CANCEL_OPTIONS = ['blur', 'escapeKey', 'outsideClick'] as const
@@ -54,7 +54,7 @@ export const ConfirmButton = ({
 	pendingChildren,
 	ref,
 	showTimeoutBar,
-	timeout = 3000,
+	timeout = 2000,
 	...props
 }: ConfirmButtonProps) => {
 	const cancelList = resolveCancelOptions(cancelOptions)
@@ -88,7 +88,7 @@ export const ConfirmButton = ({
 
 		window.addEventListener('keydown', onKeyDown)
 		return () => window.removeEventListener('keydown', onKeyDown)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	}, [isAwaitingConfirmation, cancelList])
 
 	useEffect(() => {
@@ -150,7 +150,7 @@ export const ConfirmButton = ({
 	return (
 		<Button
 			ref={mergedRef}
-			className={cn(activeClassName, showTimeoutBar && 'relative overflow-hidden', className)}
+			className={cn(activeClassName, showTimeoutBar && 'has-timeout-bar', className)}
 			disabled={isPending || disabled}
 			onBlur={handleBlur}
 			onClick={handleClick}
@@ -158,10 +158,7 @@ export const ConfirmButton = ({
 		>
 			{renderChildren()}
 			{showTimeoutBar && isAwaitingConfirmation && (
-				<span
-					className='animate-out slide-out-to-left fill-mode-forwards absolute inset-x-0 bottom-0 h-1 bg-current'
-					style={{ animationDuration: `${timeout}ms`, animationTimingFunction: 'linear' }}
-				/>
+				<span className={cn('timeout-bar', classNames?.timeoutBar)} style={{ animationDuration: `${timeout}ms` }} />
 			)}
 		</Button>
 	)

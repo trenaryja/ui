@@ -15,7 +15,7 @@ export function Demo() {
 
 			<Fieldset legend='Basic' className='fieldset-flex-examples'>
 				<ConfirmButton
-					classNames={{ default: 'btn-square', confirm: 'btn-error' }}
+					classNames={{ confirm: 'btn-error', default: 'btn-square' }}
 					onConfirm={() => toast.success('Deleted!')}
 				>
 					<LuTrash />
@@ -24,7 +24,7 @@ export function Demo() {
 
 			<Fieldset legend='Confirm children' className='fieldset-flex-examples'>
 				<ConfirmButton
-					classNames={{ default: 'btn-square', confirm: 'btn-error' }}
+					classNames={{ confirm: 'btn-error', default: 'btn-square' }}
 					confirmChildren={
 						<>
 							<LuTrash />
@@ -49,7 +49,7 @@ export function Demo() {
 					<span>{timeoutMs}ms</span>
 				</div>
 				<ConfirmButton
-					classNames={{ default: 'btn-square', confirm: 'btn-error' }}
+					classNames={{ confirm: 'btn-error', default: 'btn-square' }}
 					confirmChildren={
 						<>
 							<LuTrash />
@@ -67,7 +67,7 @@ export function Demo() {
 
 			<Fieldset legend='Cancel options' className='fieldset-flex-examples'>
 				<ConfirmButton
-					classNames={{ default: 'btn-square', confirm: 'btn-error' }}
+					classNames={{ confirm: 'btn-error', default: 'btn-square' }}
 					confirmChildren={
 						<>
 							<LuTrash />
@@ -81,7 +81,7 @@ export function Demo() {
 					<LuTrash />
 				</ConfirmButton>
 				<ConfirmButton
-					classNames={{ default: 'btn-square', confirm: 'btn-error' }}
+					classNames={{ confirm: 'btn-error', default: 'btn-square' }}
 					confirmChildren={
 						<>
 							<LuTrash />
@@ -95,7 +95,7 @@ export function Demo() {
 					<LuTrash />
 				</ConfirmButton>
 				<ConfirmButton
-					classNames={{ default: 'btn-square', confirm: 'btn-error' }}
+					classNames={{ confirm: 'btn-error', default: 'btn-square' }}
 					confirmChildren={
 						<>
 							<LuTrash />
@@ -112,7 +112,7 @@ export function Demo() {
 
 			<Fieldset legend='Async confirm' className='fieldset-flex-examples'>
 				<ConfirmButton
-					classNames={{ default: 'btn-square', confirm: 'btn-error' }}
+					classNames={{ confirm: 'btn-error', default: 'btn-square', pending: 'btn-warning' }}
 					confirmChildren={
 						<>
 							<LuTrash />
