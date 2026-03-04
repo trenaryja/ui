@@ -28,6 +28,7 @@ export function Demo() {
 			</Fieldset>
 
 			<Fieldset legend='Styles' className='fieldset-flex-examples'>
+				<Button className='btn-invert'>Invert</Button>
 				<Button className='btn-outline'>Outline</Button>
 				<Button className='btn-dash'>Dash</Button>
 				<Button className='btn-soft'>Soft</Button>
