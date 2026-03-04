@@ -15,3 +15,8 @@
 		rotate: none;
 	}
 }
+
+@utility btn-invert {
+	--btn-color: var(--color-base-content);
+	--btn-fg: var(--color-base-200);
+}
