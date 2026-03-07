@@ -2,7 +2,9 @@ import { Input, ThemePicker } from '@/components'
 import { ThemeProvider } from '@/hooks'
 import { cn } from '@/utils'
 import { useHash, useHotkeys } from '@mantine/hooks'
-import { StrictMode, useRef, useState } from 'react'
+import { useQueryState } from 'nuqs'
+import { NuqsAdapter } from 'nuqs/adapters/react'
+import { StrictMode, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { LuPanelLeft } from 'react-icons/lu'
 import { categories, demos, demosByCategory } from './meta'
@@ -13,7 +15,7 @@ import './demo.css'
 const App = () => {
 	const [hash] = useHash()
 	const route = hash.startsWith('#/') ? hash.slice(2) : hash.slice(1)
-	const [searchQuery, setSearchQuery] = useState('')
+	const [searchQuery, setSearchQuery] = useQueryState('q', { defaultValue: '' })
 	const searchRef = useRef<HTMLInputElement>(null)
 
 	useHotkeys([['mod+k', () => searchRef.current?.focus()]])
@@ -39,7 +41,7 @@ const App = () => {
 			<div className='drawer-side'>
 				<label htmlFor='sidebar' className='drawer-overlay' aria-label='toggle sidebar' />
 				<aside className='bg-base-200 h-full flex flex-col gap-4'>
-					<a href='/#' className='p-4 flex justify-center m-1'>
+					<a href='/' className='p-4 flex justify-center m-1'>
 						<img src='https://trenary.dev/icon.svg' alt='' className='max-w-16' />
 					</a>
 
@@ -69,7 +71,7 @@ const App = () => {
 										<ul>
 											{filteredDemos.map((demo) => (
 												<li key={demo.id} className={cn({ 'menu-active': route === demo.id })}>
-													<a href={`/#${demo.id}`}>
+													<a href={`#${demo.id}`}>
 														{demo.meta.title}
 														{demo.meta.tags?.map((tag) => (
 															<span key={tag} className='badge badge-xs badge-soft'>
@@ -105,8 +107,10 @@ const App = () => {
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
-		<ThemeProvider>
-			<App />
-		</ThemeProvider>
+		<NuqsAdapter>
+			<ThemeProvider>
+				<App />
+			</ThemeProvider>
+		</NuqsAdapter>
 	</StrictMode>,
 )

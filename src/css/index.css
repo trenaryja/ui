@@ -4,6 +4,7 @@
 @import './surface.css';
 @import './overflow-fade.css';
 @import './rail.css';
+@import './charts.css';
 
 @utility text-2xs {
 	font-size: 0.625rem;

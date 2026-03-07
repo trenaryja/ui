@@ -1,0 +1,55 @@
+@utility chart {
+	--chart-h: 16rem;
+	--chart-extras-base: var(--color-primary);
+	--chart-pie-stroke: var(--color-base-100);
+	--chart-pie-gap: 1px;
+	--chart-mono-from: var(--color-base-content);
+	--chart-mono-to: var(--color-base-300);
+
+	@apply size-full min-h-px;
+	height: var(--chart-h);
+
+	/* All Charts */
+	& * {
+		outline: none;
+	}
+	& .recharts-tooltip-cursor {
+		fill: var(--color-base-content);
+		fill-opacity: 0.1;
+		stroke: var(--color-base-content);
+		stroke-opacity: 0.1;
+	}
+
+	& .recharts-active-dot circle {
+		stroke: transparent;
+	}
+
+	/* Brush */
+	& .recharts-brush {
+		& > rect:first-child {
+			stroke-opacity: 0.1;
+			fill: var(--color-base-content);
+			fill-opacity: 0.05;
+		}
+		& .recharts-brush-slide {
+			fill: var(--color-base-content);
+			fill-opacity: 0.1;
+			stroke: none;
+		}
+		& .recharts-brush-traveller {
+			& rect {
+				fill: var(--color-base-content);
+				fill-opacity: 0.5;
+			}
+			& line {
+				stroke: var(--color-base-100);
+			}
+		}
+	}
+
+	/* Pie Chart */
+	& .recharts-pie-sector path {
+		stroke: var(--chart-pie-stroke);
+		stroke-width: var(--chart-pie-gap);
+	}
+}
