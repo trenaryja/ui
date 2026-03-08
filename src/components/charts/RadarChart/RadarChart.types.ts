@@ -1,4 +1,4 @@
-import type { FillType, PolarChartBaseProps } from '../charts.types'
+import type { FillType, PolarChartBaseProps, RadarTooltipProps } from '../charts.types'
 
 export type RadarSeries<T> = {
 	key: string & keyof T
@@ -7,7 +7,7 @@ export type RadarSeries<T> = {
 	color?: string
 }
 
-export type RadarChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<T> & {
+export type RadarChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<T, RadarTooltipProps> & {
 	angleKey: string & keyof T
 	yKey?: string & keyof T
 	series?: RadarSeries<T>[]

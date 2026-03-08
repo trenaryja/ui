@@ -1,25 +1,32 @@
 import type { ReactNode } from 'react'
-import { getChartColor } from '../charts.utils'
-import type { FillType } from '../charts.types'
+import { resolveColor } from '../charts.utils'
+import { TooltipContent } from '../ChartTooltip'
+import type { RadarTooltipProps } from '../charts.types'
 import type { RadarSeries } from './RadarChart.types'
 
-export const normalizeRadarSeries = <T extends Record<string, unknown>>(s: RadarSeries<T>, i: number) => ({
+export const normalizeRadarSeries = <T extends Record<string, unknown>>(
+	s: RadarSeries<T>,
+	i: number,
+	{ total, colors }: { total: number; colors?: string[] },
+) => ({
 	...s,
-	color: s.color ?? getChartColor(i),
-	fill: s.fill ?? ('gradient' as FillType),
+	color: s.color ?? resolveColor(i, total, colors),
+	fill: s.fill ?? 'gradient',
 })
 
-type RadarTooltipProps = { active?: boolean; payload?: { name?: unknown; value?: unknown; color?: string }[] }
-
-export const renderRadarTooltipContent = ({ active, payload }: RadarTooltipProps): ReactNode | null => {
+export const renderRadarTooltipContent = ({ active, label, payload }: RadarTooltipProps): ReactNode | null => {
 	if (!active || !payload?.length) return null
+	const multi = payload.length > 1
 	return (
-		<div className='bg-base-300 px-3 py-2 rounded-lg shadow-lg'>
-			{payload.map((entry) => (
-				<p key={String(entry.name)} className='font-bold' style={{ color: entry.color }}>
-					{entry.name as string}: {entry.value as number}
-				</p>
-			))}
-		</div>
+		<TooltipContent
+			title={label}
+			showSwatch={multi}
+			series={payload.map((entry) => ({
+				key: String(entry.name),
+				color: entry.color,
+				label: multi ? String(entry.name) : undefined,
+				value: entry.value,
+			}))}
+		/>
 	)
 }

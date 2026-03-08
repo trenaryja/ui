@@ -1,34 +1,28 @@
 'use client'
 
+import { cn, css } from '@/utils'
 import { format, parseISO } from 'date-fns'
-import type { ReactNode } from 'react'
-import { ReferenceArea, ReferenceLine, Tooltip } from 'recharts'
-import type { ReferenceAreaConfig, ReferenceLineConfig } from './charts.types'
+import type { ComponentProps } from 'react'
+import { ReferenceArea, ReferenceLine, ResponsiveContainer } from 'recharts'
+import type { ChartCssVars, ReferenceAreaConfig, ReferenceLineConfig } from './charts.types'
 
-export const defaultCssVars = {
-	'--chart-h': '16rem',
-	'--chart-extras-base': 'var(--color-primary)',
-	'--chart-pie-stroke': 'var(--color-base-100)',
-	'--chart-pie-gap': '1px',
-	'--chart-mono-from': 'var(--color-base-content)',
-	'--chart-mono-to': 'var(--color-base-300)',
-} as const
-
-export type ChartCssVars = Partial<Record<keyof typeof defaultCssVars, string>>
-
-const SEMANTIC_COLORS = [
+const DEFAULT_COLORS = [
 	'var(--color-base-content)',
 	'var(--color-primary)',
 	'var(--color-secondary)',
 	'var(--color-accent)',
-] as const
+]
 
-const GOLDEN_ANGLE = 137.508
-
-export const getChartColor = (i: number): string => {
-	if (i < SEMANTIC_COLORS.length) return SEMANTIC_COLORS[i]
-	const offset = Math.round(GOLDEN_ANGLE * (i - SEMANTIC_COLORS.length + 1)) % 360
-	return `oklch(from var(--chart-extras-base) l max(c, 0.15) calc(h + ${offset}))`
+export const resolveColor = (i: number, total: number, colors?: string[]): string => {
+	const stops = colors?.length ? colors : DEFAULT_COLORS
+	if (stops.length === 1) return stops[0]
+	if (stops.length >= total) return stops[i]
+	const t = total <= 1 ? 0 : i / (total - 1)
+	const segCount = stops.length - 1
+	const seg = Math.min(Math.floor(t * segCount), segCount - 1)
+	const localT = t * segCount - seg
+	const pct = Math.round((1 - localT) * 100)
+	return `color-mix(in oklch, ${stops[seg]} ${pct}%, ${stops[seg + 1]})`
 }
 
 export const DATE_TS_KEY = '__xTs' as const
@@ -39,28 +33,53 @@ export const toDateData = <T extends Record<string, unknown>>(
 ): (Record<typeof DATE_TS_KEY, number> & T)[] =>
 	data.map((d) => ({ ...d, [DATE_TS_KEY]: new Date(d[xKey] as string).getTime() }))
 
+export const resolveDateData = <T extends Record<string, unknown>>(
+	data: T[],
+	xKey: string & keyof T,
+	isDate: boolean,
+) => {
+	if (!isDate) return { chartData: data, timestamps: undefined }
+	const chartData = toDateData(data, xKey)
+	const timestamps = chartData.map((d) => d[DATE_TS_KEY]).sort((a, b) => a - b)
+	return { chartData, timestamps }
+}
+
 export const formatDate = (v: string) => format(parseISO(v), 'MMM d')
 export const formatDateFull = (v: string) => format(parseISO(v), 'MMM d, yyyy')
 
-export const ChartEmpty = ({ message }: { message: string }) => (
-	<div className='chart flex items-center justify-center opacity-60'>
-		<p>{message}</p>
-	</div>
+type ChartContainerProps = Omit<ComponentProps<typeof ResponsiveContainer>, 'className' | 'minWidth' | 'style'> & {
+	className?: string
+	cssVars?: ChartCssVars
+}
+
+export const ChartContainer = ({ className, cssVars, ...props }: ChartContainerProps) => (
+	<ResponsiveContainer {...props} className={cn('chart', className)} style={css({ ...cssVars })} minWidth={0} />
 )
 
-export const isChartEmpty = <T extends Record<string, unknown>>(data: T[], series: { key: string & keyof T }[]) =>
-	data.length === 0 || series.every((s) => data.every((d) => !d[s.key] && d[s.key] !== 0))
-
-type AnyFormatter = (v: any) => string
-
-export const getXFormatters = (xType: string | undefined, xFormat?: (v: string) => string) => {
+export const getXFormatters = (xType: string | undefined, xFormat?: (v: string) => string, timestamps?: number[]) => {
 	if (xType === 'date') {
-		const fmt: AnyFormatter = (v: number) => format(new Date(v), 'MMM d')
-		const fmtFull: AnyFormatter = (v: number) => format(new Date(v), 'MMM d, yyyy')
-		return { formatX: fmt, formatXFull: fmtFull }
+		let minInterval = Infinity
+		if (timestamps)
+			for (let i = 1; i < timestamps.length; i++) minInterval = Math.min(minInterval, timestamps[i] - timestamps[i - 1])
+		const hasTime = minInterval < 86_400_000 // sub-daily resolution
+		const span = timestamps?.length ? timestamps[timestamps.length - 1] - timestamps[0] : Infinity
+		const multiDay = span >= 86_400_000
+
+		const defaultFmt: (v: any) => string =
+			hasTime && multiDay
+				? (v: number) => format(new Date(v), 'MMM d, ha')
+				: hasTime
+					? (v: number) => format(new Date(v), 'h:mm a')
+					: (v: number) => format(new Date(v), 'MMM d')
+
+		const fullFmt: (v: any) => string = hasTime
+			? (v: number) => format(new Date(v), 'MMM d, h:mm a')
+			: (v: number) => format(new Date(v), 'MMM d, yyyy')
+
+		return { formatX: xFormat ? (xFormat as (v: any) => string) : defaultFmt, formatXFull: fullFmt }
 	}
 
-	return { formatX: xFormat as AnyFormatter | undefined, formatXFull: undefined }
+	return { formatX: xFormat, formatXFull: undefined }
 }
 
 export const makeClickHandler =
@@ -78,14 +97,14 @@ export const axisProps = {
 	fontSize: 12,
 	tickLine: false,
 	axisLine: false,
-} as const
+}
 
 export const brushProps = {
 	height: 20,
 	stroke: 'currentColor',
 	fill: 'transparent',
 	tickFormatter: () => '',
-} as const
+}
 
 export const renderRefAreas = (areas?: ReferenceAreaConfig[]) =>
 	areas?.map((ra) => (
@@ -114,30 +133,6 @@ export const renderRefLines = (lines?: ReferenceLineConfig[]) =>
 		/>
 	))
 
-export const renderTooltip = <P,>(
-	tooltip: ((props: unknown) => ReactNode) | boolean,
-	content: (props: P) => ReactNode | null,
-	wrapperClassName?: string,
-) => {
-	if (!tooltip) return null
-	if (typeof tooltip === 'function') return <Tooltip content={tooltip as (props: unknown) => ReactNode | null} />
-	return <Tooltip content={content as (props: unknown) => ReactNode | null} wrapperClassName={wrapperClassName} />
-}
-
-type CartesianPayload = {
-	active?: boolean
-	payload?: { value: unknown; dataKey?: unknown; color?: string }[]
-	label?: unknown
-}
-
-type CartesianTooltipOptions = {
-	tooltip: ((props: unknown) => ReactNode) | boolean
-	formatXFull?: (v: any) => string
-	series: { key: string; label?: string }[]
-	valueLabel?: string
-	wrapperClassName?: string
-}
-
 type BrushYDomainOptions = {
 	brushOptions: { lockYAxis?: boolean } | undefined
 	chartData: Record<string, unknown>[]
@@ -155,39 +150,3 @@ export const resolveBrushYDomain = ({
 	const max = Math.max(...chartData.flatMap((d) => seriesKeys.map((k) => Number(d[k] ?? 0))))
 	return [0, max]
 }
-
-export const renderCartesianTooltip = ({
-	tooltip,
-	formatXFull,
-	series,
-	valueLabel,
-	wrapperClassName,
-}: CartesianTooltipOptions) =>
-	renderTooltip<CartesianPayload>(
-		tooltip,
-		({ active, payload, label }) => {
-			if (!active || !payload?.length) return null
-			const formattedLabel = formatXFull && label != null ? formatXFull(label) : label
-			return (
-				<div className='bg-base-300 px-3 py-2 rounded-lg shadow-lg'>
-					<p className='text-sm opacity-70'>{formattedLabel as ReactNode}</p>
-					{payload.map((entry) => {
-						const value = entry.value as number
-						const s = series.find((x) => x.key === entry.dataKey)
-						const labelText =
-							s?.label && !valueLabel
-								? `${s.label}: ${value}`
-								: valueLabel
-									? `${value} ${valueLabel}${value !== 1 ? 's' : ''}`
-									: String(value)
-						return (
-							<p key={String(entry.dataKey)} className='font-bold' style={{ color: entry.color }}>
-								{labelText}
-							</p>
-						)
-					})}
-				</div>
-			)
-		},
-		wrapperClassName,
-	)

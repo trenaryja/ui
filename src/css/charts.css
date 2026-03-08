@@ -1,13 +1,8 @@
 @utility chart {
-	--chart-h: 16rem;
-	--chart-extras-base: var(--color-primary);
 	--chart-pie-stroke: var(--color-base-100);
 	--chart-pie-gap: 1px;
-	--chart-mono-from: var(--color-base-content);
-	--chart-mono-to: var(--color-base-300);
 
 	@apply size-full min-h-px;
-	height: var(--chart-h);
 
 	/* All Charts */
 	& * {
