@@ -17,6 +17,23 @@ const randEvents = (d: string) => {
 	return genDates(n).map((date) => ({ date, count: rand() }))
 }
 
+const timeSeriesConfig: Record<Density, { count: number; intervalMin: number }> = {
+	Low: { count: 24, intervalMin: 15 }, // 6 hours
+	Med: { count: 48, intervalMin: 30 }, // 24 hours
+	High: { count: 72, intervalMin: 60 }, // 3 days
+}
+
+const randTimeSeries = (d: string) => {
+	const { count, intervalMin } = timeSeriesConfig[d as Density]
+	const start = new Date()
+	start.setHours(21, 0, 0, 0)
+	return Array.from({ length: count }, (_, i) => {
+		const t = new Date(start)
+		t.setMinutes(t.getMinutes() + i * intervalMin)
+		return { time: t.toISOString(), readings: Math.floor(Math.random() * 40 + 60) }
+	})
+}
+
 const sparseCounts: Record<Density, number> = { Low: 10, Med: 30, High: 90 }
 
 const randSparse = (d: string) => genSparseDates(sparseCounts[d as Density]).map((date) => ({ date, count: rand() }))
@@ -31,8 +48,10 @@ export function Demo() {
 	const [gradient, setGradient] = useState(() => randVisits('Low'))
 	const [multi, setMulti] = useState(() => randMulti('Low'))
 	const [multiFill, setMultiFill] = useState(() => randMulti('Low'))
+	const [stacked, setStacked] = useState(() => randMulti('Low'))
 	const [events, setEvents] = useState(() => randEvents('Low'))
 	const [sparse, setSparse] = useState(() => randSparse('Low'))
+	const [timeSeries, setTimeSeries] = useState(() => randTimeSeries('Low'))
 	const [brush, setBrush] = useState(() => randVisits('Med'))
 	const [synced1, setSynced1] = useState(() => randVisits('Low'))
 	const [synced2, setSynced2] = useState(() => randVisits('Low'))
@@ -55,7 +74,7 @@ export function Demo() {
 						xKey='day'
 						series={[
 							{ key: 'pageviews', label: 'Pageviews' },
-							{ key: 'sessions', label: 'Sessions', strokeDasharray: '4 2' },
+							{ key: 'sessions', label: 'Sessions', strokeDasharray: '8 2' },
 							{ key: 'users', label: 'Users', strokeDasharray: '2 2' },
 						]}
 						legend
@@ -83,12 +102,37 @@ export function Demo() {
 				)}
 			</ChartCard>
 
+			<ChartCard title='Stacked' densityOptions={densityOptions} onRandomize={(d) => setStacked(randMulti(d))}>
+				{(key) => (
+					<LineChart
+						key={key}
+						data={stacked}
+						xKey='day'
+						series={[
+							{ key: 'pageviews', label: 'Pageviews', fill: 'solid' },
+							{ key: 'sessions', label: 'Sessions', fill: 'solid' },
+							{ key: 'users', label: 'Users', fill: 'solid' },
+						]}
+						stacked
+						legend
+					/>
+				)}
+			</ChartCard>
+
 			<ChartCard title='Date x-axis' densityOptions={densityOptions} onRandomize={(d) => setEvents(randEvents(d))}>
 				{(key) => <LineChart key={key} data={events} xKey='date' yKey='count' xType='date' />}
 			</ChartCard>
 
 			<ChartCard title='Sparse dates' densityOptions={densityOptions} onRandomize={(d) => setSparse(randSparse(d))}>
 				{(key) => <LineChart key={key} data={sparse} xKey='date' yKey='count' xType='date' />}
+			</ChartCard>
+
+			<ChartCard
+				title='Time series'
+				densityOptions={densityOptions}
+				onRandomize={(d) => setTimeSeries(randTimeSeries(d))}
+			>
+				{(key) => <LineChart key={key} data={timeSeries} xKey='time' yKey='readings' xType='date' />}
 			</ChartCard>
 
 			<ChartCard title='With brush' densityOptions={densityOptions} onRandomize={(d) => setBrush(randVisits(d))}>
@@ -104,9 +148,13 @@ export function Demo() {
 				}}
 			>
 				{(key) => (
-					<div className='grid grid-cols-1 gap-2 sm:grid-cols-2'>
-						<LineChart key={`a-${key}`} data={synced1} xKey='day' yKey='visits' syncId='demo' />
-						<LineChart key={`b-${key}`} data={synced2} xKey='day' yKey='visits' syncId='demo' />
+					<div className='grid gap-2 md:grid-cols-2'>
+						<div className='h-64'>
+							<LineChart key={`a-${key}`} data={synced1} xKey='day' yKey='visits' syncId='demo' />
+						</div>
+						<div className='h-64'>
+							<LineChart key={`b-${key}`} data={synced2} xKey='day' yKey='visits' syncId='demo' />
+						</div>
 					</div>
 				)}
 			</ChartCard>
@@ -117,7 +165,7 @@ export function Demo() {
 				onRandomize={(d) => setVisits(randVisits(d))}
 			>
 				{(key) => (
-					<LineChart key={key} data={visits} xKey='day' yKey='visits' referenceLines={[{ y: 100, label: 'Target' }]} />
+					<LineChart key={key} data={visits} xKey='day' yKey='visits' referenceLines={[{ y: 50, label: 'Target' }]} />
 				)}
 			</ChartCard>
 		</div>

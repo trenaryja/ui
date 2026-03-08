@@ -1,4 +1,4 @@
-import type { CartesianChartBaseProps, CurveType, FillType } from '../charts.types'
+import type { CartesianChartBaseProps, CurveType, FillType, StackOffset } from '../charts.types'
 
 export type LineSeries<T> = {
 	key: string & keyof T
@@ -9,6 +9,7 @@ export type LineSeries<T> = {
 	color?: string
 	strokeWidth?: number
 	strokeDasharray?: string
+	stackId?: string
 }
 
 export type LineChartProps<
@@ -16,4 +17,6 @@ export type LineChartProps<
 	XK extends string & keyof T = string & keyof T,
 > = CartesianChartBaseProps<T, XK> & {
 	series?: LineSeries<T>[]
+	stacked?: boolean
+	stackOffset?: StackOffset
 }

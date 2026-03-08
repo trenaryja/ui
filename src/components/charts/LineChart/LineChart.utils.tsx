@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { DATE_TS_KEY, getChartColor } from '../charts.utils'
+import { DATE_TS_KEY, resolveColor } from '../charts.utils'
 import type { LineSeries } from './LineChart.types'
 
 export const resolveLineSeries = <T extends Record<string, unknown>>(
@@ -8,9 +8,9 @@ export const resolveLineSeries = <T extends Record<string, unknown>>(
 	valueLabel: string | undefined,
 ): LineSeries<T>[] => series ?? (yKey ? [{ key: yKey, label: valueLabel }] : [])
 
-export const getLineXAxisProps = (isDate: boolean, xKey: string, formatX: ((v: any) => string) | undefined) => ({
+export const getLineXAxisProps = (isDate: boolean, xKey: string, xFormat: ((v: any) => string) | undefined) => ({
 	dataKey: isDate ? DATE_TS_KEY : xKey,
-	tickFormatter: formatX,
+	tickFormatter: xFormat,
 	...(isDate ? { type: 'number' as const, scale: 'time' as const, domain: ['dataMin', 'dataMax'] as const } : {}),
 })
 
@@ -39,12 +39,17 @@ export const renderGradientDefs = (
 	)
 }
 
-export const normalizeLineSeries = <T extends Record<string, unknown>>(s: LineSeries<T>, i: number) => ({
+export const normalizeLineSeries = <T extends Record<string, unknown>>(
+	s: LineSeries<T>,
+	i: number,
+	{ stacked, total, colors }: { stacked?: boolean; total: number; colors?: string[] },
+) => ({
 	...s,
 	name: s.label ?? s.key,
 	dot: s.dot ?? false,
-	color: s.color ?? getChartColor(i),
+	color: s.color ?? resolveColor(i, total, colors),
 	fill: s.fill ?? 'none',
 	curve: s.curve ?? 'monotone',
 	strokeWidth: s.strokeWidth ?? 2,
+	stackId: stacked && !s.stackId ? 'stack' : s.stackId,
 })

@@ -1,5 +1,4 @@
-import type { ChartCssVars } from '../charts.utils'
-import type { PolarChartBaseProps } from '../charts.types'
+import type { PieChartCssVars, PieTooltipProps, PolarChartBaseProps } from '../charts.types'
 
 export type PieSeries<T> = {
 	valueKey: string & keyof T
@@ -10,7 +9,7 @@ export type PieSeries<T> = {
 	paddingAngle?: number
 }
 
-export type PieChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<T> & {
+export type PieChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<T, PieTooltipProps> & {
 	valueKey?: string & keyof T
 	nameKey?: string & keyof T
 	innerRadius?: number | string
@@ -22,6 +21,5 @@ export type PieChartProps<T extends Record<string, unknown>> = PolarChartBasePro
 	endAngle?: number
 	donut?: boolean
 	noGap?: boolean
-	monotone?: boolean
-	cssVars?: ChartCssVars
+	cssVars?: PieChartCssVars
 }

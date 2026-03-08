@@ -5,8 +5,12 @@ export type CurveType = 'basis' | 'linear' | 'monotone' | 'natural' | 'step' | '
 export type FillType = 'gradient' | 'none' | 'solid'
 export type StackOffset = 'expand' | 'none' | 'positive' | 'sign'
 
-export type CartesianChartClassNames = 'brush' | 'container' | 'legend' | 'tooltip' | 'xAxis' | 'yAxis'
-export type NonCartesianChartClassNames = 'container' | 'legend' | 'tooltip'
+export type CartesianChartClassNames = 'brush' | 'legend' | 'tooltip' | 'xAxis' | 'yAxis'
+export type PolarChartClassNames = 'legend' | 'tooltip'
+
+export type ChartCssVars = Partial<Record<string, string>>
+
+export type PieChartCssVars = ChartCssVars & Partial<Record<'--chart-pie-gap' | '--chart-pie-stroke', string>>
 
 export type ReferenceLineConfig = {
 	y?: number
@@ -29,10 +33,39 @@ export type BrushOptions = {
 	lockYAxis?: boolean
 }
 
+// Tooltip prop types per chart category
+export type CartesianTooltipProps = {
+	active?: boolean
+	payload?: { value: number; dataKey: string; color: string; name: string }[]
+	label?: number | string
+}
+
+export type PieTooltipProps = {
+	active?: boolean
+	payload?: { name: string; value: number; fill?: string; payload?: { fill?: string } }[]
+}
+
+export type RadarTooltipProps = {
+	active?: boolean
+	label?: string
+	payload?: { name?: string; value?: number; color?: string }[]
+}
+
+export type RadialBarTooltipProps = {
+	active?: boolean
+	payload?: { color?: string; payload?: Record<string, unknown> & { fill?: string } }[]
+}
+
+export type SankeyTooltipProps = {
+	active?: boolean
+	payload?: { payload?: unknown; name: string; value: number }[]
+}
+
 export type CartesianChartBaseProps<
 	T extends Record<string, unknown>,
 	XK extends string & keyof T = string & keyof T,
 > = ClassNames<CartesianChartClassNames> & {
+	className?: string
 	data: T[]
 	xKey: XK
 	xType?: T[XK] extends number ? 'number' : 'date' | 'string'
@@ -49,13 +82,18 @@ export type CartesianChartBaseProps<
 	brush?: boolean
 	brushOptions?: BrushOptions
 	legend?: boolean
-	tooltip?: ((props: unknown) => ReactNode) | boolean
-	emptyMessage?: string
+	tooltip?: boolean
+	tooltipContent?: (props: CartesianTooltipProps) => ReactNode
+	colors?: string[]
+	cssVars?: ChartCssVars
 }
 
-export type PolarChartBaseProps<T extends Record<string, unknown>> = ClassNames<NonCartesianChartClassNames> & {
+export type PolarChartBaseProps<T extends Record<string, unknown>, TP = unknown> = ClassNames<PolarChartClassNames> & {
+	className?: string
 	data: T[]
 	legend?: boolean
-	tooltip?: ((props: unknown) => ReactNode) | boolean
-	emptyMessage?: string
+	tooltip?: boolean
+	tooltipContent?: (props: TP) => ReactNode
+	colors?: string[]
+	cssVars?: ChartCssVars
 }

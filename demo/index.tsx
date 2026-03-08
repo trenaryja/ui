@@ -45,7 +45,7 @@ export const ChartCard = ({
 	const [density, setDensity] = useState(densOpts[0])
 
 	return (
-		<div className='w-full'>
+		<div className='w-full h-64'>
 			<div className='flex items-center gap-3 justify-between'>
 				<span className='text-sm font-semibold opacity-60'>{title}</span>
 				<RadioGroup

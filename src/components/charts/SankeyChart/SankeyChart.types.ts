@@ -1,3 +1,6 @@
+import type { ReactNode } from 'react'
+import type { ChartCssVars, SankeyTooltipProps } from '../charts.types'
+
 // Public types
 export type SankeyNode = {
 	id: string
@@ -16,8 +19,12 @@ export type SankeyData = {
 }
 
 export type SankeyChartProps = {
+	className?: string
+	classNames?: { tooltip?: string }
 	data: SankeyData
-	emptyMessage?: string
+	tooltip?: boolean
+	tooltipContent?: (props: SankeyTooltipProps) => ReactNode
+	cssVars?: ChartCssVars
 }
 
 // Internal Recharts types

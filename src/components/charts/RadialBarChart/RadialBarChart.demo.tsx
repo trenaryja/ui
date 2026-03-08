@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'RadialBarChart', category: 'components', tags: ['chart'] }
 
-const densityCounts: Record<Density, number> = { Low: 3, Med: 5, High: 8 }
+const densityCounts: Record<Density, number> = { Low: 2, Med: 4, High: 8 }
 
 const NAMES = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta']
 

@@ -1,29 +1,21 @@
 'use client'
 
-import { cn } from '@/utils'
-import { useEffect, useRef, useState } from 'react'
-import { Bar, Brush, Legend, BarChart as RechartsBarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { useState } from 'react'
+import { Bar, Brush, Legend, BarChart as RechartsBarChart, XAxis, YAxis } from 'recharts'
 import {
 	axisProps,
 	brushProps,
-	ChartEmpty,
+	ChartContainer,
 	getClickHandler,
 	getXFormatters,
-	isChartEmpty,
-	renderCartesianTooltip,
 	renderRefAreas,
 	renderRefLines,
-	toDateData,
+	resolveBrushYDomain,
+	resolveDateData,
 } from '../charts.utils'
+import { chartTooltip, makeCartesianTooltipContent } from '../ChartTooltip'
 import type { BarChartProps } from './BarChart.types'
-import {
-	buildLastPerStack,
-	getBarAxisProps,
-	getBarRadius,
-	getResolvedBarSize,
-	normalizeBarSeries,
-	resolveBarSeries,
-} from './BarChart.utils'
+import { getBarAxisProps, getBarRadius, normalizeBarSeries, resolveBarSeries } from './BarChart.utils'
 
 export type { BarChartProps, BarSeries } from './BarChart.types'
 
@@ -39,6 +31,7 @@ export const BarChart = <T extends Record<string, unknown>, XK extends string & 
 	stackOffset,
 	barSize,
 	barCategoryGap,
+	colors,
 	yDomain,
 	yFormat,
 	xFormat,
@@ -51,83 +44,78 @@ export const BarChart = <T extends Record<string, unknown>, XK extends string & 
 	brushOptions,
 	legend,
 	tooltip = true,
-	emptyMessage = 'No data available',
+	tooltipContent,
+	className,
 	classNames,
+	cssVars,
 }: BarChartProps<T, XK>) => {
 	const resolvedSeries = resolveBarSeries(series, yKey, valueLabel)
-	const seriesWithColors = resolvedSeries.map(normalizeBarSeries(stacked))
-	const { formatX, formatXFull } = getXFormatters(xType, xFormat)
+	const seriesWithColors = resolvedSeries.map((s, i) =>
+		normalizeBarSeries(s, i, { stacked, total: resolvedSeries.length, colors }),
+	)
 	const isDate = xType === 'date'
-	const chartData = isDate ? toDateData(data, xKey) : data
+	const { chartData, timestamps } = resolveDateData(data, xKey, isDate)
+	const { formatX, formatXFull } = getXFormatters(xType, xFormat, timestamps)
 
-	const containerRef = useRef<HTMLDivElement>(null)
 	const [containerWidth, setContainerWidth] = useState(0)
-	useEffect(() => {
-		const el = containerRef.current
-		if (!el) return
-		const observer = new ResizeObserver(([entry]) => setContainerWidth(entry.contentRect.width))
-		observer.observe(el)
-		return () => observer.disconnect()
-	}, [])
+	const resolvedBarSize =
+		isDate && containerWidth > 0 ? Math.max(1, (containerWidth / chartData.length) * 0.75) : barSize
 
-	const resolvedBarSize = getResolvedBarSize({ isDate, containerWidth, dataLength: chartData.length, barSize })
+	const resolvedYDomain = resolveBrushYDomain({
+		brushOptions,
+		chartData,
+		seriesKeys: seriesWithColors.map((s) => s.key),
+		yDomain,
+	})
 
-	if (isChartEmpty(data, resolvedSeries)) return <ChartEmpty message={emptyMessage} />
+	const tooltipEl = chartTooltip({
+		tooltip,
+		content: tooltipContent ?? makeCartesianTooltipContent(seriesWithColors, { xFormatFull: formatXFull, valueLabel }),
+		className: classNames?.tooltip,
+	})
 
 	const { xAxisDataKey, xAxisProps, yAxisProps } = getBarAxisProps({
 		layout,
-		xKey: xKey as string,
+		xKey,
 		isDate,
-		chartData,
-		formatX,
+		timestamps,
+		xFormat: formatX,
 		yFormat,
-		yDomain,
-		brushOptions,
-		seriesKeys: seriesWithColors.map((s) => s.key),
+		yDomain: resolvedYDomain,
 	})
 
-	const lastPerStack = buildLastPerStack(seriesWithColors)
-
 	return (
-		<div ref={containerRef} className={cn('chart', classNames?.container)}>
-			<ResponsiveContainer width='100%' height='100%' minWidth={0}>
-				<RechartsBarChart
-					data={chartData}
-					layout={layout}
-					margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-					stackOffset={stackOffset}
-					barSize={resolvedBarSize}
-					barCategoryGap={barCategoryGap}
-					syncId={syncId}
-					syncMethod={syncMethod}
-					onClick={getClickHandler(onDataClick)}
-				>
-					<XAxis {...axisProps} {...xAxisProps} className={classNames?.xAxis} />
-					<YAxis {...axisProps} {...yAxisProps} allowDecimals={false} className={classNames?.yAxis} />
-					{renderCartesianTooltip({
-						tooltip,
-						formatXFull,
-						series: seriesWithColors,
-						valueLabel,
-						wrapperClassName: classNames?.tooltip,
-					})}
-					{legend && <Legend className={classNames?.legend} />}
-					{renderRefAreas(referenceAreas)}
-					{renderRefLines(referenceLines)}
-					{seriesWithColors.map((s, i) => (
-						<Bar
-							key={s.key}
-							dataKey={s.key}
-							name={s.name}
-							fill={s.color}
-							stackId={s.stackId}
-							radius={getBarRadius(s.radius, stacked, { isLast: lastPerStack.get(s.stackId) === i, layout })}
-							isAnimationActive={!brush}
-						/>
-					))}
-					{brush && <Brush {...brushProps} dataKey={xAxisDataKey} className={classNames?.brush} />}
-				</RechartsBarChart>
-			</ResponsiveContainer>
-		</div>
+		<ChartContainer className={className} cssVars={cssVars} onResize={(w) => setContainerWidth(w)}>
+			<RechartsBarChart
+				data={chartData}
+				layout={layout}
+				stackOffset={stackOffset}
+				barSize={resolvedBarSize}
+				barCategoryGap={barCategoryGap}
+				syncId={syncId}
+				syncMethod={syncMethod}
+				onClick={getClickHandler(onDataClick)}
+			>
+				<XAxis {...axisProps} {...xAxisProps} className={classNames?.xAxis} />
+				<YAxis {...axisProps} {...yAxisProps} allowDecimals={false} className={classNames?.yAxis} />
+				{tooltipEl}
+				{legend && <Legend className={classNames?.legend} />}
+				{renderRefAreas(referenceAreas)}
+				{renderRefLines(referenceLines)}
+				{seriesWithColors.map((s, i) => (
+					<Bar
+						key={s.key}
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+						dataKey={s.key as string}
+						name={s.name}
+						fill={s.color}
+						stackId={s.stackId}
+						radius={getBarRadius(seriesWithColors, i, { stacked, layout })}
+						isAnimationActive={!brush}
+					/>
+				))}
+				{brush && <Brush {...brushProps} dataKey={xAxisDataKey} className={classNames?.brush} />}
+			</RechartsBarChart>
+		</ChartContainer>
 	)
 }

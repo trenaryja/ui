@@ -1,21 +1,19 @@
 'use client'
 
-import { cn } from '@/utils'
 import { useId } from 'react'
-import { Area, Brush, Legend, AreaChart as RechartsAreaChart, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { Area, Brush, Legend, AreaChart as RechartsAreaChart, XAxis, YAxis } from 'recharts'
 import {
 	axisProps,
 	brushProps,
-	ChartEmpty,
+	ChartContainer,
 	getClickHandler,
 	getXFormatters,
-	isChartEmpty,
-	renderCartesianTooltip,
 	renderRefAreas,
 	renderRefLines,
 	resolveBrushYDomain,
-	toDateData,
+	resolveDateData,
 } from '../charts.utils'
+import { chartTooltip, makeCartesianTooltipContent } from '../ChartTooltip'
 import type { LineChartProps } from './LineChart.types'
 import {
 	getAreaFill,
@@ -34,6 +32,9 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 	yKey,
 	valueLabel,
 	series,
+	stacked,
+	stackOffset,
+	colors,
 	yDomain,
 	yFormat,
 	xFormat,
@@ -46,16 +47,20 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 	brushOptions,
 	legend,
 	tooltip = true,
-	emptyMessage = 'No data available',
+	tooltipContent,
+	className,
 	classNames,
+	cssVars,
 }: LineChartProps<T, XK>) => {
 	const chartId = useId()
 	const resolvedSeries = resolveLineSeries(series, yKey, valueLabel)
-	const seriesWithColors = resolvedSeries.map(normalizeLineSeries)
-	const { formatX, formatXFull } = getXFormatters(xType, xFormat)
+	const seriesWithColors = resolvedSeries.map((s, i) =>
+		normalizeLineSeries(s, i, { stacked, total: resolvedSeries.length, colors }),
+	)
 	const isDate = xType === 'date'
-	const chartData = isDate ? toDateData(data, xKey) : data
-	const xAxisProps = getLineXAxisProps(isDate, xKey as string, formatX)
+	const { chartData, timestamps } = resolveDateData(data, xKey, isDate)
+	const { formatX, formatXFull } = getXFormatters(xType, xFormat, timestamps)
+	const xAxisProps = getLineXAxisProps(isDate, xKey, formatX)
 	const resolvedYDomain = resolveBrushYDomain({
 		brushOptions,
 		chartData,
@@ -63,55 +68,53 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 		yDomain,
 	})
 
-	if (isChartEmpty(data, resolvedSeries)) return <ChartEmpty message={emptyMessage} />
+	const tooltipEl = chartTooltip({
+		tooltip,
+		content: tooltipContent ?? makeCartesianTooltipContent(seriesWithColors, { xFormatFull: formatXFull, valueLabel }),
+		className: classNames?.tooltip,
+	})
 
 	return (
-		<div className={cn('chart', classNames?.container)}>
-			<ResponsiveContainer width='100%' height='100%' minWidth={0}>
-				<RechartsAreaChart
-					data={chartData}
-					margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-					syncId={syncId}
-					syncMethod={syncMethod}
-					onClick={getClickHandler(onDataClick)}
-				>
-					{renderGradientDefs(seriesWithColors, chartId)}
-					<XAxis {...axisProps} {...xAxisProps} className={classNames?.xAxis} />
-					<YAxis
-						{...axisProps}
-						allowDecimals={false}
-						domain={resolvedYDomain}
-						tickFormatter={yFormat}
-						className={classNames?.yAxis}
+		<ChartContainer className={className} cssVars={cssVars}>
+			<RechartsAreaChart
+				data={chartData}
+				stackOffset={stackOffset}
+				syncId={syncId}
+				syncMethod={syncMethod}
+				onClick={getClickHandler(onDataClick)}
+			>
+				{renderGradientDefs(seriesWithColors, chartId)}
+				<XAxis {...axisProps} {...xAxisProps} className={classNames?.xAxis} />
+				<YAxis
+					{...axisProps}
+					allowDecimals={false}
+					domain={resolvedYDomain}
+					tickFormatter={yFormat}
+					className={classNames?.yAxis}
+				/>
+				{tooltipEl}
+				{legend && <Legend className={classNames?.legend} />}
+				{renderRefAreas(referenceAreas)}
+				{renderRefLines(referenceLines)}
+				{seriesWithColors.map((s, i) => (
+					<Area
+						key={s.key}
+						type={s.curve}
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+						dataKey={s.key as string}
+						name={s.name}
+						stroke={s.color}
+						fill={getAreaFill(s.fill, s.color, `${chartId}-gradient-${i}`)}
+						fillOpacity={1}
+						strokeWidth={s.strokeWidth}
+						strokeDasharray={s.strokeDasharray}
+						stackId={s.stackId}
+						dot={s.dot}
+						isAnimationActive={!brush}
 					/>
-					{renderCartesianTooltip({
-						tooltip,
-						formatXFull,
-						series: seriesWithColors,
-						valueLabel,
-						wrapperClassName: classNames?.tooltip,
-					})}
-					{legend && <Legend className={classNames?.legend} />}
-					{renderRefAreas(referenceAreas)}
-					{renderRefLines(referenceLines)}
-					{seriesWithColors.map((s, i) => (
-						<Area
-							key={s.key}
-							type={s.curve}
-							dataKey={s.key}
-							name={s.name}
-							stroke={s.color}
-							fill={getAreaFill(s.fill, s.color, `${chartId}-gradient-${i}`)}
-							fillOpacity={1}
-							strokeWidth={s.strokeWidth}
-							strokeDasharray={s.strokeDasharray}
-							dot={s.dot}
-							isAnimationActive={!brush}
-						/>
-					))}
-					{brush && <Brush {...brushProps} dataKey={xAxisProps.dataKey} className={classNames?.brush} />}
-				</RechartsAreaChart>
-			</ResponsiveContainer>
-		</div>
+				))}
+				{brush && <Brush {...brushProps} dataKey={xAxisProps.dataKey} className={classNames?.brush} />}
+			</RechartsAreaChart>
+		</ChartContainer>
 	)
 }

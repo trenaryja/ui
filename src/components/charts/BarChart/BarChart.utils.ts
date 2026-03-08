@@ -1,4 +1,4 @@
-import { DATE_TS_KEY, getChartColor, resolveBrushYDomain } from '../charts.utils'
+import { DATE_TS_KEY, resolveColor } from '../charts.utils'
 import type { BarSeries } from './BarChart.types'
 
 export const resolveBarSeries = <T extends Record<string, unknown>>(
@@ -7,105 +7,71 @@ export const resolveBarSeries = <T extends Record<string, unknown>>(
 	valueLabel: string | undefined,
 ): BarSeries<T>[] => series ?? (yKey ? [{ key: yKey, label: valueLabel }] : [])
 
-export const normalizeBarSeries =
-	<T extends Record<string, unknown>>(stacked: boolean | undefined) =>
-	(s: BarSeries<T>, i: number) => ({
-		...s,
-		name: s.label ?? s.key,
-		color: s.color ?? getChartColor(i),
-		stackId: stacked && !s.stackId ? 'stack' : s.stackId,
-	})
-
-export const buildLastPerStack = (series: { stackId: string | undefined }[]) => {
-	const map = new Map<string | undefined, number>()
-	series.forEach((s, i) => map.set(s.stackId, i))
-	return map
-}
+export const normalizeBarSeries = <T extends Record<string, unknown>>(
+	s: BarSeries<T>,
+	i: number,
+	{ stacked, total, colors }: { stacked?: boolean; total: number; colors?: string[] },
+) => ({
+	...s,
+	name: s.label ?? s.key,
+	color: s.color ?? resolveColor(i, total, colors),
+	stackId: stacked && !s.stackId ? 'stack' : s.stackId,
+})
 
 export const getBarRadius = (
-	radius: number | undefined,
-	stacked: boolean | undefined,
-	{ isLast, layout }: { isLast: boolean; layout: 'horizontal' | 'vertical' },
+	series: { stackId?: string; radius?: number }[],
+	index: number,
+	{ stacked, layout }: { stacked?: boolean; layout: 'horizontal' | 'vertical' },
 ): [number, number, number, number] => {
-	const r = radius ?? 4
+	const r = series[index].radius ?? 4
 	const rounded: [number, number, number, number] = layout === 'vertical' ? [0, r, r, 0] : [r, r, 0, 0]
 	if (!stacked) return rounded
+	const isLast = series.findLastIndex((s) => s.stackId === series[index].stackId) === index
 	return isLast ? rounded : [0, 0, 0, 0]
 }
 
-export const getDateBarDomain = (chartData: Record<string, unknown>[]): [number, number] => {
-	const timestamps = chartData
-		.map((d) => d[DATE_TS_KEY] as number)
-		.filter(Number.isFinite)
-		.sort((a, b) => a - b)
-	if (timestamps.length === 0) return [0, 0]
-	if (timestamps.length === 1) {
-		const half = 43200000 // 12 hours
-		return [timestamps[0] - half, timestamps[0] + half]
+const getDateBarDomain = (sorted: number[]): [number, number] => {
+	if (sorted.length === 0) return [0, 0]
+	if (sorted.length === 1) {
+		const half = 3_600_000 // 1 hour
+		return [sorted[0] - half, sorted[0] + half]
 	}
 
 	let minInterval = Infinity
-
-	for (let i = 1; i < timestamps.length; i++) {
-		minInterval = Math.min(minInterval, timestamps[i] - timestamps[i - 1])
-	}
+	for (let i = 1; i < sorted.length; i++) minInterval = Math.min(minInterval, sorted[i] - sorted[i - 1])
 
 	const half = minInterval / 2
-	return [timestamps[0] - half, timestamps[timestamps.length - 1] + half]
+	return [sorted[0] - half, sorted[sorted.length - 1] + half]
 }
-
-export const getResolvedBarSize = (opts: {
-	isDate: boolean
-	containerWidth: number
-	dataLength: number
-	barSize: number | undefined
-}) => {
-	if (!opts.isDate || opts.containerWidth <= 0) return opts.barSize
-	return Math.max(1, (opts.containerWidth / opts.dataLength) * 0.8)
-}
-
-type AnyFormatter = (v: any) => string
 
 type BarAxisOptions = {
 	layout: 'horizontal' | 'vertical'
 	xKey: string
 	isDate: boolean
-	chartData: Record<string, unknown>[]
-	formatX?: AnyFormatter
+	timestamps?: number[]
+	xFormat?: (v: any) => string
 	yFormat?: (v: number) => string
 	yDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
-	brushOptions?: { lockYAxis?: boolean }
-	seriesKeys?: string[]
 }
 
-export const getBarAxisProps = ({
-	layout,
-	xKey,
-	isDate,
-	chartData,
-	formatX,
-	yFormat,
-	yDomain,
-	brushOptions,
-	seriesKeys,
-}: BarAxisOptions) => {
+export const getBarAxisProps = ({ layout, xKey, isDate, timestamps, xFormat, yFormat, yDomain }: BarAxisOptions) => {
 	const xAxisDataKey = isDate ? DATE_TS_KEY : xKey
-	const dateProps = isDate
-		? { type: 'number' as const, scale: 'time' as const, domain: getDateBarDomain(chartData) }
-		: {}
-	const resolvedYDomain =
-		layout === 'horizontal' && seriesKeys
-			? resolveBrushYDomain({ brushOptions, chartData, seriesKeys, yDomain })
-			: yDomain
+	const dateProps =
+		isDate && timestamps
+			? { type: 'number' as const, scale: 'time' as const, domain: getDateBarDomain(timestamps) }
+			: {}
+
+	if (layout === 'vertical') {
+		return {
+			xAxisDataKey,
+			xAxisProps: { type: 'number' as const, tickFormatter: yFormat, domain: yDomain },
+			yAxisProps: { dataKey: xKey, type: 'category' as const, tickFormatter: xFormat },
+		}
+	}
+
 	return {
 		xAxisDataKey,
-		xAxisProps:
-			layout === 'horizontal'
-				? { dataKey: xAxisDataKey, tickFormatter: formatX, ...dateProps }
-				: { type: 'number' as const, tickFormatter: yFormat, domain: resolvedYDomain },
-		yAxisProps:
-			layout === 'horizontal'
-				? { tickFormatter: yFormat, domain: resolvedYDomain }
-				: { dataKey: xKey, type: 'category' as const, tickFormatter: formatX },
+		xAxisProps: { dataKey: xAxisDataKey, tickFormatter: xFormat, ...dateProps },
+		yAxisProps: { tickFormatter: yFormat, domain: yDomain },
 	}
 }

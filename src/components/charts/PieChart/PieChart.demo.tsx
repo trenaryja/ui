@@ -5,22 +5,9 @@ import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'PieChart', category: 'components', tags: ['chart'] }
 
-const densityCounts: Record<Density, number> = { Low: 2, Med: 4, High: 16 }
+const densityCounts: Record<Density, number> = { Low: 2, Med: 4, High: 8 }
 
-const NAMES = [
-	'Direct',
-	'Organic',
-	'Referral',
-	'Social',
-	'Email',
-	'Paid',
-	'Affiliate',
-	'Display',
-	'Video',
-	'Podcast',
-	'Influencer',
-	'PR',
-]
+const NAMES = ['Direct', 'Organic', 'Referral', 'Social', 'Email', 'Paid', 'Affiliate', 'Display']
 
 type Slice = { name: string; value: number }
 
@@ -50,12 +37,40 @@ export function Demo() {
 				{(key) => <PieChart key={key} data={noGapPie} valueKey='value' nameKey='name' noGap legend />}
 			</ChartCard>
 
-			<ChartCard title='Pie, monotone' densityOptions={densityOptions} onRandomize={(d) => setMonoPie(rand(d))}>
-				{(key) => <PieChart key={key} data={monoPie} valueKey='value' nameKey='name' monotone legend />}
+			<ChartCard title='Pie, custom colors' densityOptions={densityOptions} onRandomize={(d) => setMonoPie(rand(d))}>
+				{(key) => (
+					<PieChart
+						key={key}
+						data={monoPie}
+						valueKey='value'
+						nameKey='name'
+						colors={[
+							'var(--color-base-content)',
+							'var(--color-primary)',
+							'var(--color-secondary)',
+							'var(--color-base-300)',
+						]}
+						legend
+					/>
+				)}
 			</ChartCard>
 
-			<ChartCard title='Donut, monotone' densityOptions={densityOptions} onRandomize={(d) => setMonoDonut(rand(d))}>
-				{(key) => <PieChart key={key} data={monoDonut} valueKey='value' nameKey='name' donut monotone legend />}
+			<ChartCard
+				title='Donut, custom colors'
+				densityOptions={densityOptions}
+				onRandomize={(d) => setMonoDonut(rand(d))}
+			>
+				{(key) => (
+					<PieChart
+						key={key}
+						data={monoDonut}
+						valueKey='value'
+						nameKey='name'
+						donut
+						colors={['var(--color-base-content)', 'var(--color-base-300)']}
+						legend
+					/>
+				)}
 			</ChartCard>
 		</div>
 	)
