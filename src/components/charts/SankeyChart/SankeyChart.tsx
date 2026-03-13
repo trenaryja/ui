@@ -1,12 +1,21 @@
 'use client'
 
-import { Sankey, Tooltip } from 'recharts'
+import type { ReactNode } from 'react'
+import { Sankey } from 'recharts'
+import type { ChartCssVars, DeriveProps, SankeyTooltipProps } from '../charts.types'
 import { ChartContainer } from '../charts.utils'
+import type { ChartTooltipClassNames } from '../ChartTooltip'
 import { ChartTooltip } from '../ChartTooltip'
-import type { SankeyChartProps, TooltipPayload } from './SankeyChart.types'
-import { renderSankeyTooltipContent, toRechartsFormat } from './SankeyChart.utils'
+import { toRechartsFormat } from './SankeyChart.utils'
 
-export type { SankeyChartProps, SankeyData, SankeyLink, SankeyNode } from './SankeyChart.types'
+export type SankeyLink = { source: string; target: string; value: number }
+
+export type SankeyChartProps = DeriveProps<typeof Sankey, 'data' | 'link' | 'node'> & {
+	classNames?: { tooltip?: ChartTooltipClassNames }
+	data: SankeyLink[]
+	tooltip?: ((props: SankeyTooltipProps) => ReactNode) | boolean
+	cssVars?: ChartCssVars
+}
 
 export const SankeyChart = ({
 	data,
@@ -14,33 +23,33 @@ export const SankeyChart = ({
 	classNames,
 	cssVars,
 	tooltip = true,
-	tooltipContent,
+	...chartProps
 }: SankeyChartProps) => {
-	if (!data || data.nodes.length === 0) return null
-
-	const rechartsData = toRechartsFormat(data)
+	if (!data || data.length === 0) return null
 
 	return (
 		<ChartContainer className={className} cssVars={cssVars}>
 			<Sankey
-				data={rechartsData}
-				nodePadding={16}
-				className='fill-base-content stroke-base-content'
-				node={{ fill: 'inherit' }}
-				link={{ stroke: 'inherit' }}
+				sort={false}
+				align='left'
+				className='fill-current stroke-current'
+				node={{ className: 'fill-inherit [fill-opacity:1]' }}
+				link={{ className: 'stroke-inherit hover:[stroke-opacity:.5]' }}
+				{...chartProps}
+				data={toRechartsFormat(data)}
 			>
-				{tooltip && (
-					<Tooltip
-						wrapperStyle={{ display: 'none' }}
-						content={({ active, payload }) => (
-							<ChartTooltip active={active} className={classNames?.tooltip}>
-								{tooltipContent
-									? tooltipContent({ active, payload: payload as unknown as TooltipPayload[] })
-									: renderSankeyTooltipContent({ active, payload: payload as unknown[] })}
-							</ChartTooltip>
-						)}
-					/>
-				)}
+				<ChartTooltip
+					tooltip={tooltip}
+					classNames={classNames?.tooltip}
+					resolve={({ active, payload }: SankeyTooltipProps) => {
+						if (!active || !payload?.length) return null
+						const entry = payload[0]
+						return {
+							title: entry.name,
+							items: [{ key: entry.name, value: entry.value }],
+						}
+					}}
+				/>
 			</Sankey>
 		</ChartContainer>
 	)

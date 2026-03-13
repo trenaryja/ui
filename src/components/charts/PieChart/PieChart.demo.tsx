@@ -46,9 +46,9 @@ export function Demo() {
 						nameKey='name'
 						colors={[
 							'var(--color-base-content)',
-							'var(--color-primary)',
 							'var(--color-secondary)',
 							'var(--color-base-300)',
+							'var(--color-primary)',
 						]}
 						legend
 					/>

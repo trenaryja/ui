@@ -2,7 +2,7 @@
 
 import { cn, css } from '@/utils'
 import { format, parseISO } from 'date-fns'
-import type { ComponentProps } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { ReferenceArea, ReferenceLine, ResponsiveContainer } from 'recharts'
 import type { ChartCssVars, ReferenceAreaConfig, ReferenceLineConfig } from './charts.types'
 
@@ -53,14 +53,21 @@ type ChartContainerProps = Omit<ComponentProps<typeof ResponsiveContainer>, 'cla
 }
 
 export const ChartContainer = ({ className, cssVars, ...props }: ChartContainerProps) => (
-	<ResponsiveContainer {...props} className={cn('chart', className)} style={css({ ...cssVars })} minWidth={0} />
+	<ResponsiveContainer
+		{...props}
+		className={cn('chart', className)}
+		style={css({ ...cssVars })}
+		minWidth={0}
+		initialDimension={{ width: 1, height: 1 }}
+	/>
 )
+
+export const minGap = (sorted: number[]) =>
+	sorted.reduce((min, v, i) => (i === 0 ? min : Math.min(min, v - sorted[i - 1])), Infinity)
 
 export const getXFormatters = (xType: string | undefined, xFormat?: (v: string) => string, timestamps?: number[]) => {
 	if (xType === 'date') {
-		let minInterval = Infinity
-		if (timestamps)
-			for (let i = 1; i < timestamps.length; i++) minInterval = Math.min(minInterval, timestamps[i] - timestamps[i - 1])
+		const minInterval = timestamps ? minGap(timestamps) : Infinity
 		const hasTime = minInterval < 86_400_000 // sub-daily resolution
 		const span = timestamps?.length ? timestamps[timestamps.length - 1] - timestamps[0] : Infinity
 		const multiDay = span >= 86_400_000
@@ -107,31 +114,10 @@ export const brushProps = {
 }
 
 export const renderRefAreas = (areas?: ReferenceAreaConfig[]) =>
-	areas?.map((ra) => (
-		<ReferenceArea
-			key={`${ra.x1 ?? ''}-${ra.x2 ?? ''}-${ra.y1 ?? ''}-${ra.y2 ?? ''}`}
-			x1={ra.x1}
-			x2={ra.x2}
-			y1={ra.y1}
-			y2={ra.y2}
-			label={ra.label}
-			className={ra.className}
-		/>
-	))
+	areas?.map((ra) => <ReferenceArea key={`${ra.x1 ?? ''}-${ra.x2 ?? ''}-${ra.y1 ?? ''}-${ra.y2 ?? ''}`} {...ra} />)
 
 export const renderRefLines = (lines?: ReferenceLineConfig[]) =>
-	lines?.map((rl) => (
-		<ReferenceLine
-			key={`${rl.x ?? ''}-${rl.y ?? ''}`}
-			x={rl.x}
-			y={rl.y}
-			label={rl.label}
-			className={rl.className}
-			stroke='currentColor'
-			strokeDasharray='4 2'
-			opacity={0.5}
-		/>
-	))
+	lines?.map((rl) => <ReferenceLine key={`${rl.x ?? ''}-${rl.y ?? ''}`} strokeDasharray='4 2' opacity={0.5} {...rl} />)
 
 type BrushYDomainOptions = {
 	brushOptions: { lockYAxis?: boolean } | undefined
@@ -149,4 +135,40 @@ export const resolveBrushYDomain = ({
 	if (!brushOptions?.lockYAxis) return yDomain
 	const max = Math.max(...chartData.flatMap((d) => seriesKeys.map((k) => Number(d[k] ?? 0))))
 	return [0, max]
+}
+
+export const colorizeData = <T extends Record<string, unknown>>(
+	data: T[],
+	colors?: string[],
+): (T & { fill: string })[] => data.map((item, i) => ({ ...item, fill: resolveColor(i, data.length, colors) }))
+
+export const normalizeSeries = <S extends { key: string }>(
+	series: S[] | undefined,
+	yKey: string | undefined,
+	defaults?: Partial<Omit<S, 'key'>>,
+): S[] => series ?? (yKey ? [{ key: yKey, ...defaults } as S] : [])
+
+export const renderGradientDefs = (
+	series: { fill: string; color: string; key: string }[],
+	chartId: string,
+): ReactNode => {
+	if (!series.some((s) => s.fill === 'gradient')) return null
+	return (
+		<defs>
+			{series.map((s, i) =>
+				s.fill === 'gradient' ? (
+					<linearGradient key={s.key} id={`${chartId}-gradient-${i}`} x1='0' y1='0' x2='0' y2='1'>
+						<stop offset='5%' stopColor={s.color} stopOpacity={0.3} />
+						<stop offset='95%' stopColor={s.color} stopOpacity={0} />
+					</linearGradient>
+				) : null,
+			)}
+		</defs>
+	)
+}
+
+export const getAreaFill = (fill: string, color: string, gradientId: string) => {
+	if (fill === 'gradient') return `url(#${gradientId})`
+	if (fill === 'solid') return color
+	return 'none'
 }

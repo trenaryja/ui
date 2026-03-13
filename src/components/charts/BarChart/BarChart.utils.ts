@@ -1,14 +1,8 @@
-import { DATE_TS_KEY, resolveColor } from '../charts.utils'
-import type { BarSeries } from './BarChart.types'
-
-export const resolveBarSeries = <T extends Record<string, unknown>>(
-	series: BarSeries<T>[] | undefined,
-	yKey: (string & keyof T) | undefined,
-	valueLabel: string | undefined,
-): BarSeries<T>[] => series ?? (yKey ? [{ key: yKey, label: valueLabel }] : [])
+import { DATE_TS_KEY, minGap, resolveColor } from '../charts.utils'
+import type { BarChartProps } from './BarChart'
 
 export const normalizeBarSeries = <T extends Record<string, unknown>>(
-	s: BarSeries<T>,
+	s: NonNullable<BarChartProps<T>['series']>[number],
 	i: number,
 	{ stacked, total, colors }: { stacked?: boolean; total: number; colors?: string[] },
 ) => ({
@@ -19,7 +13,7 @@ export const normalizeBarSeries = <T extends Record<string, unknown>>(
 })
 
 export const getBarRadius = (
-	series: { stackId?: string; radius?: number }[],
+	series: { stackId?: number | string; radius?: number }[],
 	index: number,
 	{ stacked, layout }: { stacked?: boolean; layout: 'horizontal' | 'vertical' },
 ): [number, number, number, number] => {
@@ -37,10 +31,7 @@ const getDateBarDomain = (sorted: number[]): [number, number] => {
 		return [sorted[0] - half, sorted[0] + half]
 	}
 
-	let minInterval = Infinity
-	for (let i = 1; i < sorted.length; i++) minInterval = Math.min(minInterval, sorted[i] - sorted[i - 1])
-
-	const half = minInterval / 2
+	const half = minGap(sorted) / 2
 	return [sorted[0] - half, sorted[sorted.length - 1] + half]
 }
 
@@ -53,6 +44,11 @@ type BarAxisOptions = {
 	yFormat?: (v: number) => string
 	yDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
 }
+
+export const resolveBarSize = (
+	barSize: number | string | undefined,
+	{ isDate, containerWidth, dataLength }: { isDate: boolean; containerWidth: number; dataLength: number },
+) => (isDate && containerWidth > 0 ? Math.max(1, (containerWidth / dataLength) * 0.75) : barSize)
 
 export const getBarAxisProps = ({ layout, xKey, isDate, timestamps, xFormat, yFormat, yDomain }: BarAxisOptions) => {
 	const xAxisDataKey = isDate ? DATE_TS_KEY : xKey
