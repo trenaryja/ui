@@ -140,12 +140,8 @@ export function Demo() {
 			>
 				{(key) => (
 					<div className='grid gap-2 md:grid-cols-2'>
-						<div className='h-64'>
-							<BarChart key={`a-${key}`} data={synced1} xKey='week' yKey='sales' syncId='demo' />
-						</div>
-						<div className='h-64'>
-							<BarChart key={`b-${key}`} data={synced2} xKey='week' yKey='sales' syncId='demo' />
-						</div>
+						<BarChart key={`a-${key}`} data={synced1} xKey='week' yKey='sales' syncId='demo' />
+						<BarChart key={`b-${key}`} data={synced2} xKey='week' yKey='sales' syncId='demo' />
 					</div>
 				)}
 			</ChartCard>

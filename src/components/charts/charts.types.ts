@@ -1,12 +1,35 @@
-import type { ClassNames } from '@/types'
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode, RefObject } from 'react'
+import type { Brush, XAxis, YAxis } from 'recharts'
+import type { ChartLegendClassNames } from './ChartLegend'
+import type { ChartTooltipClassNames } from './ChartTooltip'
+
+/** Derive recharts component props, omitting keys we control internally. */
+export type DeriveProps<C extends React.ElementType, Controlled extends string = never> = Omit<
+	ComponentProps<C>,
+	'children' | 'ref' | Controlled
+>
+
+export type CartesianSubProps = {
+	xAxis?: DeriveProps<typeof XAxis>
+	yAxis?: DeriveProps<typeof YAxis>
+	brush?: DeriveProps<typeof Brush, 'dataKey'>
+}
 
 export type CurveType = 'basis' | 'linear' | 'monotone' | 'natural' | 'step' | 'stepAfter' | 'stepBefore'
 export type FillType = 'gradient' | 'none' | 'solid'
-export type StackOffset = 'expand' | 'none' | 'positive' | 'sign'
 
-export type CartesianChartClassNames = 'brush' | 'legend' | 'tooltip' | 'xAxis' | 'yAxis'
-export type PolarChartClassNames = 'legend' | 'tooltip'
+export type CartesianChartClassNames = {
+	brush?: string
+	legend?: ChartLegendClassNames
+	tooltip?: ChartTooltipClassNames
+	xAxis?: string
+	yAxis?: string
+}
+
+export type PolarChartClassNames = {
+	legend?: ChartLegendClassNames
+	tooltip?: ChartTooltipClassNames
+}
 
 export type ChartCssVars = Partial<Record<string, string>>
 
@@ -34,66 +57,93 @@ export type BrushOptions = {
 }
 
 // Tooltip prop types per chart category
-export type CartesianTooltipProps = {
+export type ChartTooltipProps<P = unknown> = {
 	active?: boolean
-	payload?: { value: number; dataKey: string; color: string; name: string }[]
 	label?: number | string
+	payload?: P[]
 }
 
-export type PieTooltipProps = {
-	active?: boolean
-	payload?: { name: string; value: number; fill?: string; payload?: { fill?: string } }[]
+export type CartesianTooltipProps = ChartTooltipProps<{ value: number; dataKey: string; color: string; name: string }>
+export type PieTooltipProps = ChartTooltipProps<{
+	name: string
+	value: number
+	fill?: string
+	payload?: { fill?: string }
+}>
+export type RadarTooltipProps = ChartTooltipProps<{ name?: string; value?: number; color?: string }>
+export type RadialBarTooltipProps = ChartTooltipProps<{
+	value?: number
+	color?: string
+	payload?: Record<string, unknown> & { fill?: string }
+}>
+export type SankeyLinkPayload = {
+	source: { name: string; count?: number; value: number }
+	target: { name: string; count?: number; value: number }
+	value: number
 }
 
-export type RadarTooltipProps = {
-	active?: boolean
+export type SankeyTooltipProps = ChartTooltipProps<{
+	payload: Record<string, unknown>
+	name: string
+	value: number
+}>
+
+export type LegendItem = {
+	key: string
+	color?: string
+	label: string
+	value?: ReactNode
+	swatch?: ReactNode
+}
+
+// Shared series base for keyed chart series (Bar, Line, Radar)
+export type ChartSeries<T> = {
+	key: string & keyof T
+	color?: string
 	label?: string
-	payload?: { name?: string; value?: number; color?: string }[]
 }
 
-export type RadialBarTooltipProps = {
-	active?: boolean
-	payload?: { color?: string; payload?: Record<string, unknown> & { fill?: string } }[]
-}
-
-export type SankeyTooltipProps = {
-	active?: boolean
-	payload?: { payload?: unknown; name: string; value: number }[]
+// Shared base for ALL chart types
+export type ChartBaseProps<T extends Record<string, unknown>, TP = unknown> = {
+	data: T[]
+	/** `true` for default legend, or a render function for custom legend */
+	legend?: ((items: LegendItem[]) => ReactNode) | boolean
+	/** Portal the legend into a different DOM element */
+	legendTarget?: RefObject<HTMLElement | null>
+	/** `true` for default tooltip, `false` to disable, or a render function for custom tooltip */
+	tooltip?: ((props: TP) => ReactNode) | boolean
+	colors?: string[]
+	cssVars?: ChartCssVars
 }
 
 export type CartesianChartBaseProps<
 	T extends Record<string, unknown>,
 	XK extends string & keyof T = string & keyof T,
-> = ClassNames<CartesianChartClassNames> & {
-	className?: string
-	data: T[]
-	xKey: XK
-	xType?: T[XK] extends number ? 'number' : 'date' | 'string'
-	yKey?: string & keyof T
-	valueLabel?: string
-	yDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
-	yFormat?: (value: number) => string
-	xFormat?: (value: string) => string
-	referenceLines?: ReferenceLineConfig[]
-	referenceAreas?: ReferenceAreaConfig[]
-	syncId?: string
-	syncMethod?: 'index' | 'value'
-	onDataClick?: (data: T, index: number) => void
-	brush?: boolean
-	brushOptions?: BrushOptions
-	legend?: boolean
-	tooltip?: boolean
-	tooltipContent?: (props: CartesianTooltipProps) => ReactNode
-	colors?: string[]
-	cssVars?: ChartCssVars
-}
+	Chart extends React.ElementType = React.ElementType,
+> = ChartBaseProps<T, CartesianTooltipProps> &
+	DeriveProps<Chart, 'data' | 'onClick' | 'stackOffset'> & {
+		classNames?: CartesianChartClassNames
+		xKey: XK
+		xType?: T[XK] extends number ? 'number' : 'date' | 'string'
+		yKey?: string & keyof T
+		valueLabel?: string
+		yDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
+		yFormat?: (value: number) => string
+		xFormat?: (value: string) => string
+		referenceLines?: ReferenceLineConfig[]
+		referenceAreas?: ReferenceAreaConfig[]
+		onDataClick?: (data: T, index: number) => void
+		brush?: boolean
+		brushOptions?: BrushOptions
+		/** `true` for basic stacking, or a stack offset mode */
+		stacked?: boolean | 'expand' | 'positive' | 'sign'
+	}
 
-export type PolarChartBaseProps<T extends Record<string, unknown>, TP = unknown> = ClassNames<PolarChartClassNames> & {
-	className?: string
-	data: T[]
-	legend?: boolean
-	tooltip?: boolean
-	tooltipContent?: (props: TP) => ReactNode
-	colors?: string[]
-	cssVars?: ChartCssVars
-}
+export type PolarChartBaseProps<
+	T extends Record<string, unknown>,
+	TP = unknown,
+	Chart extends React.ElementType = React.ElementType,
+> = ChartBaseProps<T, TP> &
+	DeriveProps<Chart, 'data'> & {
+		classNames?: PolarChartClassNames
+	}

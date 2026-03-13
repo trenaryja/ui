@@ -30,7 +30,6 @@ const randMulti = (d: string): CompStat[] => {
 export function Demo() {
 	const [single, setSingle] = useState(() => randSingle('Low'))
 	const [multi, setMulti] = useState(() => randMulti('Low'))
-	const [circle, setCircle] = useState(() => randSingle('Low'))
 
 	return (
 		<div className='demo'>
@@ -51,10 +50,6 @@ export function Demo() {
 						legend
 					/>
 				)}
-			</ChartCard>
-
-			<ChartCard title='Circle grid' densityOptions={densityOptions} onRandomize={(d) => setCircle(randSingle(d))}>
-				{(key) => <RadarChart key={key} data={circle} angleKey='subject' yKey='score' gridType='circle' />}
 			</ChartCard>
 		</div>
 	)

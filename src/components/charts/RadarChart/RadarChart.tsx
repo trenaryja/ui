@@ -1,13 +1,30 @@
 'use client'
 
 import { useId } from 'react'
-import { Legend, PolarAngleAxis, PolarGrid, Radar, RadarChart as RechartsRadarChart } from 'recharts'
-import { ChartContainer } from '../charts.utils'
-import { chartTooltip } from '../ChartTooltip'
-import type { RadarChartProps, RadarSeries } from './RadarChart.types'
-import { normalizeRadarSeries, renderRadarTooltipContent } from './RadarChart.utils'
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart as RechartsRadarChart } from 'recharts'
+import { ChartLegend } from '../ChartLegend'
+import type { ChartSeries, DeriveProps, FillType, PolarChartBaseProps, RadarTooltipProps } from '../charts.types'
+import { ChartContainer, getAreaFill, normalizeSeries, renderGradientDefs } from '../charts.utils'
+import { ChartTooltip } from '../ChartTooltip'
+import { normalizeRadarSeries } from './RadarChart.utils'
 
-export type { RadarChartProps, RadarSeries } from './RadarChart.types'
+export type RadarChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<
+	T,
+	RadarTooltipProps,
+	typeof RechartsRadarChart
+> & {
+	angleKey: string & keyof T
+	yKey?: string & keyof T
+	series?: (ChartSeries<T> &
+		DeriveProps<typeof Radar, 'dataKey'> & {
+			fill?: FillType
+		})[]
+	subProps?: {
+		radar?: DeriveProps<typeof Radar, 'dataKey'>
+		polarGrid?: DeriveProps<typeof PolarGrid>
+		polarAngleAxis?: DeriveProps<typeof PolarAngleAxis, 'dataKey'>
+	}
+}
 
 export const RadarChart = <T extends Record<string, unknown>>({
 	data,
@@ -15,56 +32,67 @@ export const RadarChart = <T extends Record<string, unknown>>({
 	yKey,
 	series,
 	colors,
-	gridType = 'polygon',
+	subProps,
 	legend,
+	legendTarget,
 	tooltip = true,
-	tooltipContent,
 	className,
 	classNames,
 	cssVars,
+	...chartProps
 }: RadarChartProps<T>) => {
 	const chartId = useId()
-	const resolvedSeries: RadarSeries<T>[] = series ?? (yKey ? [{ key: yKey }] : [])
-	const seriesWithColors = resolvedSeries.map((s, i) =>
-		normalizeRadarSeries(s, i, { total: resolvedSeries.length, colors }),
+	const normalizedSeries = normalizeSeries(series, yKey)
+	const seriesWithColors = normalizedSeries.map((s, i) =>
+		normalizeRadarSeries(s, i, { total: normalizedSeries.length, colors }),
 	)
 
-	const tooltipEl = chartTooltip({
-		tooltip,
-		content: tooltipContent ?? renderRadarTooltipContent,
-		className: classNames?.tooltip,
-	})
+	const legendItems = seriesWithColors.map((s) => ({ key: s.key, color: s.color, label: s.label ?? s.key }))
 
 	return (
-		<ChartContainer className={className} cssVars={cssVars}>
-			<RechartsRadarChart data={data}>
-				<defs>
-					{seriesWithColors.map((s, i) =>
-						s.fill === 'gradient' ? (
-							<linearGradient key={s.key} id={`${chartId}-gradient-${i}`} x1='0' y1='0' x2='0' y2='1'>
-								<stop offset='5%' stopColor={s.color} stopOpacity={0.3} />
-								<stop offset='95%' stopColor={s.color} stopOpacity={0.05} />
-							</linearGradient>
-						) : null,
-					)}
-				</defs>
-				<PolarGrid gridType={gridType} stroke='currentColor' opacity={0.2} />
-				{/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
-				<PolarAngleAxis dataKey={angleKey as string} stroke='currentColor' opacity={0.5} fontSize={12} />
-				{tooltipEl}
-				{legend && <Legend className={classNames?.legend} />}
-				{seriesWithColors.map((s, i) => (
-					<Radar
-						key={s.key}
+		<>
+			<ChartContainer className={className} cssVars={cssVars}>
+				<RechartsRadarChart {...chartProps} data={data}>
+					{renderGradientDefs(seriesWithColors, chartId)}
+					<PolarGrid className='stroke-current/25' {...subProps?.polarGrid} />
+					<PolarAngleAxis
+						className='stroke-current/50 text-sm'
+						{...subProps?.polarAngleAxis}
 						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-						dataKey={s.key as string}
-						name={s.label ?? s.key}
-						stroke={s.color}
-						fill={s.fill === 'gradient' ? `url(#${chartId}-gradient-${i})` : s.fill === 'solid' ? s.color : 'none'}
-						fillOpacity={1}
+						dataKey={angleKey as string}
 					/>
-				))}
-			</RechartsRadarChart>
-		</ChartContainer>
+					<ChartTooltip
+						tooltip={tooltip}
+						classNames={classNames?.tooltip}
+						resolve={({ active, payload, label }: RadarTooltipProps) => {
+							if (!active || !payload?.length) return null
+							const multi = payload.length > 1
+							return {
+								title: label,
+								items: payload.map((entry) => ({
+									key: String(entry.name),
+									color: multi ? entry.color : undefined,
+									label: multi ? String(entry.name) : undefined,
+									value: entry.value,
+								})),
+							}
+						}}
+					/>
+					{seriesWithColors.map(({ key, ...s }, i) => (
+						<Radar
+							key={key}
+							{...subProps?.radar}
+							{...s}
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+							dataKey={key as string}
+							name={s.label ?? key}
+							stroke={s.color}
+							fill={getAreaFill(s.fill, s.color, `${chartId}-gradient-${i}`)}
+						/>
+					))}
+				</RechartsRadarChart>
+			</ChartContainer>
+			<ChartLegend legend={legend} items={legendItems} classNames={classNames?.legend} target={legendTarget} />
+		</>
 	)
 }

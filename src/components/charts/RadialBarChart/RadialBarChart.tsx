@@ -1,56 +1,73 @@
 'use client'
 
-import { Legend, RadialBar, RadialBarChart as RechartsRadialBarChart } from 'recharts'
-import { ChartContainer, resolveColor } from '../charts.utils'
-import { chartTooltip, TooltipContent } from '../ChartTooltip'
-import type { RadialBarChartProps } from './RadialBarChart.types'
+import { RadialBar, RadialBarChart as RechartsRadialBarChart } from 'recharts'
+import { ChartLegend } from '../ChartLegend'
+import type { DeriveProps, PolarChartBaseProps, RadialBarTooltipProps } from '../charts.types'
+import { ChartContainer, colorizeData } from '../charts.utils'
+import { ChartTooltip } from '../ChartTooltip'
 
-export type { RadialBarChartProps } from './RadialBarChart.types'
+export type RadialBarChartSubProps = {
+	radialBar?: DeriveProps<typeof RadialBar, 'dataKey'>
+}
+
+export type RadialBarChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<
+	T,
+	RadialBarTooltipProps,
+	typeof RechartsRadialBarChart
+> & {
+	valueKey: string & keyof T
+	nameKey: string & keyof T
+	subProps?: RadialBarChartSubProps
+}
 
 export const RadialBarChart = <T extends Record<string, unknown>>({
 	data,
 	valueKey,
 	nameKey,
-	innerRadius = '30%',
-	outerRadius = '100%',
+	subProps,
 	colors,
 	legend,
+	legendTarget,
 	tooltip = true,
-	tooltipContent,
 	className,
 	classNames,
 	cssVars,
+	...chartProps
 }: RadialBarChartProps<T>) => {
-	const tooltipEl = chartTooltip({
-		tooltip,
-		content:
-			tooltipContent ??
-			(({ active, payload }) => {
-				if (!active || !payload?.length) return null
-				const item = payload[0].payload
-				if (!item) return null
-				const name = String(item[nameKey])
-				return <TooltipContent title={name} series={[{ key: name, color: item.fill, value: String(item[valueKey]) }]} />
-			}),
-		className: classNames?.tooltip,
-	})
+	const colorizedData = colorizeData(data, colors)
 
-	const coloredData = data.map((item, i) => ({ ...item, fill: resolveColor(i, data.length, colors) }))
+	const legendItems = colorizedData.map((item) => ({
+		key: String(item[nameKey]),
+		color: item.fill,
+		label: String(item[nameKey]),
+	}))
 
 	return (
-		<ChartContainer className={className} cssVars={cssVars}>
-			<RechartsRadialBarChart
-				data={coloredData}
-				innerRadius={innerRadius}
-				outerRadius={outerRadius}
-				startAngle={90}
-				endAngle={-270}
-			>
-				{/* eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion */}
-				<RadialBar dataKey={valueKey as string} background={{ fill: 'currentColor', opacity: 0.05 }} />
-				{tooltipEl}
-				{legend && <Legend iconSize={10} className={classNames?.legend} />}
-			</RechartsRadialBarChart>
-		</ChartContainer>
+		<>
+			<ChartContainer className={className} cssVars={cssVars}>
+				<RechartsRadialBarChart {...chartProps} data={colorizedData}>
+					<RadialBar
+						background={{ fill: 'currentColor', opacity: 0.05 }}
+						{...subProps?.radialBar}
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+						dataKey={valueKey as string}
+					/>
+					<ChartTooltip
+						tooltip={tooltip}
+						classNames={classNames?.tooltip}
+						resolve={({ active, payload }: RadialBarTooltipProps) => {
+							if (!active || !payload?.length) return null
+							const entry = payload[0]
+							const name = String(entry.payload?.[nameKey] ?? '')
+							return {
+								title: name,
+								items: [{ key: name, color: entry.color ?? entry.payload?.fill, value: entry.value }],
+							}
+						}}
+					/>
+				</RechartsRadialBarChart>
+			</ChartContainer>
+			<ChartLegend legend={legend} items={legendItems} classNames={classNames?.legend} target={legendTarget} />
+		</>
 	)
 }
