@@ -1,5 +1,6 @@
 'use client'
 
+import { EMPTY_OBJ } from '@/utils'
 import { useState } from 'react'
 import { Bar, Brush, BarChart as RechartsBarChart, XAxis, YAxis } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
@@ -16,6 +17,7 @@ import {
 	ChartContainer,
 	getClickHandler,
 	getXFormatters,
+	makeTooltipResolver,
 	normalizeSeries,
 	renderRefAreas,
 	renderRefLines,
@@ -49,13 +51,13 @@ export const BarChart = <
 	rangeKey,
 	valueLabel,
 	series,
-	subProps,
+	subProps = EMPTY_OBJ,
 	layout = 'horizontal',
 	stacked,
 	barSize,
 	colors,
 	rangeDomain,
-	formatters,
+	formatters = EMPTY_OBJ,
 	referenceLines,
 	referenceAreas,
 	onDataClick,
@@ -65,7 +67,7 @@ export const BarChart = <
 	legendTarget,
 	tooltip = true,
 	className,
-	classNames,
+	classNames = EMPTY_OBJ,
 	cssVars,
 	...chartProps
 }: BarChartProps<TData, TDomainKey>) => {
@@ -98,7 +100,7 @@ export const BarChart = <
 		isDate,
 		timestamps,
 		domainFormat: formatX,
-		rangeFormat: formatters?.rangeTick,
+		rangeFormat: formatters.rangeTick,
 		rangeDomain: resolvedRangeDomain,
 	})
 
@@ -113,29 +115,13 @@ export const BarChart = <
 					data={chartData}
 					onClick={getClickHandler(onDataClick)}
 				>
-					<XAxis {...axisProps} className={classNames?.xAxis} {...subProps?.xAxis} {...xAxisProps} />
-					<YAxis {...axisProps} className={classNames?.yAxis} {...subProps?.yAxis} {...yAxisProps} />
+					<XAxis {...axisProps} className={classNames.xAxis} {...subProps.xAxis} {...xAxisProps} />
+					<YAxis {...axisProps} className={classNames.yAxis} {...subProps.yAxis} {...yAxisProps} />
 					<ChartTooltip
 						tooltip={tooltip}
-						classNames={classNames?.tooltip}
-						formatters={formatters?.tooltip}
-						resolve={({ active, payload, label }) => {
-							if (!active || !payload?.length) return null
-							const multi = seriesWithColors.length > 1
-							return {
-								title: formatXFull && label != null ? formatXFull(label) : label,
-								items: payload.map((entry) => {
-									const s = seriesWithColors.find((x) => x.key === entry.dataKey)
-									const { value } = entry
-									return {
-										key: entry.dataKey,
-										color: multi ? (s?.color ?? entry.color) : undefined,
-										label: multi ? s?.name : undefined,
-										value: valueLabel ? `${value} ${valueLabel}${value !== 1 ? 's' : ''}` : value,
-									}
-								}),
-							}
-						}}
+						classNames={classNames.tooltip}
+						formatters={formatters.tooltip}
+						resolve={makeTooltipResolver(seriesWithColors, formatXFull, { valueLabel })}
 					/>
 					{renderRefAreas(referenceAreas)}
 					{renderRefLines(referenceLines)}
@@ -143,8 +129,8 @@ export const BarChart = <
 						<Bar
 							key={key}
 							isAnimationActive={!brush}
-							className={classNames?.bar}
-							{...subProps?.bar}
+							className={classNames.bar}
+							{...subProps.bar}
 							{...s}
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 							dataKey={key as string}
@@ -152,14 +138,14 @@ export const BarChart = <
 							radius={getBarRadius(seriesWithColors, i, { stacked: isStacked, layout })}
 						/>
 					))}
-					{brush && <Brush {...brushProps} className={classNames?.brush} {...subProps?.brush} dataKey={xAxisDataKey} />}
+					{brush && <Brush {...brushProps} className={classNames.brush} {...subProps.brush} dataKey={xAxisDataKey} />}
 				</RechartsBarChart>
 			</ChartContainer>
 			<ChartLegend
 				legend={legend}
 				items={legendItems}
-				classNames={classNames?.legend}
-				formatters={formatters?.legend}
+				classNames={classNames.legend}
+				formatters={formatters.legend}
 				target={legendTarget}
 			/>
 		</>
