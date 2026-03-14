@@ -1,9 +1,13 @@
 import type { CurveType, FillType } from '../charts.types'
 import { DATE_TS_KEY, resolveColor } from '../charts.utils'
 
-export const getLineXAxisProps = (isDate: boolean, xKey: string, xFormat: ((v: any) => string) | undefined) => ({
-	dataKey: isDate ? DATE_TS_KEY : xKey,
-	tickFormatter: xFormat,
+export const getLineXAxisProps = (
+	isDate: boolean,
+	domainKey: string,
+	domainFormat: ((v: any) => string) | undefined,
+) => ({
+	dataKey: isDate ? DATE_TS_KEY : domainKey,
+	tickFormatter: domainFormat,
 	...(isDate ? { type: 'number' as const, scale: 'time' as const, domain: ['dataMin', 'dataMax'] as const } : {}),
 })
 

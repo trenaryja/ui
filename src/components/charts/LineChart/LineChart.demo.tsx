@@ -23,11 +23,13 @@ export function Demo() {
 	return (
 		<div className='demo'>
 			<ChartCard title='Default' onRandomize={(d) => setSingle(rand(d))}>
-				{(key) => <LineChart key={key} data={single.data} xKey='label' yKey='a' />}
+				{(key) => <LineChart key={key} data={single.data} domainKey='label' rangeKey='a' />}
 			</ChartCard>
 
 			<ChartCard title='Gradient fill' onRandomize={(d) => setGradient(rand(d))}>
-				{(key) => <LineChart key={key} data={gradient.data} xKey='label' series={[{ key: 'a', fill: 'gradient' }]} />}
+				{(key) => (
+					<LineChart key={key} data={gradient.data} domainKey='label' series={[{ key: 'a', fill: 'gradient' }]} />
+				)}
 			</ChartCard>
 
 			<ChartCard title='Multi-series' onRandomize={(d) => setMulti(rand(d))}>
@@ -35,7 +37,7 @@ export function Demo() {
 					<LineChart
 						key={key}
 						data={multi.data}
-						xKey='label'
+						domainKey='label'
 						series={multi.series.map((s, i) => ({
 							...s,
 							strokeDasharray: ['', '8 2', '2 2'][i],
@@ -50,7 +52,7 @@ export function Demo() {
 					<LineChart
 						key={key}
 						data={multiFill.data}
-						xKey='label'
+						domainKey='label'
 						series={multiFill.series.map((s) => ({ ...s, fill: 'gradient' as const }))}
 						legend
 					/>
@@ -62,7 +64,7 @@ export function Demo() {
 					<LineChart
 						key={key}
 						data={stacked.data}
-						xKey='label'
+						domainKey='label'
 						series={stacked.series.map((s) => ({ ...s, fill: 'solid' as const }))}
 						stacked
 						legend
@@ -71,15 +73,15 @@ export function Demo() {
 			</ChartCard>
 
 			<ChartCard title='Date x-axis' onRandomize={(d) => setDates(rand(d))}>
-				{(key) => <LineChart key={key} data={dates.data} xKey='date' yKey='a' xType='date' />}
+				{(key) => <LineChart key={key} data={dates.data} domainKey='date' rangeKey='a' domainType='date' />}
 			</ChartCard>
 
 			<ChartCard title='Sparse dates' onRandomize={(d) => setSparse(randChartData(counts[d], { sparse: true }))}>
-				{(key) => <LineChart key={key} data={sparse.data} xKey='date' yKey='a' xType='date' />}
+				{(key) => <LineChart key={key} data={sparse.data} domainKey='date' rangeKey='a' domainType='date' />}
 			</ChartCard>
 
 			<ChartCard title='With brush' onRandomize={(d) => setBrush(rand(d))}>
-				{(key) => <LineChart key={key} data={brush.data} xKey='label' yKey='a' brush />}
+				{(key) => <LineChart key={key} data={brush.data} domainKey='label' rangeKey='a' brush />}
 			</ChartCard>
 
 			<ChartCard
@@ -91,15 +93,21 @@ export function Demo() {
 			>
 				{(key) => (
 					<div className='grid gap-2 md:grid-cols-2'>
-						<LineChart key={`a-${key}`} data={synced1.data} xKey='label' yKey='a' syncId='demo' />
-						<LineChart key={`b-${key}`} data={synced2.data} xKey='label' yKey='a' syncId='demo' />
+						<LineChart key={`a-${key}`} data={synced1.data} domainKey='label' rangeKey='a' syncId='demo' />
+						<LineChart key={`b-${key}`} data={synced2.data} domainKey='label' rangeKey='a' syncId='demo' />
 					</div>
 				)}
 			</ChartCard>
 
 			<ChartCard title='With reference line' onRandomize={(d) => setSingle(rand(d))}>
 				{(key) => (
-					<LineChart key={key} data={single.data} xKey='label' yKey='a' referenceLines={[{ y: 50, label: 'Target' }]} />
+					<LineChart
+						key={key}
+						data={single.data}
+						domainKey='label'
+						rangeKey='a'
+						referenceLines={[{ y: 50, label: 'Target' }]}
+					/>
 				)}
 			</ChartCard>
 		</div>

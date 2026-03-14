@@ -27,19 +27,19 @@ export const resolveColor = (i: number, total: number, colors?: string[]): strin
 
 export const DATE_TS_KEY = '__xTs' as const
 
-export const toDateData = <T extends Record<string, unknown>>(
-	data: T[],
-	xKey: string & keyof T,
-): (Record<typeof DATE_TS_KEY, number> & T)[] =>
-	data.map((d) => ({ ...d, [DATE_TS_KEY]: new Date(d[xKey] as string).getTime() }))
+export const toDateData = <TData extends Record<string, unknown>>(
+	data: TData[],
+	domainKey: string & keyof TData,
+): (Record<typeof DATE_TS_KEY, number> & TData)[] =>
+	data.map((d) => ({ ...d, [DATE_TS_KEY]: new Date(d[domainKey] as string).getTime() }))
 
-export const resolveDateData = <T extends Record<string, unknown>>(
-	data: T[],
-	xKey: string & keyof T,
+export const resolveDateData = <TData extends Record<string, unknown>>(
+	data: TData[],
+	domainKey: string & keyof TData,
 	isDate: boolean,
 ) => {
 	if (!isDate) return { chartData: data, timestamps: undefined }
-	const chartData = toDateData(data, xKey)
+	const chartData = toDateData(data, domainKey)
 	const timestamps = chartData.map((d) => d[DATE_TS_KEY]).sort((a, b) => a - b)
 	return { chartData, timestamps }
 }
@@ -65,8 +65,12 @@ export const ChartContainer = ({ className, cssVars, ...props }: ChartContainerP
 export const minGap = (sorted: number[]) =>
 	sorted.reduce((min, v, i) => (i === 0 ? min : Math.min(min, v - sorted[i - 1])), Infinity)
 
-export const getXFormatters = (xType: string | undefined, xFormat?: (v: string) => string, timestamps?: number[]) => {
-	if (xType === 'date') {
+export const getXFormatters = (
+	domainType: string | undefined,
+	formatters?: { domainTick?: (v: number | string) => string; tooltip?: { title?: (v: ReactNode) => ReactNode } },
+	timestamps?: number[],
+) => {
+	if (domainType === 'date') {
 		const minInterval = timestamps ? minGap(timestamps) : Infinity
 		const hasTime = minInterval < 86_400_000 // sub-daily resolution
 		const span = timestamps?.length ? timestamps[timestamps.length - 1] - timestamps[0] : Infinity
@@ -83,20 +87,24 @@ export const getXFormatters = (xType: string | undefined, xFormat?: (v: string) 
 			? (v: number) => format(new Date(v), 'MMM d, h:mm a')
 			: (v: number) => format(new Date(v), 'MMM d, yyyy')
 
-		return { formatX: xFormat ? (xFormat as (v: any) => string) : defaultFmt, formatXFull: fullFmt }
+		return {
+			formatX: formatters?.domainTick ? (formatters.domainTick as (v: any) => string) : defaultFmt,
+			formatXFull: fullFmt,
+		}
 	}
 
-	return { formatX: xFormat, formatXFull: undefined }
+	return { formatX: formatters?.domainTick as ((v: any) => string) | undefined, formatXFull: undefined }
 }
 
 export const makeClickHandler =
-	<T,>(fn: (data: T, index: number) => void) =>
+	<TData,>(fn: (data: TData, index: number) => void) =>
 	(e: Record<string, unknown>) => {
-		const payload = e?.activePayload as { payload: T }[] | undefined
+		const payload = e?.activePayload as { payload: TData }[] | undefined
 		if (payload?.[0]) fn(payload[0].payload, Number(e.activeTooltipIndex ?? 0))
 	}
 
-export const getClickHandler = <T,>(fn?: (data: T, index: number) => void) => (fn ? makeClickHandler(fn) : undefined)
+export const getClickHandler = <TData,>(fn?: (data: TData, index: number) => void) =>
+	fn ? makeClickHandler(fn) : undefined
 
 export const axisProps = {
 	stroke: 'currentColor',
@@ -119,34 +127,34 @@ export const renderRefAreas = (areas?: ReferenceAreaConfig[]) =>
 export const renderRefLines = (lines?: ReferenceLineConfig[]) =>
 	lines?.map((rl) => <ReferenceLine key={`${rl.x ?? ''}-${rl.y ?? ''}`} strokeDasharray='4 2' opacity={0.5} {...rl} />)
 
-type BrushYDomainOptions = {
-	brushOptions: { lockYAxis?: boolean } | undefined
+type BrushRangeDomainOptions = {
+	brushOptions: { lockRange?: boolean } | undefined
 	chartData: Record<string, unknown>[]
 	seriesKeys: string[]
-	yDomain: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax'] | undefined
+	rangeDomain: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax'] | undefined
 }
 
-export const resolveBrushYDomain = ({
+export const resolveBrushRangeDomain = ({
 	brushOptions,
 	chartData,
 	seriesKeys,
-	yDomain,
-}: BrushYDomainOptions): [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax'] | undefined => {
-	if (!brushOptions?.lockYAxis) return yDomain
+	rangeDomain,
+}: BrushRangeDomainOptions): [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax'] | undefined => {
+	if (!brushOptions?.lockRange) return rangeDomain
 	const max = Math.max(...chartData.flatMap((d) => seriesKeys.map((k) => Number(d[k] ?? 0))))
 	return [0, max]
 }
 
-export const colorizeData = <T extends Record<string, unknown>>(
-	data: T[],
+export const colorizeData = <TData extends Record<string, unknown>>(
+	data: TData[],
 	colors?: string[],
-): (T & { fill: string })[] => data.map((item, i) => ({ ...item, fill: resolveColor(i, data.length, colors) }))
+): (TData & { fill: string })[] => data.map((item, i) => ({ ...item, fill: resolveColor(i, data.length, colors) }))
 
-export const normalizeSeries = <S extends { key: string }>(
-	series: S[] | undefined,
-	yKey: string | undefined,
-	defaults?: Partial<Omit<S, 'key'>>,
-): S[] => series ?? (yKey ? [{ key: yKey, ...defaults } as S] : [])
+export const normalizeSeries = <TSeries extends { key: string }>(
+	series: TSeries[] | undefined,
+	rangeKey: string | undefined,
+	defaults?: Partial<Omit<TSeries, 'key'>>,
+): TSeries[] => series ?? (rangeKey ? [{ key: rangeKey, ...defaults } as TSeries] : [])
 
 export const renderGradientDefs = (
 	series: { fill: string; color: string; key: string }[],

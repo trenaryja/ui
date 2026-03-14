@@ -23,32 +23,39 @@ export function Demo() {
 	return (
 		<div className='demo'>
 			<ChartCard title='Default' onRandomize={(d) => setSingle(rand(d))}>
-				{(key) => <BarChart key={key} data={single.data} xKey='label' yKey='a' />}
+				{(key) => <BarChart key={key} data={single.data} domainKey='label' rangeKey='a' />}
 			</ChartCard>
 
 			<ChartCard title='Multi-series' onRandomize={(d) => setMulti(rand(d))}>
-				{(key) => <BarChart key={key} data={multi.data} xKey='label' series={multi.series} legend />}
+				{(key) => <BarChart key={key} data={multi.data} domainKey='label' series={multi.series} legend />}
 			</ChartCard>
 
 			<ChartCard title='Stacked' onRandomize={(d) => setStacked(rand(d))}>
-				{(key) => <BarChart key={key} data={stacked.data} xKey='label' series={stacked.series} stacked legend />}
+				{(key) => <BarChart key={key} data={stacked.data} domainKey='label' series={stacked.series} stacked legend />}
 			</ChartCard>
 
 			<ChartCard title='Horizontal' onRandomize={(d) => setHorizontal(rand(d))}>
-				{(key) => <BarChart key={key} data={horizontal.data} xKey='label' yKey='a' layout='vertical' />}
+				{(key) => <BarChart key={key} data={horizontal.data} domainKey='label' rangeKey='a' layout='vertical' />}
 			</ChartCard>
 
 			<ChartCard title='Date x-axis' onRandomize={(d) => setDates(rand(d))}>
-				{(key) => <BarChart key={key} data={dates.data} xKey='date' yKey='a' xType='date' />}
+				{(key) => <BarChart key={key} data={dates.data} domainKey='date' rangeKey='a' domainType='date' />}
 			</ChartCard>
 
 			<ChartCard title='Sparse dates' onRandomize={(d) => setSparse(randChartData(counts[d], { sparse: true }))}>
-				{(key) => <BarChart key={key} data={sparse.data} xKey='date' yKey='a' xType='date' />}
+				{(key) => <BarChart key={key} data={sparse.data} domainKey='date' rangeKey='a' domainType='date' />}
 			</ChartCard>
 
 			<ChartCard title='With brush' onRandomize={(d) => setBrush(rand(d))}>
 				{(key) => (
-					<BarChart key={key} data={brush.data} xKey='label' yKey='a' brush brushOptions={{ lockYAxis: true }} />
+					<BarChart
+						key={key}
+						data={brush.data}
+						domainKey='label'
+						rangeKey='a'
+						brush
+						brushOptions={{ lockRange: true }}
+					/>
 				)}
 			</ChartCard>
 
@@ -61,15 +68,21 @@ export function Demo() {
 			>
 				{(key) => (
 					<div className='grid gap-2 md:grid-cols-2'>
-						<BarChart key={`a-${key}`} data={synced1.data} xKey='label' yKey='a' syncId='demo' />
-						<BarChart key={`b-${key}`} data={synced2.data} xKey='label' yKey='a' syncId='demo' />
+						<BarChart key={`a-${key}`} data={synced1.data} domainKey='label' rangeKey='a' syncId='demo' />
+						<BarChart key={`b-${key}`} data={synced2.data} domainKey='label' rangeKey='a' syncId='demo' />
 					</div>
 				)}
 			</ChartCard>
 
 			<ChartCard title='With reference line' onRandomize={(d) => setRefLine(rand(d))}>
 				{(key) => (
-					<BarChart key={key} data={refLine.data} xKey='label' yKey='a' referenceLines={[{ y: 50, label: 'Target' }]} />
+					<BarChart
+						key={key}
+						data={refLine.data}
+						domainKey='label'
+						rangeKey='a'
+						referenceLines={[{ y: 50, label: 'Target' }]}
+					/>
 				)}
 			</ChartCard>
 		</div>

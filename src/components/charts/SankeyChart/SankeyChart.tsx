@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { Sankey } from 'recharts'
-import type { ChartCssVars, DeriveProps, SankeyTooltipProps } from '../charts.types'
+import type { ChartCssVars, DeriveProps, SankeyFormatters, SankeyTooltipProps } from '../charts.types'
 import { ChartContainer } from '../charts.utils'
 import type { ChartTooltipClassNames } from '../ChartTooltip'
 import { ChartTooltip } from '../ChartTooltip'
@@ -14,6 +14,7 @@ export type SankeyChartProps = DeriveProps<typeof Sankey, 'data' | 'link' | 'nod
 	classNames?: { tooltip?: ChartTooltipClassNames }
 	data: SankeyLink[]
 	tooltip?: ((props: SankeyTooltipProps) => ReactNode) | boolean
+	formatters?: SankeyFormatters
 	cssVars?: ChartCssVars
 }
 
@@ -23,6 +24,7 @@ export const SankeyChart = ({
 	classNames,
 	cssVars,
 	tooltip = true,
+	formatters,
 	...chartProps
 }: SankeyChartProps) => {
 	if (!data || data.length === 0) return null
@@ -41,6 +43,7 @@ export const SankeyChart = ({
 				<ChartTooltip
 					tooltip={tooltip}
 					classNames={classNames?.tooltip}
+					formatters={formatters?.tooltip}
 					resolve={({ active, payload }: SankeyTooltipProps) => {
 						if (!active || !payload?.length) return null
 						const entry = payload[0]

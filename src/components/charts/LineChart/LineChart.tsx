@@ -10,6 +10,7 @@ import type {
 	CurveType,
 	DeriveProps,
 	FillType,
+	LineChartClassNames,
 } from '../charts.types'
 import {
 	axisProps,
@@ -22,7 +23,7 @@ import {
 	renderGradientDefs,
 	renderRefAreas,
 	renderRefLines,
-	resolveBrushYDomain,
+	resolveBrushRangeDomain,
 	resolveDateData,
 } from '../charts.utils'
 import { ChartSwatch } from '../ChartSwatch'
@@ -30,10 +31,11 @@ import { ChartTooltip } from '../ChartTooltip'
 import { getLineXAxisProps, normalizeLineSeries } from './LineChart.utils'
 
 export type LineChartProps<
-	T extends Record<string, unknown>,
-	XK extends string & keyof T = string & keyof T,
-> = CartesianChartBaseProps<T, XK, typeof RechartsAreaChart> & {
-	series?: (ChartSeries<T> &
+	TData extends Record<string, unknown>,
+	TDomainKey extends string & keyof TData = string & keyof TData,
+> = CartesianChartBaseProps<TData, TDomainKey, typeof RechartsAreaChart> & {
+	classNames?: LineChartClassNames
+	series?: (ChartSeries<TData> &
 		DeriveProps<typeof Area, 'dataKey'> & {
 			fill?: FillType
 			curve?: CurveType
@@ -45,19 +47,21 @@ export type LineChartProps<
 	}
 }
 
-export const LineChart = <T extends Record<string, unknown>, XK extends string & keyof T = string & keyof T>({
+export const LineChart = <
+	TData extends Record<string, unknown>,
+	TDomainKey extends string & keyof TData = string & keyof TData,
+>({
 	data,
-	xKey,
-	xType,
-	yKey,
+	domainKey,
+	domainType,
+	rangeKey,
 	valueLabel,
 	series,
 	subProps,
 	stacked,
 	colors,
-	yDomain,
-	yFormat,
-	xFormat,
+	rangeDomain,
+	formatters,
 	referenceLines,
 	referenceAreas,
 	onDataClick,
@@ -70,33 +74,32 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 	classNames,
 	cssVars,
 	...chartProps
-}: LineChartProps<T, XK>) => {
+}: LineChartProps<TData, TDomainKey>) => {
 	const chartId = useId()
 	const isStacked = !!stacked
 	const stackOffset = typeof stacked === 'string' ? stacked : undefined
 
-	const normalizedSeries = normalizeSeries(series, yKey, { label: valueLabel })
+	const normalizedSeries = normalizeSeries(series, rangeKey, { label: valueLabel })
 	const seriesWithColors = normalizedSeries.map((s, i) =>
 		normalizeLineSeries(s, i, { stacked: isStacked, total: normalizedSeries.length, colors }),
 	)
-	const isDate = xType === 'date'
-	const { chartData, timestamps } = resolveDateData(data, xKey, isDate)
-	const { formatX, formatXFull } = getXFormatters(xType, xFormat, timestamps)
-	const xAxisProps = getLineXAxisProps(isDate, xKey, formatX)
-	const resolvedYDomain = resolveBrushYDomain({
+	const isDate = domainType === 'date'
+	const { chartData, timestamps } = resolveDateData(data, domainKey, isDate)
+	const { formatX, formatXFull } = getXFormatters(domainType, formatters, timestamps)
+	const xAxisProps = getLineXAxisProps(isDate, domainKey, formatX)
+	const resolvedRangeDomain = resolveBrushRangeDomain({
 		brushOptions,
 		chartData,
 		seriesKeys: seriesWithColors.map((s) => s.key),
-		yDomain,
+		rangeDomain,
 	})
 
-	const makeSwatch = (s: (typeof seriesWithColors)[number], swatchClassName?: string) => (
+	const makeSwatch = (s: (typeof seriesWithColors)[number]) => (
 		<ChartSwatch
 			variant={s.fill === 'solid' ? 'square' : s.fill && s.fill !== 'none' ? 'area' : 'line'}
 			color={s.color}
 			strokeWidth={s.strokeWidth}
 			strokeDasharray={s.strokeDasharray}
-			className={swatchClassName}
 		/>
 	)
 
@@ -104,7 +107,7 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 		key: s.key,
 		color: s.color,
 		label: s.name,
-		swatch: makeSwatch(s, classNames?.legend?.swatch),
+		swatch: makeSwatch(s),
 	}))
 
 	return (
@@ -122,12 +125,13 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 						{...axisProps}
 						className={classNames?.yAxis}
 						{...subProps?.yAxis}
-						domain={resolvedYDomain}
-						tickFormatter={yFormat}
+						domain={resolvedRangeDomain}
+						tickFormatter={formatters?.rangeTick}
 					/>
 					<ChartTooltip
 						tooltip={tooltip}
 						classNames={classNames?.tooltip}
+						formatters={formatters?.tooltip}
 						resolve={({ active, payload, label }) => {
 							if (!active || !payload?.length) return null
 							return {
@@ -139,7 +143,7 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 									return {
 										key: entry.dataKey,
 										color: multi ? (s?.color ?? entry.color) : undefined,
-										swatch: multi && s ? makeSwatch(s, classNames?.tooltip?.swatch) : undefined,
+										swatch: multi && s ? makeSwatch(s) : undefined,
 										label: multi && s?.name && !valueLabel ? s.name : undefined,
 										value: valueLabel ? `${value} ${valueLabel}${value !== 1 ? 's' : ''}` : value,
 									}
@@ -154,6 +158,7 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 							key={key}
 							fillOpacity={1}
 							isAnimationActive={!brush}
+							className={classNames?.area}
 							{...subProps?.area}
 							{...s}
 							type={s.curve}
@@ -168,7 +173,13 @@ export const LineChart = <T extends Record<string, unknown>, XK extends string &
 					)}
 				</RechartsAreaChart>
 			</ChartContainer>
-			<ChartLegend legend={legend} items={legendItems} classNames={classNames?.legend} target={legendTarget} />
+			<ChartLegend
+				legend={legend}
+				items={legendItems}
+				classNames={classNames?.legend}
+				formatters={formatters?.legend}
+				target={legendTarget}
+			/>
 		</>
 	)
 }
