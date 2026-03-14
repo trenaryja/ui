@@ -45,7 +45,7 @@ export const SankeyChart = ({
 						if (!active || !payload?.length) return null
 						const entry = payload[0]
 						return {
-							title: entry.name,
+							title: entry.name.replace('-', '→'),
 							items: [{ key: entry.name, value: entry.value }],
 						}
 					}}

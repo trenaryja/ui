@@ -2,60 +2,70 @@ import type { ToastPosition } from '@/components'
 import { Button, Checkbox, Input, Radio, RadioGroup, Range, Select, TextArea, Toggle, TriToggle } from '@/components'
 import type { Arrow } from '@/utils'
 import { durationUnits, joinTyped } from '@/utils'
+import { capitalize } from 'remeda'
+import { faker } from '@faker-js/faker'
 import type { JSXElementConstructor, ReactElement, ReactNode } from 'react'
 import { createElement, useEffect, useState } from 'react'
 
 export * from './meta'
 
-export const densityOptions = ['Low', 'Med', 'High'] as const
+const densityOptions = ['Low', 'Med', 'High'] as const
 export type Density = (typeof densityOptions)[number]
 
-export const genLabels = (n: number) => Array.from({ length: n }, (_, i) => `Day ${i + 1}`)
+export type ChartData = { label: string; name: string; date: string; a: number; b: number; c: number }
+export type DemoSeries = { key: 'a'; label: string } | { key: 'b'; label: string } | { key: 'c'; label: string }
+export type ChartDataResult = { data: ChartData[]; series: [DemoSeries, DemoSeries, DemoSeries] }
 
-export const genDates = (n: number) =>
-	Array.from({ length: n }, (_, i) => {
-		const d = new Date('2024-01-01')
-		d.setDate(d.getDate() + i)
-		return d.toISOString().slice(0, 10)
-	})
+export const randChartData = (count: number, options?: { sparse?: boolean }): ChartDataResult => {
+	const nouns = faker.helpers.uniqueArray(faker.word.noun, count)
+	const start = new Date('2024-01-01')
+	const dates = options?.sparse
+		? faker.date.betweens({ from: start, to: '2024-12-31', count }).map((d) => d.toISOString().slice(0, 10))
+		: Array.from({ length: count }, (_, i) => {
+				const d = new Date(start)
+				d.setDate(d.getDate() + i)
+				return d.toISOString().slice(0, 10)
+			})
 
-export const rand = () => Math.floor(Math.random() * 101)
-
-export const genSparseDates = (n: number, range = 365) => {
-	const all = genDates(range)
-	const indices = new Set<number>()
-	while (indices.size < Math.min(n, range)) indices.add(Math.floor(Math.random() * range))
-	return [...indices].sort((a, b) => a - b).map((i) => all[i])
+	return {
+		data: nouns.map((noun, i) => ({
+			label: `Day ${i + 1}`,
+			name: capitalize(noun),
+			date: dates[i],
+			a: faker.number.int({ min: 20, max: 100 }),
+			b: faker.number.int({ min: 20, max: 100 }),
+			c: faker.number.int({ min: 20, max: 100 }),
+		})),
+		series: faker.helpers.uniqueArray(faker.word.noun, 3).map((noun, i) => ({
+			key: (['a', 'b', 'c'] as const)[i],
+			label: capitalize(noun),
+		})) as [DemoSeries, DemoSeries, DemoSeries],
+	}
 }
 
 type ChartCardProps = {
 	title: string
-	densityOptions?: readonly string[]
-	onRandomize?: (density: string) => void
+	onRandomize?: (density: Density) => void
 	children: (key: number) => ReactNode
 }
 
-export const ChartCard = ({
-	title,
-	densityOptions: densOpts = densityOptions,
-	onRandomize,
-	children,
-}: ChartCardProps) => {
+export const ChartCard = ({ title, onRandomize, children }: ChartCardProps) => {
 	const [key, setKey] = useState(0)
-	const [density, setDensity] = useState(densOpts[0])
+	const [density, setDensity] = useState<Density>(densityOptions[0])
 
 	return (
 		<div className='size-full [&_.chart]:h-64!'>
-			<div className='flex items-center gap-3 justify-between'>
-				<span className='text-sm font-semibold opacity-60'>{title}</span>
+			<div className='flex items-center gap-3 pb-3 justify-between'>
+				<span>{title}</span>
 				<RadioGroup
 					variant='btn'
-					options={[...densOpts]}
+					options={[...densityOptions]}
 					value={density}
-					classNames={{ item: 'btn-xs' }}
+					classNames={{ item: 'btn-xs btn-ghost' }}
 					onChange={(e) => {
-						setDensity(e.target.value)
-						onRandomize?.(e.target.value)
+						const d = e.target.value satisfies string as Density
+						setDensity(d)
+						onRandomize?.(d)
 					}}
 				/>
 				<div className='flex gap-1'>
