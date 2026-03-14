@@ -19,7 +19,9 @@ export function Demo() {
 			</ChartCard>
 
 			<ChartCard title='Multi-series' onRandomize={(d) => setMulti(rand(d))}>
-				{(key) => <RadarChart key={key} data={multi.data} angleKey='name' series={multi.series} legend />}
+				{(key) => (
+					<RadarChart key={key} data={multi.data} angleKey='name' series={multi.series} components={{ legend: true }} />
+				)}
 			</ChartCard>
 		</div>
 	)

@@ -14,7 +14,7 @@ export function Demo() {
 	return (
 		<div className='demo'>
 			<ChartCard title='Default' onRandomize={(d) => setData(rand(d))}>
-				{(key) => <RadialBarChart key={key} data={data.data} valueKey='a' nameKey='name' legend />}
+				{(key) => <RadialBarChart key={key} data={data.data} valueKey='a' nameKey='name' />}
 			</ChartCard>
 		</div>
 	)

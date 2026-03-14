@@ -18,7 +18,7 @@ export function Demo() {
 	const [brush, setBrush] = useState(() => rand('Low'))
 	const [synced1, setSynced1] = useState(() => rand('Low'))
 	const [synced2, setSynced2] = useState(() => rand('Low'))
-	const [refLine, setRefLine] = useState(() => rand('Low'))
+	const [grid, setGrid] = useState(() => rand('Low'))
 
 	return (
 		<div className='demo'>
@@ -27,11 +27,22 @@ export function Demo() {
 			</ChartCard>
 
 			<ChartCard title='Multi-series' onRandomize={(d) => setMulti(rand(d))}>
-				{(key) => <BarChart key={key} data={multi.data} domainKey='label' series={multi.series} legend />}
+				{(key) => (
+					<BarChart key={key} data={multi.data} domainKey='label' series={multi.series} components={{ legend: true }} />
+				)}
 			</ChartCard>
 
 			<ChartCard title='Stacked' onRandomize={(d) => setStacked(rand(d))}>
-				{(key) => <BarChart key={key} data={stacked.data} domainKey='label' series={stacked.series} stacked legend />}
+				{(key) => (
+					<BarChart
+						key={key}
+						data={stacked.data}
+						domainKey='label'
+						series={stacked.series}
+						stacked
+						components={{ legend: true }}
+					/>
+				)}
 			</ChartCard>
 
 			<ChartCard title='Horizontal' onRandomize={(d) => setHorizontal(rand(d))}>
@@ -53,7 +64,7 @@ export function Demo() {
 						data={brush.data}
 						domainKey='label'
 						rangeKey='a'
-						brush
+						components={{ brush: true }}
 						brushOptions={{ lockRange: true }}
 					/>
 				)}
@@ -74,16 +85,8 @@ export function Demo() {
 				)}
 			</ChartCard>
 
-			<ChartCard title='With reference line' onRandomize={(d) => setRefLine(rand(d))}>
-				{(key) => (
-					<BarChart
-						key={key}
-						data={refLine.data}
-						domainKey='label'
-						rangeKey='a'
-						referenceLines={[{ y: 50, label: 'Target' }]}
-					/>
-				)}
+			<ChartCard title='With grid' onRandomize={(d) => setGrid(rand(d))}>
+				{(key) => <BarChart key={key} data={grid.data} domainKey='label' rangeKey='a' components={{ grid: true }} />}
 			</ChartCard>
 		</div>
 	)
