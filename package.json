@@ -11,20 +11,20 @@
 		"url": "git+https://github.com/trenaryja/ui.git"
 	},
 	"scripts": {
-		"dev": "concurrently \"pnpm:build --watch\" \"pnpm:demo\"",
-		"test": "concurrently -g --timings \"pnpm:lint\" \"pnpm:tsc\" \"pnpm:build\"",
+		"dev": "concurrently \"bun run build --watch\" \"bun run demo\"",
+		"test": "concurrently -g --timings \"bun run lint\" \"bun run tsc\" \"bun run build\"",
 		"demo": "vite",
 		"lint": "eslint .",
-		"format": "prettier -w . !\"pnpm-lock.yaml\"",
+		"format": "prettier -w .",
 		"tsc": "tsc",
 		"build": "tsup",
-		"build:use-client": "tsx scripts/build-use-client.ts",
-		"build:css": "tsx scripts/build-css.ts",
-		"build:nf": "tsx scripts/build-nf.ts",
+		"build:use-client": "bun scripts/build-use-client.ts",
+		"build:css": "bun scripts/build-css.ts",
+		"build:nf": "bun scripts/build-nf.ts",
 		"build:demo": "vite build",
-		"postbuild": "pnpm build:use-client && pnpm build:css && pnpm build:nf && pnpm build:demo",
-		"get-latest": "pnpm up -L -i -r",
-		"release": "pnpm build && release-it --"
+		"postbuild": "bun run build:use-client && bun run build:css && bun run build:nf && bun run build:demo",
+		"get-latest": "bun update --latest -i",
+		"release": "bun run build && release-it --"
 	},
 	"types": "./dist/index.d.ts",
 	"browser": "./dist/css/browser.css",
@@ -45,6 +45,7 @@
 		"dist"
 	],
 	"devDependencies": {
+		"@faker-js/faker": "^10.3.0",
 		"@fullstacksjs/eslint-config": "^14.0.2",
 		"@tailwindcss/cli": "^4.2.1",
 		"@tailwindcss/postcss": "^4.2.1",
@@ -55,50 +56,40 @@
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^6.0.1",
-		"clsx": "^2.1.1",
 		"concurrently": "^9.2.1",
 		"daisyui": "^5.5.19",
 		"eslint": "^10.0.3",
+		"nuqs": "^2.8.9",
 		"prettier": "^3.8.1",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
-		"react-icons": "^5.6.0",
 		"react-markdown": "^10.1.0",
 		"rehype-raw": "^7.0.0",
 		"release-it": "^19.2.4",
-		"tailwind-merge": "^3.5.0",
 		"tailwindcss": "^4.2.1",
 		"tsup": "^8.5.1",
-		"tsx": "^4.21.0",
 		"tw-animate-css": "^1.4.0",
-		"type-fest": "^5.4.4",
 		"typescript": "^5.9.3",
 		"vite": "^8.0.0"
 	},
 	"dependencies": {
-		"@faker-js/faker": "^10.3.0",
 		"@floating-ui/react": "^0.27.19",
 		"@mantine/hooks": "^8.3.16",
 		"chroma-js": "^3.2.0",
+		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
-		"nuqs": "^2.8.9",
+		"react-icons": "^5.6.0",
 		"recharts": "^3.8.0",
 		"remeda": "^2.33.6",
-		"sonner": "^2.0.7"
+		"sonner": "^2.0.7",
+		"tailwind-merge": "^3.5.0",
+		"type-fest": "^5.4.4"
 	},
 	"peerDependencies": {
 		"daisyui": ">=5",
 		"react": ">=19",
 		"react-dom": ">=19",
 		"tailwindcss": ">=4"
-	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@parcel/watcher",
-			"@tailwindcss/oxide",
-			"esbuild",
-			"unrs-resolver"
-		]
 	},
 	"postcss": {
 		"plugins": {
