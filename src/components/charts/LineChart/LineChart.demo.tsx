@@ -19,6 +19,7 @@ export function Demo() {
 	const [brush, setBrush] = useState(() => rand('Med'))
 	const [synced1, setSynced1] = useState(() => rand('Low'))
 	const [synced2, setSynced2] = useState(() => rand('Low'))
+	const [grid, setGrid] = useState(() => rand('Low'))
 
 	return (
 		<div className='demo'>
@@ -42,7 +43,7 @@ export function Demo() {
 							...s,
 							strokeDasharray: ['', '8 2', '2 2'][i],
 						}))}
-						legend
+						components={{ legend: true }}
 					/>
 				)}
 			</ChartCard>
@@ -54,7 +55,7 @@ export function Demo() {
 						data={multiFill.data}
 						domainKey='label'
 						series={multiFill.series.map((s) => ({ ...s, fill: 'gradient' as const }))}
-						legend
+						components={{ legend: true }}
 					/>
 				)}
 			</ChartCard>
@@ -67,7 +68,7 @@ export function Demo() {
 						domainKey='label'
 						series={stacked.series.map((s) => ({ ...s, fill: 'solid' as const }))}
 						stacked
-						legend
+						components={{ legend: true }}
 					/>
 				)}
 			</ChartCard>
@@ -81,7 +82,7 @@ export function Demo() {
 			</ChartCard>
 
 			<ChartCard title='With brush' onRandomize={(d) => setBrush(rand(d))}>
-				{(key) => <LineChart key={key} data={brush.data} domainKey='label' rangeKey='a' brush />}
+				{(key) => <LineChart key={key} data={brush.data} domainKey='label' rangeKey='a' components={{ brush: true }} />}
 			</ChartCard>
 
 			<ChartCard
@@ -99,16 +100,8 @@ export function Demo() {
 				)}
 			</ChartCard>
 
-			<ChartCard title='With reference line' onRandomize={(d) => setSingle(rand(d))}>
-				{(key) => (
-					<LineChart
-						key={key}
-						data={single.data}
-						domainKey='label'
-						rangeKey='a'
-						referenceLines={[{ y: 50, label: 'Target' }]}
-					/>
-				)}
+			<ChartCard title='With grid' onRandomize={(d) => setGrid(rand(d))}>
+				{(key) => <LineChart key={key} data={grid.data} domainKey='label' rangeKey='a' components={{ grid: true }} />}
 			</ChartCard>
 		</div>
 	)

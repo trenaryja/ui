@@ -1,16 +1,4 @@
-import { DATE_TS_KEY, minGap, resolveColor } from '../charts.utils'
-import type { BarChartProps } from './BarChart'
-
-export const normalizeBarSeries = <TData extends Record<string, unknown>>(
-	s: NonNullable<BarChartProps<TData>['series']>[number],
-	i: number,
-	{ stacked, total, colors }: { stacked?: boolean; total: number; colors?: string[] },
-) => ({
-	...s,
-	name: s.label ?? s.key,
-	color: s.color ?? resolveColor(i, total, colors),
-	stackId: stacked && !s.stackId ? 'stack' : s.stackId,
-})
+import { DATE_TS_KEY, minGap } from '../charts.utils'
 
 export const getBarRadius = (
 	series: { stackId?: number | string; radius?: number }[],

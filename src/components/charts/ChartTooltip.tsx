@@ -1,11 +1,12 @@
 'use client'
 
-import { cn, cnFn } from '@/utils'
 import type { FunctionalClassName } from '@/utils'
+import { cn, cnFn } from '@/utils'
 import { flip, FloatingPortal, offset, shift, useFloating } from '@floating-ui/react'
-import type { ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import { useEffect, useRef } from 'react'
 import { Tooltip } from 'recharts'
+import type { ChartTooltipComponents, ChartTooltipProps } from './charts.types'
 import { ChartSwatch } from './ChartSwatch'
 
 export type ChartTooltipFormatters = {
@@ -74,48 +75,113 @@ const TooltipPortal = ({ active, children }: { active?: boolean; children: React
 	)
 }
 
-export const ChartTooltip = <TProps,>({
-	tooltip = true,
+const DefaultSwatch = ({ item, className }: { item: TooltipItem; className?: string }) => (
+	<>{item.swatch ?? (item.color && <ChartSwatch color={item.color} className={className} />)}</>
+)
+
+const DefaultRow = ({
+	item,
+	classNames,
+	formatters,
+	Swatch,
+}: {
+	item: TooltipItem
+	classNames?: ChartTooltipClassNames
+	formatters?: ChartTooltipFormatters
+	Swatch: ComponentType<{ item: TooltipItem; className?: string }>
+}) => {
+	const label = item.label && formatters?.label ? formatters.label(item.label, item) : item.label
+	const value = formatters?.value ? formatters.value(item.value, item) : item.value
+	return (
+		<div className={cn('flex items-center gap-1', cnFn(classNames?.row, item))}>
+			<Swatch item={item} className={cnFn(classNames?.swatch, item)} />
+			{label && <span className={cn('opacity-50', cnFn(classNames?.label, item))}>{label}:</span>}
+			<span className={cn('font-bold', cnFn(classNames?.value, item))}>{value}</span>
+		</div>
+	)
+}
+
+const DefaultTooltipContent = ({
+	data,
+	classNames,
+	formatters,
+	components,
+}: {
+	data: TooltipData
+	classNames?: ChartTooltipClassNames
+	formatters?: ChartTooltipFormatters
+	components?: Exclude<ChartTooltipComponents, ComponentType<any>> | undefined
+}) => {
+	const Container = components?.container
+	const Title = components?.title
+	const Row = components?.row
+	const Swatch = components?.swatch ?? DefaultSwatch
+
+	const title = formatters?.title ? formatters.title(data.title) : data.title
+	const containerClassName = cn('bg-base-300 p-2 rounded-box shadow-lg text-sm', cnFn(classNames?.container, data))
+
+	const children = (
+		<>
+			{title != null &&
+				(Title ? (
+					<Title data={data} className={cnFn(classNames?.title, data)} />
+				) : (
+					<p className={cn('font-bold opacity-50', cnFn(classNames?.title, data))}>{title}</p>
+				))}
+			{data.items.map((item) =>
+				Row ? (
+					<Row key={item.key} item={item} className={cnFn(classNames?.row, item)}>
+						<Swatch item={item} className={cnFn(classNames?.swatch, item)} />
+					</Row>
+				) : (
+					<DefaultRow key={item.key} item={item} classNames={classNames} formatters={formatters} Swatch={Swatch} />
+				),
+			)}
+		</>
+	)
+
+	return Container ? (
+		<Container data={data} className={containerClassName}>
+			{children}
+		</Container>
+	) : (
+		<div className={containerClassName}>{children}</div>
+	)
+}
+
+export const ChartTooltip = ({
 	resolve,
 	classNames,
 	formatters,
+	components,
 }: {
-	tooltip?: ((props: TProps) => ReactNode | null) | boolean
-	resolve: (props: TProps) => TooltipData | null
+	resolve: (props: ChartTooltipProps) => TooltipData | null
 	classNames?: ChartTooltipClassNames
 	formatters?: ChartTooltipFormatters
+	components?: ChartTooltipComponents
 }) => {
-	if (!tooltip) return null
+	const isFullReplacement = typeof components === 'function'
 
-	const renderContent = (props: TProps): ReactNode | null => {
-		if (typeof tooltip === 'function') return tooltip(props)
-		const data = resolve(props)
+	const renderContent = (raw: ChartTooltipProps): ReactNode | null => {
+		const data = resolve(raw)
+
+		if (isFullReplacement) {
+			const Component = components
+			return <Component data={data} raw={raw} />
+		}
+
 		if (!data) return null
-		const title = formatters?.title ? formatters.title(data.title) : data.title
-		return (
-			<div className={cn('bg-base-300 p-2 rounded-box shadow-lg text-sm', cnFn(classNames?.container, data))}>
-				{title != null && <p className={cn('font-bold opacity-50', cnFn(classNames?.title, data))}>{title}</p>}
-				{data.items.map((item) => {
-					const label = item.label && formatters?.label ? formatters.label(item.label, item) : item.label
-					const value = formatters?.value ? formatters.value(item.value, item) : item.value
-					return (
-						<div key={item.key} className={cn('flex items-center gap-1', cnFn(classNames?.row, item))}>
-							{item.swatch ??
-								(item.color && <ChartSwatch color={item.color} className={cnFn(classNames?.swatch, item)} />)}
-							{label && <span className={cn('opacity-50', cnFn(classNames?.label, item))}>{label}:</span>}
-							<span className={cn('font-bold', cnFn(classNames?.value, item))}>{value}</span>
-						</div>
-					)
-				})}
-			</div>
-		)
+
+		return <DefaultTooltipContent data={data} classNames={classNames} formatters={formatters} components={components} />
 	}
 
 	return (
 		<Tooltip
 			wrapperStyle={{ display: 'none' }}
 			content={(props) => (
-				<TooltipPortal active={(props as { active?: boolean }).active}>{renderContent(props as TProps)}</TooltipPortal>
+				<TooltipPortal active={(props as { active?: boolean }).active}>
+					{renderContent(props as unknown as ChartTooltipProps)}
+				</TooltipPortal>
 			)}
 		/>
 	)

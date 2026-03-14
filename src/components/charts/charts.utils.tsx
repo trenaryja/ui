@@ -3,8 +3,9 @@
 import { cn, css } from '@/utils'
 import { format, parseISO } from 'date-fns'
 import type { ComponentProps, ReactNode } from 'react'
-import { ReferenceArea, ReferenceLine, ResponsiveContainer } from 'recharts'
-import type { CartesianTooltipProps, ChartCssVars, ReferenceAreaConfig, ReferenceLineConfig } from './charts.types'
+import type { Brush, CartesianGrid, XAxis, YAxis } from 'recharts'
+import { ResponsiveContainer } from 'recharts'
+import type { ChartCssVars, ChartTooltipProps } from './charts.types'
 
 const DEFAULT_COLORS = [
 	'var(--color-base-content)',
@@ -106,26 +107,24 @@ export const makeClickHandler =
 export const getClickHandler = <TData,>(fn?: (data: TData, index: number) => void) =>
 	fn ? makeClickHandler(fn) : undefined
 
-export const axisProps = {
+export const defaultAxisProps: ComponentProps<typeof XAxis> & ComponentProps<typeof YAxis> = {
 	stroke: 'currentColor',
 	opacity: 0.5,
-	fontSize: 12,
+	fontSize: '.75rem',
 	tickLine: false,
-	axisLine: false,
 }
 
-export const brushProps = {
+export const defaultBrushProps: Omit<ComponentProps<typeof Brush>, 'dataKey'> = {
 	height: 20,
 	stroke: 'currentColor',
 	fill: 'transparent',
 	tickFormatter: () => '',
 }
 
-export const renderRefAreas = (areas?: ReferenceAreaConfig[]) =>
-	areas?.map((ra) => <ReferenceArea key={`${ra.x1 ?? ''}-${ra.x2 ?? ''}-${ra.y1 ?? ''}-${ra.y2 ?? ''}`} {...ra} />)
-
-export const renderRefLines = (lines?: ReferenceLineConfig[]) =>
-	lines?.map((rl) => <ReferenceLine key={`${rl.x ?? ''}-${rl.y ?? ''}`} strokeDasharray='4 2' opacity={0.5} {...rl} />)
+export const defaultGridProps: ComponentProps<typeof CartesianGrid> = {
+	stroke: 'currentColor',
+	opacity: 0.1,
+}
 
 type BrushRangeDomainOptions = {
 	brushOptions: { lockRange?: boolean } | undefined
@@ -183,7 +182,7 @@ export const makeTooltipResolver = <T extends { key: string; color: string; name
 	const { valueLabel, makeSwatch } = opts ?? {}
 	const multi = seriesWithColors.length > 1
 
-	return ({ active, payload, label }: CartesianTooltipProps) => {
+	return ({ active, payload, label }: ChartTooltipProps) => {
 		if (!active || !payload?.length) return null
 		return {
 			title: formatXFull && label != null ? formatXFull(label) : label,
@@ -191,7 +190,7 @@ export const makeTooltipResolver = <T extends { key: string; color: string; name
 				const s = seriesWithColors.find((x) => x.key === entry.dataKey)
 				const { value } = entry
 				return {
-					key: entry.dataKey,
+					key: entry.dataKey ?? '',
 					color: multi ? (s?.color ?? entry.color) : undefined,
 					swatch: multi && s && makeSwatch ? makeSwatch(s) : undefined,
 					label: multi ? s?.name : undefined,
@@ -201,6 +200,10 @@ export const makeTooltipResolver = <T extends { key: string; color: string; name
 		}
 	}
 }
+
+/** Extract custom components from a slot value, filtering out booleans. */
+export const slotComponents = <T,>(slot: boolean | T | undefined): T | undefined =>
+	typeof slot === 'boolean' || slot == null ? undefined : slot
 
 export const getAreaFill = (fill: string, color: string, gradientId: string) => {
 	if (fill === 'gradient') return `url(#${gradientId})`

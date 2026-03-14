@@ -2,36 +2,39 @@
 
 import { EMPTY_OBJ } from '@/utils'
 import { useState } from 'react'
-import { Bar, Brush, BarChart as RechartsBarChart, XAxis, YAxis } from 'recharts'
+import { Bar, Brush, CartesianGrid, BarChart as RechartsBarChart, XAxis, YAxis } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
 import type {
-	BarChartClassNames,
 	CartesianChartBaseProps,
+	CartesianChartClassNames,
 	CartesianSubProps,
 	ChartSeries,
 	DeriveProps,
 } from '../charts.types'
 import {
-	axisProps,
-	brushProps,
 	ChartContainer,
+	defaultAxisProps,
+	defaultBrushProps,
+	defaultGridProps,
 	getClickHandler,
 	getXFormatters,
 	makeTooltipResolver,
 	normalizeSeries,
-	renderRefAreas,
-	renderRefLines,
 	resolveBrushRangeDomain,
+	resolveColor,
 	resolveDateData,
+	slotComponents,
 } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
-import { getBarAxisProps, getBarRadius, normalizeBarSeries, resolveBarSize } from './BarChart.utils'
+import { getBarAxisProps, getBarRadius, resolveBarSize } from './BarChart.utils'
 
 export type BarChartProps<
 	TData extends Record<string, unknown>,
 	TDomainKey extends string & keyof TData = string & keyof TData,
 > = CartesianChartBaseProps<TData, TDomainKey, typeof RechartsBarChart> & {
-	classNames?: BarChartClassNames
+	classNames?: CartesianChartClassNames & {
+		bar?: string
+	}
 	series?: (ChartSeries<TData> &
 		DeriveProps<typeof Bar, 'dataKey'> & {
 			radius?: number
@@ -46,6 +49,7 @@ export const BarChart = <
 	TDomainKey extends string & keyof TData = string & keyof TData,
 >({
 	data,
+	children,
 	domainKey,
 	domainType,
 	rangeKey,
@@ -56,16 +60,12 @@ export const BarChart = <
 	stacked,
 	barSize,
 	colors,
+	components = EMPTY_OBJ,
 	rangeDomain,
 	formatters = EMPTY_OBJ,
-	referenceLines,
-	referenceAreas,
 	onDataClick,
-	brush,
 	brushOptions,
-	legend,
 	legendTarget,
-	tooltip = true,
 	className,
 	classNames = EMPTY_OBJ,
 	cssVars,
@@ -75,9 +75,12 @@ export const BarChart = <
 	const stackOffset = typeof stacked === 'string' ? stacked : undefined
 
 	const normalizedSeries = normalizeSeries(series, rangeKey, { label: valueLabel })
-	const seriesWithColors = normalizedSeries.map((s, i) =>
-		normalizeBarSeries(s, i, { stacked: isStacked, total: normalizedSeries.length, colors }),
-	)
+	const seriesWithColors = normalizedSeries.map((s, i) => ({
+		...s,
+		name: s.label ?? s.key,
+		color: s.color ?? resolveColor(i, normalizedSeries.length, colors),
+		stackId: isStacked && !s.stackId ? 'stack' : s.stackId,
+	}))
 	const isDate = domainType === 'date'
 	const { chartData, timestamps } = resolveDateData(data, domainKey, isDate)
 	const { formatX, formatXFull } = getXFormatters(domainType, formatters, timestamps)
@@ -115,39 +118,49 @@ export const BarChart = <
 					data={chartData}
 					onClick={getClickHandler(onDataClick)}
 				>
-					<XAxis {...axisProps} className={classNames.xAxis} {...subProps.xAxis} {...xAxisProps} />
-					<YAxis {...axisProps} className={classNames.yAxis} {...subProps.yAxis} {...yAxisProps} />
-					<ChartTooltip
-						tooltip={tooltip}
-						classNames={classNames.tooltip}
-						formatters={formatters.tooltip}
-						resolve={makeTooltipResolver(seriesWithColors, formatXFull, { valueLabel })}
-					/>
-					{renderRefAreas(referenceAreas)}
-					{renderRefLines(referenceLines)}
+					{components.grid && <CartesianGrid {...defaultGridProps} className={classNames.grid} {...subProps.grid} />}
+					{components.xAxis !== false && (
+						<XAxis {...defaultAxisProps} className={classNames.xAxis} {...subProps.xAxis} {...xAxisProps} />
+					)}
+					{components.yAxis !== false && (
+						<YAxis {...defaultAxisProps} className={classNames.yAxis} {...subProps.yAxis} {...yAxisProps} />
+					)}
+					{components.tooltip !== false && (
+						<ChartTooltip
+							classNames={classNames.tooltip}
+							formatters={formatters.tooltip}
+							components={slotComponents(components.tooltip)}
+							resolve={makeTooltipResolver(seriesWithColors, formatXFull, { valueLabel })}
+						/>
+					)}
 					{seriesWithColors.map(({ key, ...s }, i) => (
 						<Bar
 							key={key}
-							isAnimationActive={!brush}
+							isAnimationActive={!components.brush}
 							className={classNames.bar}
-							{...subProps.bar}
 							{...s}
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-							dataKey={key as string}
 							fill={s.color}
 							radius={getBarRadius(seriesWithColors, i, { stacked: isStacked, layout })}
+							{...subProps.bar}
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+							dataKey={key as string}
 						/>
 					))}
-					{brush && <Brush {...brushProps} className={classNames.brush} {...subProps.brush} dataKey={xAxisDataKey} />}
+					{components.brush && (
+						<Brush {...defaultBrushProps} className={classNames.brush} {...subProps.brush} dataKey={xAxisDataKey} />
+					)}
+					{children}
 				</RechartsBarChart>
 			</ChartContainer>
-			<ChartLegend
-				legend={legend}
-				items={legendItems}
-				classNames={classNames.legend}
-				formatters={formatters.legend}
-				target={legendTarget}
-			/>
+			{components.legend && (
+				<ChartLegend
+					items={legendItems}
+					classNames={classNames.legend}
+					formatters={formatters.legend}
+					components={slotComponents(components.legend)}
+					target={legendTarget}
+				/>
+			)}
 		</>
 	)
 }

@@ -18,15 +18,15 @@ export function Demo() {
 	return (
 		<div className='demo'>
 			<ChartCard title='Pie' onRandomize={(d) => setPie(rand(d))}>
-				{(key) => <PieChart key={key} data={pie.data} valueKey='a' nameKey='name' legend />}
+				{(key) => <PieChart key={key} data={pie.data} valueKey='a' nameKey='name' />}
 			</ChartCard>
 
 			<ChartCard title='Donut' onRandomize={(d) => setDonut(rand(d))}>
-				{(key) => <PieChart key={key} data={donut.data} valueKey='a' nameKey='name' donut legend />}
+				{(key) => <PieChart key={key} data={donut.data} valueKey='a' nameKey='name' donut />}
 			</ChartCard>
 
 			<ChartCard title='Pie, noGap' onRandomize={(d) => setNoGapPie(rand(d))}>
-				{(key) => <PieChart key={key} data={noGapPie.data} valueKey='a' nameKey='name' noGap legend />}
+				{(key) => <PieChart key={key} data={noGapPie.data} valueKey='a' nameKey='name' noGap />}
 			</ChartCard>
 
 			<ChartCard title='Pie, custom colors' onRandomize={(d) => setMonoPie(rand(d))}>
@@ -42,7 +42,6 @@ export function Demo() {
 							'var(--color-base-300)',
 							'var(--color-primary)',
 						]}
-						legend
 					/>
 				)}
 			</ChartCard>
@@ -56,7 +55,6 @@ export function Demo() {
 						nameKey='name'
 						donut
 						colors={['var(--color-base-content)', 'var(--color-base-300)']}
-						legend
 					/>
 				)}
 			</ChartCard>

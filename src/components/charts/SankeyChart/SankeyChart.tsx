@@ -1,30 +1,35 @@
 'use client'
 
+import { EMPTY_OBJ } from '@/utils'
 import type { ReactNode } from 'react'
 import { Sankey } from 'recharts'
-import type { ChartCssVars, DeriveProps, SankeyFormatters, SankeyTooltipProps } from '../charts.types'
-import { ChartContainer } from '../charts.utils'
-import type { ChartTooltipClassNames } from '../ChartTooltip'
+import type { ChartCssVars, ChartTooltipComponents, ChartTooltipProps, DeriveProps } from '../charts.types'
+import { ChartContainer, slotComponents } from '../charts.utils'
+import type { ChartTooltipClassNames, ChartTooltipFormatters } from '../ChartTooltip'
 import { ChartTooltip } from '../ChartTooltip'
 import { toRechartsFormat } from './SankeyChart.utils'
 
 export type SankeyLink = { source: string; target: string; value: number }
 
 export type SankeyChartProps = DeriveProps<typeof Sankey, 'data' | 'link' | 'node'> & {
+	children?: ReactNode
 	classNames?: { tooltip?: ChartTooltipClassNames }
+	components?: { tooltip?: boolean | ChartTooltipComponents }
 	data: SankeyLink[]
-	tooltip?: ((props: SankeyTooltipProps) => ReactNode) | boolean
-	formatters?: SankeyFormatters
 	cssVars?: ChartCssVars
+	formatters?: {
+		tooltip?: ChartTooltipFormatters
+	}
 }
 
 export const SankeyChart = ({
 	data,
+	children,
 	className,
-	classNames,
+	classNames = EMPTY_OBJ,
+	components = EMPTY_OBJ,
 	cssVars,
-	tooltip = true,
-	formatters,
+	formatters = EMPTY_OBJ,
 	...chartProps
 }: SankeyChartProps) => {
 	if (!data || data.length === 0) return null
@@ -40,19 +45,24 @@ export const SankeyChart = ({
 				{...chartProps}
 				data={toRechartsFormat(data)}
 			>
-				<ChartTooltip
-					tooltip={tooltip}
-					classNames={classNames?.tooltip}
-					formatters={formatters?.tooltip}
-					resolve={({ active, payload }: SankeyTooltipProps) => {
-						if (!active || !payload?.length) return null
-						const entry = payload[0]
-						return {
-							title: entry.name.replace('-', '→'),
-							items: [{ key: entry.name, value: entry.value }],
-						}
-					}}
-				/>
+				{components.tooltip !== false && (
+					<ChartTooltip
+						classNames={classNames.tooltip}
+						formatters={formatters.tooltip}
+						components={slotComponents(components.tooltip)}
+						resolve={({ active, payload }: ChartTooltipProps) => {
+							if (!active || !payload?.length) return null
+							const entry = payload[0]
+							const name = entry.name ?? ''
+							return {
+								// Sankey names use hyphens as source-target separators
+								title: name.replaceAll('-', '→'),
+								items: [{ key: name, value: entry.value }],
+							}
+						}}
+					/>
+				)}
+				{children}
 			</Sankey>
 		</ChartContainer>
 	)

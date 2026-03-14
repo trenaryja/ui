@@ -2,31 +2,31 @@
 
 import { EMPTY_OBJ } from '@/utils'
 import { useId } from 'react'
-import { Area, Brush, AreaChart as RechartsAreaChart, XAxis, YAxis } from 'recharts'
+import { Area, Brush, CartesianGrid, AreaChart as RechartsAreaChart, XAxis, YAxis } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
 import type {
 	CartesianChartBaseProps,
+	CartesianChartClassNames,
 	CartesianSubProps,
 	ChartSeries,
 	CurveType,
 	DeriveProps,
 	FillType,
-	LineChartClassNames,
 } from '../charts.types'
 import {
-	axisProps,
-	brushProps,
 	ChartContainer,
+	defaultAxisProps,
+	defaultBrushProps,
+	defaultGridProps,
 	getAreaFill,
 	getClickHandler,
 	getXFormatters,
 	makeTooltipResolver,
 	normalizeSeries,
 	renderGradientDefs,
-	renderRefAreas,
-	renderRefLines,
 	resolveBrushRangeDomain,
 	resolveDateData,
+	slotComponents,
 } from '../charts.utils'
 import { ChartSwatch } from '../ChartSwatch'
 import { ChartTooltip } from '../ChartTooltip'
@@ -36,7 +36,9 @@ export type LineChartProps<
 	TData extends Record<string, unknown>,
 	TDomainKey extends string & keyof TData = string & keyof TData,
 > = CartesianChartBaseProps<TData, TDomainKey, typeof RechartsAreaChart> & {
-	classNames?: LineChartClassNames
+	classNames?: CartesianChartClassNames & {
+		area?: string
+	}
 	series?: (ChartSeries<TData> &
 		DeriveProps<typeof Area, 'dataKey'> & {
 			fill?: FillType
@@ -54,6 +56,7 @@ export const LineChart = <
 	TDomainKey extends string & keyof TData = string & keyof TData,
 >({
 	data,
+	children,
 	domainKey,
 	domainType,
 	rangeKey,
@@ -62,16 +65,12 @@ export const LineChart = <
 	subProps = EMPTY_OBJ,
 	stacked,
 	colors,
+	components = EMPTY_OBJ,
 	rangeDomain,
 	formatters = EMPTY_OBJ,
-	referenceLines,
-	referenceAreas,
 	onDataClick,
-	brush,
 	brushOptions,
-	legend,
 	legendTarget,
-	tooltip = true,
 	className,
 	classNames = EMPTY_OBJ,
 	cssVars,
@@ -122,49 +121,62 @@ export const LineChart = <
 					onClick={getClickHandler(onDataClick)}
 				>
 					{renderGradientDefs(seriesWithColors, chartId)}
-					<XAxis {...axisProps} className={classNames.xAxis} {...subProps.xAxis} {...xAxisProps} />
-					<YAxis
-						{...axisProps}
-						className={classNames.yAxis}
-						{...subProps.yAxis}
-						domain={resolvedRangeDomain}
-						tickFormatter={formatters.rangeTick}
-					/>
-					<ChartTooltip
-						tooltip={tooltip}
-						classNames={classNames.tooltip}
-						formatters={formatters.tooltip}
-						resolve={makeTooltipResolver(seriesWithColors, formatXFull, { valueLabel, makeSwatch })}
-					/>
-					{renderRefAreas(referenceAreas)}
-					{renderRefLines(referenceLines)}
+					{components.grid && <CartesianGrid {...defaultGridProps} className={classNames.grid} {...subProps.grid} />}
+					{components.xAxis !== false && (
+						<XAxis {...defaultAxisProps} className={classNames.xAxis} {...subProps.xAxis} {...xAxisProps} />
+					)}
+					{components.yAxis !== false && (
+						<YAxis
+							{...defaultAxisProps}
+							className={classNames.yAxis}
+							{...subProps.yAxis}
+							domain={resolvedRangeDomain}
+							tickFormatter={formatters.rangeTick}
+						/>
+					)}
+					{components.tooltip !== false && (
+						<ChartTooltip
+							classNames={classNames.tooltip}
+							formatters={formatters.tooltip}
+							components={slotComponents(components.tooltip)}
+							resolve={makeTooltipResolver(seriesWithColors, formatXFull, { valueLabel, makeSwatch })}
+						/>
+					)}
 					{seriesWithColors.map(({ key, ...s }, i) => (
 						<Area
 							key={key}
 							fillOpacity={1}
-							isAnimationActive={!brush}
+							isAnimationActive={!components.brush}
 							className={classNames.area}
-							{...subProps.area}
 							{...s}
 							type={s.curve}
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-							dataKey={key as string}
 							stroke={s.color}
 							fill={getAreaFill(s.fill, s.color, `${chartId}-gradient-${i}`)}
+							{...subProps.area}
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+							dataKey={key as string}
 						/>
 					))}
-					{brush && (
-						<Brush {...brushProps} className={classNames.brush} {...subProps.brush} dataKey={xAxisProps.dataKey} />
+					{components.brush && (
+						<Brush
+							{...defaultBrushProps}
+							className={classNames.brush}
+							{...subProps.brush}
+							dataKey={xAxisProps.dataKey}
+						/>
 					)}
+					{children}
 				</RechartsAreaChart>
 			</ChartContainer>
-			<ChartLegend
-				legend={legend}
-				items={legendItems}
-				classNames={classNames.legend}
-				formatters={formatters.legend}
-				target={legendTarget}
-			/>
+			{components.legend && (
+				<ChartLegend
+					items={legendItems}
+					classNames={classNames.legend}
+					formatters={formatters.legend}
+					components={slotComponents(components.legend)}
+					target={legendTarget}
+				/>
+			)}
 		</>
 	)
 }
