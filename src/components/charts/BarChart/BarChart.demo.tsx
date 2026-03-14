@@ -1,164 +1,75 @@
 import { BarChart } from '@/components'
 import type { DemoMeta, Density } from '@demo'
-import { ChartCard, densityOptions, genDates, genLabels, genSparseDates, rand } from '@demo'
+import { ChartCard, randChartData } from '@demo'
 import { useState } from 'react'
 
 export const meta: DemoMeta = { title: 'BarChart', category: 'components', tags: ['chart'] }
 
-const densityCounts: Record<Density, number> = { Low: 7, Med: 30, High: 365 }
-
-const randSales = (d: string) => {
-	const n = densityCounts[d as Density]
-	return genLabels(n).map((week) => ({ week, sales: rand() }))
-}
-
-const randStacked = (d: string) => {
-	const n = densityCounts[d as Density]
-	return genLabels(n).map((week) => ({ week, direct: rand(), organic: rand(), referral: rand() }))
-}
-
-const randHorizontal = (d: string) => {
-	const n = densityCounts[d as Density]
-	return genLabels(n).map((week) => ({ week, revenue: rand() }))
-}
-
-const randEvents = (d: string) => {
-	const n = densityCounts[d as Density]
-	return genDates(n).map((date) => ({ date, count: rand() }))
-}
-
-const timeSeriesConfig: Record<Density, { count: number; intervalMin: number }> = {
-	Low: { count: 24, intervalMin: 15 }, // 6 hours
-	Med: { count: 48, intervalMin: 30 }, // 24 hours
-	High: { count: 72, intervalMin: 60 }, // 3 days
-}
-
-const randTimeSeries = (d: string) => {
-	const { count, intervalMin } = timeSeriesConfig[d as Density]
-	const start = new Date()
-	start.setHours(21, 0, 0, 0) // 9 PM — crosses midnight
-	return Array.from({ length: count }, (_, i) => {
-		const t = new Date(start)
-		t.setMinutes(t.getMinutes() + i * intervalMin)
-		return { time: t.toISOString(), readings: Math.floor(Math.random() * 40 + 60) }
-	})
-}
-
-const sparseCounts: Record<Density, number> = { Low: 10, Med: 30, High: 90 }
-
-const randSparse = (d: string) => genSparseDates(sparseCounts[d as Density]).map((date) => ({ date, count: rand() }))
+const counts: Record<Density, number> = { Low: 7, Med: 30, High: 365 }
+const rand = (d: Density) => randChartData(counts[d])
 
 export function Demo() {
-	const [sales, setSales] = useState(() => randSales('Low'))
-	const [multiSeries, setMultiSeries] = useState(() => randStacked('Low'))
-	const [stacked, setStacked] = useState(() => randStacked('Low'))
-	const [horizontal, setHorizontal] = useState(() => randHorizontal('Low'))
-	const [events, setEvents] = useState(() => randEvents('Low'))
-	const [sparse, setSparse] = useState(() => randSparse('Low'))
-	const [timeSeries, setTimeSeries] = useState(() => randTimeSeries('Low'))
-	const [brushSales, setBrushSales] = useState(() => randSales('Low'))
-	const [synced1, setSynced1] = useState(() => randSales('Low'))
-	const [synced2, setSynced2] = useState(() => randSales('Low'))
-	const [refLineSales, setRefLineSales] = useState(() => randSales('Low'))
+	const [single, setSingle] = useState(() => rand('Low'))
+	const [multi, setMulti] = useState(() => rand('Low'))
+	const [stacked, setStacked] = useState(() => rand('Low'))
+	const [horizontal, setHorizontal] = useState(() => rand('Low'))
+	const [dates, setDates] = useState(() => rand('Low'))
+	const [sparse, setSparse] = useState(() => randChartData(counts.Low, { sparse: true }))
+	const [brush, setBrush] = useState(() => rand('Low'))
+	const [synced1, setSynced1] = useState(() => rand('Low'))
+	const [synced2, setSynced2] = useState(() => rand('Low'))
+	const [refLine, setRefLine] = useState(() => rand('Low'))
 
 	return (
 		<div className='demo'>
-			<ChartCard title='Default' densityOptions={densityOptions} onRandomize={(d) => setSales(randSales(d))}>
-				{(key) => <BarChart key={key} data={sales} xKey='week' yKey='sales' />}
+			<ChartCard title='Default' onRandomize={(d) => setSingle(rand(d))}>
+				{(key) => <BarChart key={key} data={single.data} xKey='label' yKey='a' />}
 			</ChartCard>
 
-			<ChartCard
-				title='Multi-series'
-				densityOptions={densityOptions}
-				onRandomize={(d) => setMultiSeries(randStacked(d))}
-			>
+			<ChartCard title='Multi-series' onRandomize={(d) => setMulti(rand(d))}>
+				{(key) => <BarChart key={key} data={multi.data} xKey='label' series={multi.series} legend />}
+			</ChartCard>
+
+			<ChartCard title='Stacked' onRandomize={(d) => setStacked(rand(d))}>
+				{(key) => <BarChart key={key} data={stacked.data} xKey='label' series={stacked.series} stacked legend />}
+			</ChartCard>
+
+			<ChartCard title='Horizontal' onRandomize={(d) => setHorizontal(rand(d))}>
+				{(key) => <BarChart key={key} data={horizontal.data} xKey='label' yKey='a' layout='vertical' />}
+			</ChartCard>
+
+			<ChartCard title='Date x-axis' onRandomize={(d) => setDates(rand(d))}>
+				{(key) => <BarChart key={key} data={dates.data} xKey='date' yKey='a' xType='date' />}
+			</ChartCard>
+
+			<ChartCard title='Sparse dates' onRandomize={(d) => setSparse(randChartData(counts[d], { sparse: true }))}>
+				{(key) => <BarChart key={key} data={sparse.data} xKey='date' yKey='a' xType='date' />}
+			</ChartCard>
+
+			<ChartCard title='With brush' onRandomize={(d) => setBrush(rand(d))}>
 				{(key) => (
-					<BarChart
-						key={key}
-						data={multiSeries}
-						xKey='week'
-						series={[
-							{ key: 'direct', label: 'Direct' },
-							{ key: 'organic', label: 'Organic' },
-							{ key: 'referral', label: 'Referral' },
-						]}
-						legend
-					/>
-				)}
-			</ChartCard>
-
-			<ChartCard title='Stacked' densityOptions={densityOptions} onRandomize={(d) => setStacked(randStacked(d))}>
-				{(key) => (
-					<BarChart
-						key={key}
-						data={stacked}
-						xKey='week'
-						series={[
-							{ key: 'direct', label: 'Direct' },
-							{ key: 'organic', label: 'Organic' },
-							{ key: 'referral', label: 'Referral' },
-						]}
-						stacked
-						legend
-					/>
-				)}
-			</ChartCard>
-
-			<ChartCard title='Horizontal' onRandomize={(d) => setHorizontal(randHorizontal(d))}>
-				{(key) => <BarChart key={key} data={horizontal} xKey='week' yKey='revenue' layout='vertical' />}
-			</ChartCard>
-
-			<ChartCard title='Date x-axis' densityOptions={densityOptions} onRandomize={(d) => setEvents(randEvents(d))}>
-				{(key) => <BarChart key={key} data={events} xKey='date' yKey='count' xType='date' />}
-			</ChartCard>
-
-			<ChartCard title='Sparse dates' densityOptions={densityOptions} onRandomize={(d) => setSparse(randSparse(d))}>
-				{(key) => <BarChart key={key} data={sparse} xKey='date' yKey='count' xType='date' />}
-			</ChartCard>
-
-			<ChartCard
-				title='Time series'
-				densityOptions={densityOptions}
-				onRandomize={(d) => setTimeSeries(randTimeSeries(d))}
-			>
-				{(key) => <BarChart key={key} data={timeSeries} xKey='time' yKey='readings' xType='date' />}
-			</ChartCard>
-
-			<ChartCard title='With brush' densityOptions={densityOptions} onRandomize={(d) => setBrushSales(randSales(d))}>
-				{(key) => (
-					<BarChart key={key} data={brushSales} xKey='week' yKey='sales' brush brushOptions={{ lockYAxis: true }} />
+					<BarChart key={key} data={brush.data} xKey='label' yKey='a' brush brushOptions={{ lockYAxis: true }} />
 				)}
 			</ChartCard>
 
 			<ChartCard
 				title='Synced charts'
-				densityOptions={densityOptions}
 				onRandomize={(d) => {
-					setSynced1(randSales(d))
-					setSynced2(randSales(d))
+					setSynced1(rand(d))
+					setSynced2(rand(d))
 				}}
 			>
 				{(key) => (
 					<div className='grid gap-2 md:grid-cols-2'>
-						<BarChart key={`a-${key}`} data={synced1} xKey='week' yKey='sales' syncId='demo' />
-						<BarChart key={`b-${key}`} data={synced2} xKey='week' yKey='sales' syncId='demo' />
+						<BarChart key={`a-${key}`} data={synced1.data} xKey='label' yKey='a' syncId='demo' />
+						<BarChart key={`b-${key}`} data={synced2.data} xKey='label' yKey='a' syncId='demo' />
 					</div>
 				)}
 			</ChartCard>
 
-			<ChartCard
-				title='With reference line'
-				densityOptions={densityOptions}
-				onRandomize={(d) => setRefLineSales(randSales(d))}
-			>
+			<ChartCard title='With reference line' onRandomize={(d) => setRefLine(rand(d))}>
 				{(key) => (
-					<BarChart
-						key={key}
-						data={refLineSales}
-						xKey='week'
-						yKey='sales'
-						referenceLines={[{ y: 50, label: 'Target' }]}
-					/>
+					<BarChart key={key} data={refLine.data} xKey='label' yKey='a' referenceLines={[{ y: 50, label: 'Target' }]} />
 				)}
 			</ChartCard>
 		</div>
