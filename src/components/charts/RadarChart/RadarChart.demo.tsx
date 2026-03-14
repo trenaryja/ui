@@ -15,7 +15,7 @@ export function Demo() {
 	return (
 		<div className='demo'>
 			<ChartCard title='Default' onRandomize={(d) => setSingle(rand(d))}>
-				{(key) => <RadarChart key={key} data={single.data} angleKey='name' yKey='a' />}
+				{(key) => <RadarChart key={key} data={single.data} angleKey='name' rangeKey='a' />}
 			</ChartCard>
 
 			<ChartCard title='Multi-series' onRandomize={(d) => setMulti(rand(d))}>

@@ -2,23 +2,30 @@
 
 import { Pie, PieChart as RechartsPieChart } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
-import type { DeriveProps, PieChartCssVars, PieTooltipProps, PolarChartBaseProps } from '../charts.types'
+import type {
+	DeriveProps,
+	PieChartClassNames,
+	PieChartCssVars,
+	PieTooltipProps,
+	PolarChartBaseProps,
+} from '../charts.types'
 import { ChartContainer, colorizeData } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 import { normalizePieSeries } from './PieChart.utils'
 
 type PieSliceProps = DeriveProps<typeof Pie, 'data' | 'dataKey' | 'nameKey'>
 
-export type PieChartProps<T extends Record<string, unknown>> = Pick<
+export type PieChartProps<TData extends Record<string, unknown>> = Pick<
 	PieSliceProps,
 	'cornerRadius' | 'endAngle' | 'innerRadius' | 'outerRadius' | 'paddingAngle' | 'startAngle'
 > &
-	PolarChartBaseProps<T, PieTooltipProps, typeof RechartsPieChart> & {
-		valueKey?: string & keyof T
-		nameKey?: string & keyof T
+	PolarChartBaseProps<TData, PieTooltipProps, typeof RechartsPieChart> & {
+		classNames?: PieChartClassNames
+		valueKey?: string & keyof TData
+		nameKey?: string & keyof TData
 		series?: (PieSliceProps & {
-			valueKey: string & keyof T
-			nameKey: string & keyof T
+			valueKey: string & keyof TData
+			nameKey: string & keyof TData
 		})[]
 		donut?: boolean
 		noGap?: boolean
@@ -26,7 +33,7 @@ export type PieChartProps<T extends Record<string, unknown>> = Pick<
 		subProps?: { pie?: PieSliceProps }
 	}
 
-export const PieChart = <T extends Record<string, unknown>>({
+export const PieChart = <TData extends Record<string, unknown>>({
 	data,
 	valueKey,
 	nameKey,
@@ -47,8 +54,9 @@ export const PieChart = <T extends Record<string, unknown>>({
 	tooltip = true,
 	className,
 	classNames,
+	formatters,
 	...chartProps
-}: PieChartProps<T>) => {
+}: PieChartProps<TData>) => {
 	const normalizedSeries = normalizePieSeries(series, {
 		valueKey,
 		nameKey,
@@ -72,6 +80,7 @@ export const PieChart = <T extends Record<string, unknown>>({
 					<ChartTooltip
 						tooltip={tooltip}
 						classNames={classNames?.tooltip}
+						formatters={formatters?.tooltip}
 						resolve={({ active, payload }: PieTooltipProps) => {
 							if (!active || !payload?.length) return null
 							const entry = payload[0]
@@ -87,6 +96,7 @@ export const PieChart = <T extends Record<string, unknown>>({
 							outerRadius='100%'
 							startAngle={startAngle}
 							endAngle={endAngle}
+							className={classNames?.pie}
 							{...subProps?.pie}
 							{...s}
 							data={colorizedData}
@@ -96,7 +106,13 @@ export const PieChart = <T extends Record<string, unknown>>({
 					))}
 				</RechartsPieChart>
 			</ChartContainer>
-			<ChartLegend legend={legend} items={legendItems} classNames={classNames?.legend} target={legendTarget} />
+			<ChartLegend
+				legend={legend}
+				items={legendItems}
+				classNames={classNames?.legend}
+				formatters={formatters?.legend}
+				target={legendTarget}
+			/>
 		</>
 	)
 }

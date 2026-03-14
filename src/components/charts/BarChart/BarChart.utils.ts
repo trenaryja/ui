@@ -1,8 +1,8 @@
 import { DATE_TS_KEY, minGap, resolveColor } from '../charts.utils'
 import type { BarChartProps } from './BarChart'
 
-export const normalizeBarSeries = <T extends Record<string, unknown>>(
-	s: NonNullable<BarChartProps<T>['series']>[number],
+export const normalizeBarSeries = <TData extends Record<string, unknown>>(
+	s: NonNullable<BarChartProps<TData>['series']>[number],
 	i: number,
 	{ stacked, total, colors }: { stacked?: boolean; total: number; colors?: string[] },
 ) => ({
@@ -37,12 +37,12 @@ const getDateBarDomain = (sorted: number[]): [number, number] => {
 
 type BarAxisOptions = {
 	layout: 'horizontal' | 'vertical'
-	xKey: string
+	domainKey: string
 	isDate: boolean
 	timestamps?: number[]
-	xFormat?: (v: any) => string
-	yFormat?: (v: number) => string
-	yDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
+	domainFormat?: (v: any) => string
+	rangeFormat?: (v: number) => string
+	rangeDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
 }
 
 export const resolveBarSize = (
@@ -50,8 +50,16 @@ export const resolveBarSize = (
 	{ isDate, containerWidth, dataLength }: { isDate: boolean; containerWidth: number; dataLength: number },
 ) => (isDate && containerWidth > 0 ? Math.max(1, (containerWidth / dataLength) * 0.75) : barSize)
 
-export const getBarAxisProps = ({ layout, xKey, isDate, timestamps, xFormat, yFormat, yDomain }: BarAxisOptions) => {
-	const xAxisDataKey = isDate ? DATE_TS_KEY : xKey
+export const getBarAxisProps = ({
+	layout,
+	domainKey,
+	isDate,
+	timestamps,
+	domainFormat,
+	rangeFormat,
+	rangeDomain,
+}: BarAxisOptions) => {
+	const xAxisDataKey = isDate ? DATE_TS_KEY : domainKey
 	const dateProps =
 		isDate && timestamps
 			? { type: 'number' as const, scale: 'time' as const, domain: getDateBarDomain(timestamps) }
@@ -60,14 +68,14 @@ export const getBarAxisProps = ({ layout, xKey, isDate, timestamps, xFormat, yFo
 	if (layout === 'vertical') {
 		return {
 			xAxisDataKey,
-			xAxisProps: { type: 'number' as const, tickFormatter: yFormat, domain: yDomain },
-			yAxisProps: { dataKey: xKey, type: 'category' as const, tickFormatter: xFormat },
+			xAxisProps: { type: 'number' as const, tickFormatter: rangeFormat, domain: rangeDomain },
+			yAxisProps: { dataKey: domainKey, type: 'category' as const, tickFormatter: domainFormat },
 		}
 	}
 
 	return {
 		xAxisDataKey,
-		xAxisProps: { dataKey: xAxisDataKey, tickFormatter: xFormat, ...dateProps },
-		yAxisProps: { tickFormatter: yFormat, domain: yDomain },
+		xAxisProps: { dataKey: xAxisDataKey, tickFormatter: domainFormat, ...dateProps },
+		yAxisProps: { tickFormatter: rangeFormat, domain: rangeDomain },
 	}
 }

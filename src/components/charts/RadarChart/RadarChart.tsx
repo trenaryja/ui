@@ -3,19 +3,27 @@
 import { useId } from 'react'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart as RechartsRadarChart } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
-import type { ChartSeries, DeriveProps, FillType, PolarChartBaseProps, RadarTooltipProps } from '../charts.types'
+import type {
+	ChartSeries,
+	DeriveProps,
+	FillType,
+	PolarChartBaseProps,
+	RadarChartClassNames,
+	RadarTooltipProps,
+} from '../charts.types'
 import { ChartContainer, getAreaFill, normalizeSeries, renderGradientDefs } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 import { normalizeRadarSeries } from './RadarChart.utils'
 
-export type RadarChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<
-	T,
+export type RadarChartProps<TData extends Record<string, unknown>> = PolarChartBaseProps<
+	TData,
 	RadarTooltipProps,
 	typeof RechartsRadarChart
 > & {
-	angleKey: string & keyof T
-	yKey?: string & keyof T
-	series?: (ChartSeries<T> &
+	classNames?: RadarChartClassNames
+	angleKey: string & keyof TData
+	rangeKey?: string & keyof TData
+	series?: (ChartSeries<TData> &
 		DeriveProps<typeof Radar, 'dataKey'> & {
 			fill?: FillType
 		})[]
@@ -26,10 +34,10 @@ export type RadarChartProps<T extends Record<string, unknown>> = PolarChartBaseP
 	}
 }
 
-export const RadarChart = <T extends Record<string, unknown>>({
+export const RadarChart = <TData extends Record<string, unknown>>({
 	data,
 	angleKey,
-	yKey,
+	rangeKey,
 	series,
 	colors,
 	subProps,
@@ -38,11 +46,12 @@ export const RadarChart = <T extends Record<string, unknown>>({
 	tooltip = true,
 	className,
 	classNames,
+	formatters,
 	cssVars,
 	...chartProps
-}: RadarChartProps<T>) => {
+}: RadarChartProps<TData>) => {
 	const chartId = useId()
-	const normalizedSeries = normalizeSeries(series, yKey)
+	const normalizedSeries = normalizeSeries(series, rangeKey)
 	const seriesWithColors = normalizedSeries.map((s, i) =>
 		normalizeRadarSeries(s, i, { total: normalizedSeries.length, colors }),
 	)
@@ -54,16 +63,18 @@ export const RadarChart = <T extends Record<string, unknown>>({
 			<ChartContainer className={className} cssVars={cssVars}>
 				<RechartsRadarChart {...chartProps} data={data}>
 					{renderGradientDefs(seriesWithColors, chartId)}
-					<PolarGrid className='stroke-current/25' {...subProps?.polarGrid} />
+					<PolarGrid className={classNames?.polarGrid ?? 'stroke-current/25'} {...subProps?.polarGrid} />
 					<PolarAngleAxis
-						className='stroke-current/50 text-sm'
+						className={classNames?.polarAngleAxis ?? 'stroke-current/50 text-sm'}
 						{...subProps?.polarAngleAxis}
 						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 						dataKey={angleKey as string}
+						{...(formatters?.label && { tickFormatter: formatters.label })}
 					/>
 					<ChartTooltip
 						tooltip={tooltip}
 						classNames={classNames?.tooltip}
+						formatters={formatters?.tooltip}
 						resolve={({ active, payload, label }: RadarTooltipProps) => {
 							if (!active || !payload?.length) return null
 							const multi = payload.length > 1
@@ -81,6 +92,7 @@ export const RadarChart = <T extends Record<string, unknown>>({
 					{seriesWithColors.map(({ key, ...s }, i) => (
 						<Radar
 							key={key}
+							className={classNames?.radar}
 							{...subProps?.radar}
 							{...s}
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
@@ -92,7 +104,13 @@ export const RadarChart = <T extends Record<string, unknown>>({
 					))}
 				</RechartsRadarChart>
 			</ChartContainer>
-			<ChartLegend legend={legend} items={legendItems} classNames={classNames?.legend} target={legendTarget} />
+			<ChartLegend
+				legend={legend}
+				items={legendItems}
+				classNames={classNames?.legend}
+				formatters={formatters?.legend}
+				target={legendTarget}
+			/>
 		</>
 	)
 }

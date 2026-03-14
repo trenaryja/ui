@@ -2,7 +2,7 @@
 
 import { RadialBar, RadialBarChart as RechartsRadialBarChart } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
-import type { DeriveProps, PolarChartBaseProps, RadialBarTooltipProps } from '../charts.types'
+import type { DeriveProps, PolarChartBaseProps, RadialBarChartClassNames, RadialBarTooltipProps } from '../charts.types'
 import { ChartContainer, colorizeData } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 
@@ -10,17 +10,18 @@ export type RadialBarChartSubProps = {
 	radialBar?: DeriveProps<typeof RadialBar, 'dataKey'>
 }
 
-export type RadialBarChartProps<T extends Record<string, unknown>> = PolarChartBaseProps<
-	T,
+export type RadialBarChartProps<TData extends Record<string, unknown>> = PolarChartBaseProps<
+	TData,
 	RadialBarTooltipProps,
 	typeof RechartsRadialBarChart
 > & {
-	valueKey: string & keyof T
-	nameKey: string & keyof T
+	classNames?: RadialBarChartClassNames
+	valueKey: string & keyof TData
+	nameKey: string & keyof TData
 	subProps?: RadialBarChartSubProps
 }
 
-export const RadialBarChart = <T extends Record<string, unknown>>({
+export const RadialBarChart = <TData extends Record<string, unknown>>({
 	data,
 	valueKey,
 	nameKey,
@@ -31,9 +32,10 @@ export const RadialBarChart = <T extends Record<string, unknown>>({
 	tooltip = true,
 	className,
 	classNames,
+	formatters,
 	cssVars,
 	...chartProps
-}: RadialBarChartProps<T>) => {
+}: RadialBarChartProps<TData>) => {
 	const colorizedData = colorizeData(data, colors)
 
 	const legendItems = colorizedData.map((item) => ({
@@ -48,6 +50,7 @@ export const RadialBarChart = <T extends Record<string, unknown>>({
 				<RechartsRadialBarChart {...chartProps} data={colorizedData}>
 					<RadialBar
 						background={{ fill: 'currentColor', opacity: 0.05 }}
+						className={classNames?.radialBar}
 						{...subProps?.radialBar}
 						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 						dataKey={valueKey as string}
@@ -55,6 +58,7 @@ export const RadialBarChart = <T extends Record<string, unknown>>({
 					<ChartTooltip
 						tooltip={tooltip}
 						classNames={classNames?.tooltip}
+						formatters={formatters?.tooltip}
 						resolve={({ active, payload }: RadialBarTooltipProps) => {
 							if (!active || !payload?.length) return null
 							const entry = payload[0]
@@ -67,7 +71,13 @@ export const RadialBarChart = <T extends Record<string, unknown>>({
 					/>
 				</RechartsRadialBarChart>
 			</ChartContainer>
-			<ChartLegend legend={legend} items={legendItems} classNames={classNames?.legend} target={legendTarget} />
+			<ChartLegend
+				legend={legend}
+				items={legendItems}
+				classNames={classNames?.legend}
+				formatters={formatters?.legend}
+				target={legendTarget}
+			/>
 		</>
 	)
 }

@@ -1,11 +1,11 @@
 import type { PieChartProps } from './PieChart'
 
-type PieSeries<T extends Record<string, unknown>> = NonNullable<PieChartProps<T>['series']>[number]
+type PieSeries<TData extends Record<string, unknown>> = NonNullable<PieChartProps<TData>['series']>[number]
 
-export const normalizePieSeries = <T extends Record<string, unknown>>(
-	series: PieSeries<T>[] | undefined,
-	shorthand: Partial<PieSeries<T>>,
-): PieSeries<T>[] => {
+export const normalizePieSeries = <TData extends Record<string, unknown>>(
+	series: PieSeries<TData>[] | undefined,
+	shorthand: Partial<PieSeries<TData>>,
+): PieSeries<TData>[] => {
 	if (series) return series
 	const { valueKey, nameKey } = shorthand
 	if (valueKey && nameKey) return [{ ...shorthand, valueKey, nameKey }]

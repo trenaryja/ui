@@ -1,11 +1,11 @@
 import type { ComponentProps, ReactNode, RefObject } from 'react'
 import type { Brush, XAxis, YAxis } from 'recharts'
-import type { ChartLegendClassNames } from './ChartLegend'
-import type { ChartTooltipClassNames } from './ChartTooltip'
+import type { ChartLegendClassNames, ChartLegendFormatters } from './ChartLegend'
+import type { ChartTooltipClassNames, ChartTooltipFormatters } from './ChartTooltip'
 
 /** Derive recharts component props, omitting keys we control internally. */
-export type DeriveProps<C extends React.ElementType, Controlled extends string = never> = Omit<
-	ComponentProps<C>,
+export type DeriveProps<TComponent extends React.ElementType, Controlled extends string = never> = Omit<
+	ComponentProps<TComponent>,
 	'children' | 'ref' | Controlled
 >
 
@@ -24,6 +24,34 @@ export type CartesianChartClassNames = {
 	tooltip?: ChartTooltipClassNames
 	xAxis?: string
 	yAxis?: string
+}
+
+export type BarChartClassNames = CartesianChartClassNames & {
+	bar?: string
+}
+
+export type LineChartClassNames = CartesianChartClassNames & {
+	area?: string
+}
+
+export type RadarChartClassNames = {
+	legend?: ChartLegendClassNames
+	tooltip?: ChartTooltipClassNames
+	polarGrid?: string
+	polarAngleAxis?: string
+	radar?: string
+}
+
+export type PieChartClassNames = {
+	legend?: ChartLegendClassNames
+	tooltip?: ChartTooltipClassNames
+	pie?: string
+}
+
+export type RadialBarChartClassNames = {
+	legend?: ChartLegendClassNames
+	tooltip?: ChartTooltipClassNames
+	radialBar?: string
 }
 
 export type PolarChartClassNames = {
@@ -52,15 +80,15 @@ export type ReferenceAreaConfig = {
 }
 
 export type BrushOptions = {
-	/** Lock the Y-axis to the full dataset range while panning. Prevents rescaling during brush. */
-	lockYAxis?: boolean
+	/** Lock the range axis to the full dataset extent while panning. Prevents rescaling during brush. */
+	lockRange?: boolean
 }
 
 // Tooltip prop types per chart category
-export type ChartTooltipProps<P = unknown> = {
+export type ChartTooltipProps<TPayload = unknown> = {
 	active?: boolean
 	label?: number | string
-	payload?: P[]
+	payload?: TPayload[]
 }
 
 export type CartesianTooltipProps = ChartTooltipProps<{ value: number; dataKey: string; color: string; name: string }>
@@ -96,43 +124,61 @@ export type LegendItem = {
 	swatch?: ReactNode
 }
 
+// Formatter types per chart category
+export type CartesianFormatters = {
+	domainTick?: (value: number | string) => string
+	rangeTick?: (value: number) => string
+	tooltip?: ChartTooltipFormatters
+	legend?: ChartLegendFormatters
+}
+
+export type PolarFormatters = {
+	label?: (name: string) => string
+	tooltip?: ChartTooltipFormatters
+	legend?: ChartLegendFormatters
+}
+
+export type SankeyFormatters = {
+	tooltip?: ChartTooltipFormatters
+	nodeLabel?: (name: string) => string
+}
+
 // Shared series base for keyed chart series (Bar, Line, Radar)
-export type ChartSeries<T> = {
-	key: string & keyof T
+export type ChartSeries<TData> = {
+	key: string & keyof TData
 	color?: string
 	label?: string
 }
 
 // Shared base for ALL chart types
-export type ChartBaseProps<T extends Record<string, unknown>, TP = unknown> = {
-	data: T[]
+export type ChartBaseProps<TData extends Record<string, unknown>, TTooltipProps = unknown> = {
+	data: TData[]
 	/** `true` for default legend, or a render function for custom legend */
 	legend?: ((items: LegendItem[]) => ReactNode) | boolean
 	/** Portal the legend into a different DOM element */
 	legendTarget?: RefObject<HTMLElement | null>
 	/** `true` for default tooltip, `false` to disable, or a render function for custom tooltip */
-	tooltip?: ((props: TP) => ReactNode) | boolean
+	tooltip?: ((props: TTooltipProps) => ReactNode) | boolean
 	colors?: string[]
 	cssVars?: ChartCssVars
 }
 
 export type CartesianChartBaseProps<
-	T extends Record<string, unknown>,
-	XK extends string & keyof T = string & keyof T,
+	TData extends Record<string, unknown>,
+	TDomainKey extends string & keyof TData = string & keyof TData,
 	Chart extends React.ElementType = React.ElementType,
-> = ChartBaseProps<T, CartesianTooltipProps> &
+> = ChartBaseProps<TData, CartesianTooltipProps> &
 	DeriveProps<Chart, 'data' | 'onClick' | 'stackOffset'> & {
 		classNames?: CartesianChartClassNames
-		xKey: XK
-		xType?: T[XK] extends number ? 'number' : 'date' | 'string'
-		yKey?: string & keyof T
+		domainKey: TDomainKey
+		domainType?: TData[TDomainKey] extends number ? 'number' : 'date' | 'string'
+		rangeKey?: string & keyof TData
 		valueLabel?: string
-		yDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
-		yFormat?: (value: number) => string
-		xFormat?: (value: string) => string
+		rangeDomain?: [number | 'auto' | 'dataMin', number | 'auto' | 'dataMax']
+		formatters?: CartesianFormatters
 		referenceLines?: ReferenceLineConfig[]
 		referenceAreas?: ReferenceAreaConfig[]
-		onDataClick?: (data: T, index: number) => void
+		onDataClick?: (data: TData, index: number) => void
 		brush?: boolean
 		brushOptions?: BrushOptions
 		/** `true` for basic stacking, or a stack offset mode */
@@ -140,10 +186,11 @@ export type CartesianChartBaseProps<
 	}
 
 export type PolarChartBaseProps<
-	T extends Record<string, unknown>,
-	TP = unknown,
+	TData extends Record<string, unknown>,
+	TTooltipProps = unknown,
 	Chart extends React.ElementType = React.ElementType,
-> = ChartBaseProps<T, TP> &
+> = ChartBaseProps<TData, TTooltipProps> &
 	DeriveProps<Chart, 'data'> & {
 		classNames?: PolarChartClassNames
+		formatters?: PolarFormatters
 	}

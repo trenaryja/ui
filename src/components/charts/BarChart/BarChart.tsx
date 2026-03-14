@@ -3,7 +3,13 @@
 import { useState } from 'react'
 import { Bar, Brush, BarChart as RechartsBarChart, XAxis, YAxis } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
-import type { CartesianChartBaseProps, CartesianSubProps, ChartSeries, DeriveProps } from '../charts.types'
+import type {
+	BarChartClassNames,
+	CartesianChartBaseProps,
+	CartesianSubProps,
+	ChartSeries,
+	DeriveProps,
+} from '../charts.types'
 import {
 	axisProps,
 	brushProps,
@@ -13,17 +19,18 @@ import {
 	normalizeSeries,
 	renderRefAreas,
 	renderRefLines,
-	resolveBrushYDomain,
+	resolveBrushRangeDomain,
 	resolveDateData,
 } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 import { getBarAxisProps, getBarRadius, normalizeBarSeries, resolveBarSize } from './BarChart.utils'
 
 export type BarChartProps<
-	T extends Record<string, unknown>,
-	XK extends string & keyof T = string & keyof T,
-> = CartesianChartBaseProps<T, XK, typeof RechartsBarChart> & {
-	series?: (ChartSeries<T> &
+	TData extends Record<string, unknown>,
+	TDomainKey extends string & keyof TData = string & keyof TData,
+> = CartesianChartBaseProps<TData, TDomainKey, typeof RechartsBarChart> & {
+	classNames?: BarChartClassNames
+	series?: (ChartSeries<TData> &
 		DeriveProps<typeof Bar, 'dataKey'> & {
 			radius?: number
 		})[]
@@ -32,11 +39,14 @@ export type BarChartProps<
 	}
 }
 
-export const BarChart = <T extends Record<string, unknown>, XK extends string & keyof T = string & keyof T>({
+export const BarChart = <
+	TData extends Record<string, unknown>,
+	TDomainKey extends string & keyof TData = string & keyof TData,
+>({
 	data,
-	xKey,
-	xType,
-	yKey,
+	domainKey,
+	domainType,
+	rangeKey,
 	valueLabel,
 	series,
 	subProps,
@@ -44,9 +54,8 @@ export const BarChart = <T extends Record<string, unknown>, XK extends string & 
 	stacked,
 	barSize,
 	colors,
-	yDomain,
-	yFormat,
-	xFormat,
+	rangeDomain,
+	formatters,
 	referenceLines,
 	referenceAreas,
 	onDataClick,
@@ -59,38 +68,38 @@ export const BarChart = <T extends Record<string, unknown>, XK extends string & 
 	classNames,
 	cssVars,
 	...chartProps
-}: BarChartProps<T, XK>) => {
+}: BarChartProps<TData, TDomainKey>) => {
 	const isStacked = !!stacked
 	const stackOffset = typeof stacked === 'string' ? stacked : undefined
 
-	const normalizedSeries = normalizeSeries(series, yKey, { label: valueLabel })
+	const normalizedSeries = normalizeSeries(series, rangeKey, { label: valueLabel })
 	const seriesWithColors = normalizedSeries.map((s, i) =>
 		normalizeBarSeries(s, i, { stacked: isStacked, total: normalizedSeries.length, colors }),
 	)
-	const isDate = xType === 'date'
-	const { chartData, timestamps } = resolveDateData(data, xKey, isDate)
-	const { formatX, formatXFull } = getXFormatters(xType, xFormat, timestamps)
+	const isDate = domainType === 'date'
+	const { chartData, timestamps } = resolveDateData(data, domainKey, isDate)
+	const { formatX, formatXFull } = getXFormatters(domainType, formatters, timestamps)
 
 	const [containerWidth, setContainerWidth] = useState(0)
 	const resolvedBarSize = resolveBarSize(barSize, { isDate, containerWidth, dataLength: chartData.length })
 
-	const resolvedYDomain = resolveBrushYDomain({
+	const resolvedRangeDomain = resolveBrushRangeDomain({
 		brushOptions,
 		chartData,
 		seriesKeys: seriesWithColors.map((s) => s.key),
-		yDomain,
+		rangeDomain,
 	})
 
 	const legendItems = seriesWithColors.map((s) => ({ key: s.key, color: s.color, label: s.name }))
 
 	const { xAxisDataKey, xAxisProps, yAxisProps } = getBarAxisProps({
 		layout,
-		xKey,
+		domainKey,
 		isDate,
 		timestamps,
-		xFormat: formatX,
-		yFormat,
-		yDomain: resolvedYDomain,
+		domainFormat: formatX,
+		rangeFormat: formatters?.rangeTick,
+		rangeDomain: resolvedRangeDomain,
 	})
 
 	return (
@@ -109,6 +118,7 @@ export const BarChart = <T extends Record<string, unknown>, XK extends string & 
 					<ChartTooltip
 						tooltip={tooltip}
 						classNames={classNames?.tooltip}
+						formatters={formatters?.tooltip}
 						resolve={({ active, payload, label }) => {
 							if (!active || !payload?.length) return null
 							const multi = seriesWithColors.length > 1
@@ -133,6 +143,7 @@ export const BarChart = <T extends Record<string, unknown>, XK extends string & 
 						<Bar
 							key={key}
 							isAnimationActive={!brush}
+							className={classNames?.bar}
 							{...subProps?.bar}
 							{...s}
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
@@ -144,7 +155,13 @@ export const BarChart = <T extends Record<string, unknown>, XK extends string & 
 					{brush && <Brush {...brushProps} className={classNames?.brush} {...subProps?.brush} dataKey={xAxisDataKey} />}
 				</RechartsBarChart>
 			</ChartContainer>
-			<ChartLegend legend={legend} items={legendItems} classNames={classNames?.legend} target={legendTarget} />
+			<ChartLegend
+				legend={legend}
+				items={legendItems}
+				classNames={classNames?.legend}
+				formatters={formatters?.legend}
+				target={legendTarget}
+			/>
 		</>
 	)
 }
