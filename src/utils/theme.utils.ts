@@ -1,4 +1,5 @@
 import chroma from 'chroma-js'
+import * as R from 'remeda'
 import type { ClassValue } from 'clsx'
 import { clsx } from 'clsx'
 import type { CSSProperties } from 'react'
@@ -18,6 +19,9 @@ export const cn = (...inputs: ClassValue[]) => {
 export const cnFn = <T>(className: FunctionalClassName<T>, value: T) =>
 	typeof className === 'string' ? className : className?.(value)
 export type FunctionalClassName<T> = ((val: T) => string | undefined) | string | undefined
+
+export const colorMix = (color1: string, color2: string, ratio: number) =>
+	`color-mix(in oklab, ${color1} ${R.clamp(ratio, { min: 0, max: 100 })}%, ${color2})`
 
 export const addOpacityToOklch = (oklch: string | undefined, opacity: number) =>
 	`${oklch?.split(')')[0]} / ${opacity / 100})`
