@@ -1,5 +1,6 @@
 'use client'
 
+import { EMPTY_OBJ } from '@/utils'
 import { useId } from 'react'
 import { Area, Brush, AreaChart as RechartsAreaChart, XAxis, YAxis } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
@@ -19,6 +20,7 @@ import {
 	getAreaFill,
 	getClickHandler,
 	getXFormatters,
+	makeTooltipResolver,
 	normalizeSeries,
 	renderGradientDefs,
 	renderRefAreas,
@@ -57,11 +59,11 @@ export const LineChart = <
 	rangeKey,
 	valueLabel,
 	series,
-	subProps,
+	subProps = EMPTY_OBJ,
 	stacked,
 	colors,
 	rangeDomain,
-	formatters,
+	formatters = EMPTY_OBJ,
 	referenceLines,
 	referenceAreas,
 	onDataClick,
@@ -71,7 +73,7 @@ export const LineChart = <
 	legendTarget,
 	tooltip = true,
 	className,
-	classNames,
+	classNames = EMPTY_OBJ,
 	cssVars,
 	...chartProps
 }: LineChartProps<TData, TDomainKey>) => {
@@ -120,36 +122,19 @@ export const LineChart = <
 					onClick={getClickHandler(onDataClick)}
 				>
 					{renderGradientDefs(seriesWithColors, chartId)}
-					<XAxis {...axisProps} className={classNames?.xAxis} {...subProps?.xAxis} {...xAxisProps} />
+					<XAxis {...axisProps} className={classNames.xAxis} {...subProps.xAxis} {...xAxisProps} />
 					<YAxis
 						{...axisProps}
-						className={classNames?.yAxis}
-						{...subProps?.yAxis}
+						className={classNames.yAxis}
+						{...subProps.yAxis}
 						domain={resolvedRangeDomain}
-						tickFormatter={formatters?.rangeTick}
+						tickFormatter={formatters.rangeTick}
 					/>
 					<ChartTooltip
 						tooltip={tooltip}
-						classNames={classNames?.tooltip}
-						formatters={formatters?.tooltip}
-						resolve={({ active, payload, label }) => {
-							if (!active || !payload?.length) return null
-							return {
-								title: formatXFull && label != null ? formatXFull(label) : label,
-								items: payload.map((entry) => {
-									const s = seriesWithColors.find((x) => x.key === entry.dataKey)
-									const { value } = entry
-									const multi = seriesWithColors.length > 1
-									return {
-										key: entry.dataKey,
-										color: multi ? (s?.color ?? entry.color) : undefined,
-										swatch: multi && s ? makeSwatch(s) : undefined,
-										label: multi && s?.name && !valueLabel ? s.name : undefined,
-										value: valueLabel ? `${value} ${valueLabel}${value !== 1 ? 's' : ''}` : value,
-									}
-								}),
-							}
-						}}
+						classNames={classNames.tooltip}
+						formatters={formatters.tooltip}
+						resolve={makeTooltipResolver(seriesWithColors, formatXFull, { valueLabel, makeSwatch })}
 					/>
 					{renderRefAreas(referenceAreas)}
 					{renderRefLines(referenceLines)}
@@ -158,8 +143,8 @@ export const LineChart = <
 							key={key}
 							fillOpacity={1}
 							isAnimationActive={!brush}
-							className={classNames?.area}
-							{...subProps?.area}
+							className={classNames.area}
+							{...subProps.area}
 							{...s}
 							type={s.curve}
 							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
@@ -169,15 +154,15 @@ export const LineChart = <
 						/>
 					))}
 					{brush && (
-						<Brush {...brushProps} className={classNames?.brush} {...subProps?.brush} dataKey={xAxisProps.dataKey} />
+						<Brush {...brushProps} className={classNames.brush} {...subProps.brush} dataKey={xAxisProps.dataKey} />
 					)}
 				</RechartsAreaChart>
 			</ChartContainer>
 			<ChartLegend
 				legend={legend}
 				items={legendItems}
-				classNames={classNames?.legend}
-				formatters={formatters?.legend}
+				classNames={classNames.legend}
+				formatters={formatters.legend}
 				target={legendTarget}
 			/>
 		</>
