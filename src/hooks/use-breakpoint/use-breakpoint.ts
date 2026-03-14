@@ -6,23 +6,25 @@ type Breakpoints = Readonly<Record<string, string>>
 
 type DefaultBreakpoints = typeof defaultTheme.screens
 
-type BreakpointName<T extends Breakpoints | undefined> =
-	| (undefined extends T ? keyof DefaultBreakpoints : keyof NonNullable<T>)
+type BreakpointName<TBreakpoints extends Breakpoints | undefined> =
+	| (undefined extends TBreakpoints ? keyof DefaultBreakpoints : keyof NonNullable<TBreakpoints>)
 	| 'base'
 
-type NormalizedBreakpoints<T extends Breakpoints | undefined> = Record<BreakpointName<T>, string>
+type NormalizedBreakpoints<TBreakpoints extends Breakpoints | undefined> = Record<BreakpointName<TBreakpoints>, string>
 
-export const useBreakpoint = <const T extends Breakpoints = DefaultBreakpoints>(breakpoints?: T) => {
-	const [currentBreakpoint, setCurrentBreakpoint] = useState<BreakpointName<T>>('base')
+export const useBreakpoint = <const TBreakpoints extends Breakpoints = DefaultBreakpoints>(
+	breakpoints?: TBreakpoints,
+) => {
+	const [currentBreakpoint, setCurrentBreakpoint] = useState<BreakpointName<TBreakpoints>>('base')
 
 	const normalized = (
 		breakpoints ? { base: '0rem', ...breakpoints } : { base: '0rem', ...defaultTheme.screens }
-	) as NormalizedBreakpoints<T>
+	) as NormalizedBreakpoints<TBreakpoints>
 
 	const sorted = R.entries(normalized).sort(([, a], [, b]) => Number.parseFloat(a) - Number.parseFloat(b))
 
-	const ranked = new Map<BreakpointName<T>, number>()
-	sorted.forEach(([name], i) => ranked.set(name as BreakpointName<T>, i))
+	const ranked = new Map<BreakpointName<TBreakpoints>, number>()
+	sorted.forEach(([name], i) => ranked.set(name as BreakpointName<TBreakpoints>, i))
 
 	useEffect(() => {
 		if (typeof window === 'undefined') return
@@ -30,7 +32,7 @@ export const useBreakpoint = <const T extends Breakpoints = DefaultBreakpoints>(
 
 		const read = () => {
 			const i = queries.findLastIndex((q) => q.matches)
-			const next = (i === -1 ? 'base' : sorted[i][0]) as BreakpointName<T>
+			const next = (i === -1 ? 'base' : sorted[i][0]) as BreakpointName<TBreakpoints>
 			setCurrentBreakpoint((prev) => (prev === next ? prev : next))
 		}
 
@@ -42,13 +44,13 @@ export const useBreakpoint = <const T extends Breakpoints = DefaultBreakpoints>(
 		}
 	}, [sorted])
 
-	const isAtLeast = (name: BreakpointName<T>) => {
+	const isAtLeast = (name: BreakpointName<TBreakpoints>) => {
 		const a = ranked.get(currentBreakpoint)
 		const b = ranked.get(name)
 		return a !== undefined && b !== undefined && a >= b
 	}
 
-	const isBelow = (name: BreakpointName<T>) => {
+	const isBelow = (name: BreakpointName<TBreakpoints>) => {
 		const a = ranked.get(currentBreakpoint)
 		const b = ranked.get(name)
 		return a !== undefined && b !== undefined && a < b

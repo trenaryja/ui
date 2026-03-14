@@ -26,11 +26,11 @@ type UseCycleOptions = {
 	idleResetMs?: number | null
 }
 
-type UseCycleResult<V> = {
+type UseCycleResult<TValue> = {
 	index: number
-	value: V
-	next: V
-	prev: V
+	value: TValue
+	next: TValue
+	prev: TValue
 	increment: () => void
 	decrement: () => void
 	setIndex: (index: number) => void
@@ -44,10 +44,10 @@ type UseCycleResult<V> = {
  * - `prev` is derived from the current index (after `increment()`, `prev` becomes
  *   the value you just had).
  */
-export const useCycle = <const T extends readonly unknown[]>(
-	values: T,
+export const useCycle = <const TValues extends readonly unknown[]>(
+	values: TValues,
 	options: UseCycleOptions = {},
-): UseCycleResult<T[number]> => {
+): UseCycleResult<TValues[number]> => {
 	const { idleResetMs = null, initialIndex = 0, wrap = true } = options
 
 	const { length } = values

@@ -2,17 +2,17 @@ import type { Duration, DurationUnit } from '@/utils'
 import { getDuration } from '@/utils'
 import { useEffect, useState } from 'react'
 
-export type UseDurationOptions<T extends readonly DurationUnit[]> = {
+export type UseDurationOptions<TUnits extends readonly DurationUnit[]> = {
 	readonly targetDate: Date
-	readonly units: T
+	readonly units: TUnits
 	readonly intervalMs?: number
 	readonly enabled?: boolean
 }
 
-export const useDuration = <T extends readonly DurationUnit[]>(options: UseDurationOptions<T>): Duration<T> => {
+export const useDuration = <TUnits extends readonly DurationUnit[]>(options: UseDurationOptions<TUnits>): Duration<TUnits> => {
 	const { targetDate, units, intervalMs = 100, enabled = true } = options
 
-	const [duration, setDuration] = useState<Duration<T>>(() =>
+	const [duration, setDuration] = useState<Duration<TUnits>>(() =>
 		getDuration({ start: new Date(0), end: new Date(0), units }),
 	)
 

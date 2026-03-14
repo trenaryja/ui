@@ -13,8 +13,8 @@
  * ```
  */
 export const makeTypeGuard =
-	<const T extends readonly unknown[]>(allowed: T) =>
-	(x: unknown): x is T[number] =>
+	<const TAllowed extends readonly unknown[]>(allowed: TAllowed) =>
+	(x: unknown): x is TAllowed[number] =>
 		(allowed as readonly unknown[]).includes(x)
 
 /**
@@ -32,12 +32,12 @@ export const makeTypeGuard =
  * }
  * ```
  */
-export const makeDiscriminatedGuard = <T extends string, const Allowed extends readonly string[]>(
-	prop: T,
-	allowed: Allowed,
+export const makeDiscriminatedGuard = <TProp extends string, const TAllowed extends readonly string[]>(
+	prop: TProp,
+	allowed: TAllowed,
 ) => {
 	const set = new Set<string>(allowed as readonly string[])
-	return <U extends Record<T, string>>(x: U): x is Extract<U, Record<T, Allowed[number]>> => set.has(x[prop])
+	return <TRecord extends Record<TProp, string>>(x: TRecord): x is Extract<TRecord, Record<TProp, TAllowed[number]>> => set.has(x[prop])
 }
 
 /**
@@ -66,10 +66,10 @@ export const makeDiscriminatedGuard = <T extends string, const Allowed extends r
  * })
  * ```
  */
-export function attempt<T>(fn: () => T, options: { fallback: T; onError?: (error: unknown) => void }): T
-export function attempt<T>(fn: () => T, options?: { fallback?: T; onError?: (error: unknown) => void }): T | undefined
+export function attempt<TResult>(fn: () => TResult, options: { fallback: TResult; onError?: (error: unknown) => void }): TResult
+export function attempt<TResult>(fn: () => TResult, options?: { fallback?: TResult; onError?: (error: unknown) => void }): TResult | undefined
 
-export function attempt<T>(fn: () => T, options?: { fallback?: T; onError?: (error: unknown) => void }): T | undefined {
+export function attempt<TResult>(fn: () => TResult, options?: { fallback?: TResult; onError?: (error: unknown) => void }): TResult | undefined {
 	try {
 		return fn()
 	} catch (error) {
@@ -89,7 +89,7 @@ export function attempt<T>(fn: () => T, options?: { fallback?: T; onError?: (err
  * isIn(color, ['invalid']) // ❌ Type error
  * ```
  */
-export const isIn = <T, U extends T>(x: T, array: U[]) => array.includes(x as U)
+export const isIn = <TValue, TElement extends TValue>(x: TValue, array: TElement[]) => array.includes(x as TElement)
 
 /**
  * Creates the cartesian product of two string arrays
@@ -103,11 +103,11 @@ export const isIn = <T, U extends T>(x: T, array: U[]) => array.includes(x as U)
  * // readonly ("top-left" | "top-right" | "bottom-left" | "bottom-right")[]
  * ```
  */
-export const joinTyped = <const A extends readonly string[], const B extends readonly string[], const D extends string>(
-	a: A,
-	b: B,
-	delimiter: D,
-): `${A[number]}${D}${B[number]}`[] => a.flatMap((x) => b.map((y) => `${x}${delimiter}${y}` as const))
+export const joinTyped = <const TFirst extends readonly string[], const TSecond extends readonly string[], const TDelimiter extends string>(
+	a: TFirst,
+	b: TSecond,
+	delimiter: TDelimiter,
+): `${TFirst[number]}${TDelimiter}${TSecond[number]}`[] => a.flatMap((x) => b.map((y) => `${x}${delimiter}${y}` as const))
 
 /**
  * Maps a nullable optional boolean to one of three values.
@@ -118,7 +118,7 @@ export const joinTyped = <const A extends readonly string[], const B extends rea
  * boolMap(isEnabled, ['On', 'Off', 'Default'])
  * ```
  */
-export const boolMap = <T>(value: boolean | null | undefined, [onTrue, onFalse, onNullOrUndefined]: [T, T, T]) =>
+export const boolMap = <TResult>(value: boolean | null | undefined, [onTrue, onFalse, onNullOrUndefined]: [TResult, TResult, TResult]) =>
 	value === true ? onTrue : value === false ? onFalse : onNullOrUndefined
 
 /** A stable empty object. Useful as a default for optional object props to avoid re-renders. */

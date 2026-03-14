@@ -30,7 +30,7 @@ export const durationUnits = [
 ] as const
 export type DurationUnit = (typeof durationUnits)[number]
 
-export type Duration<T extends readonly DurationUnit[]> = Record<T[number], number> & {
+export type Duration<TUnits extends readonly DurationUnit[]> = Record<TUnits[number], number> & {
 	readonly _ms: number
 }
 
@@ -45,11 +45,11 @@ export const durationUnitMap = {
 	milliseconds: { diff: differenceInMilliseconds, add: addMilliseconds },
 } as const
 
-export const getDuration = <T extends readonly DurationUnit[]>(opts: {
+export const getDuration = <TUnits extends readonly DurationUnit[]>(opts: {
 	readonly start: Date
 	readonly end: Date
-	readonly units: T
-}): Duration<T> => {
+	readonly units: TUnits
+}): Duration<TUnits> => {
 	const { start, end, units } = opts
 	const totalMsRaw = end.getTime() - start.getTime()
 	const forward = totalMsRaw >= 0
@@ -75,7 +75,7 @@ export const getDuration = <T extends readonly DurationUnit[]>(opts: {
 	}
 
 	return {
-		...(pick(out, units) as Record<T[number], number>),
+		...(pick(out, units) as Record<TUnits[number], number>),
 		_ms: forward ? totalMsRaw : -totalMsRaw,
 	}
 }

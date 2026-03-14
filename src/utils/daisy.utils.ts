@@ -6,7 +6,7 @@ import { makeTypeGuard } from './type.utils'
 export type DaisyThemeName = keyof OmitIndexSignature<typeof _daisyThemes>
 export type DaisyTheme = (typeof _daisyThemes)[DaisyThemeName]
 export type DaisyThemeColor = {
-	[K in keyof DaisyTheme]: K extends `--color-${infer Color}` ? Color : never
+	[TKey in keyof DaisyTheme]: TKey extends `--color-${infer Color}` ? Color : never
 }[keyof DaisyTheme]
 
 export const daisyThemes = R.pipe(

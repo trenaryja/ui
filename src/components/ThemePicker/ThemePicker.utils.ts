@@ -7,12 +7,12 @@ import type { ThemeName } from '@/hooks'
  * @param options - Toggle options
  * @returns The next theme to switch to
  */
-export const getNextToggleTheme = <T extends readonly string[]>(options: {
-	currentTheme: ThemeName<T> | undefined
+export const getNextToggleTheme = <TThemes extends readonly string[]>(options: {
+	currentTheme: ThemeName<TThemes> | undefined
 	systemTheme: 'dark' | 'light' | undefined
-	defaultLight: ThemeName<T>
-	defaultDark: ThemeName<T>
-}): ThemeName<T> => {
+	defaultLight: ThemeName<TThemes>
+	defaultDark: ThemeName<TThemes>
+}): ThemeName<TThemes> => {
 	const { currentTheme, systemTheme, defaultLight, defaultDark } = options
 
 	// If current is system, toggle to opposite of system preference
