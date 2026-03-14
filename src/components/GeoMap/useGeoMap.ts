@@ -1,50 +1,43 @@
 'use client'
 
-import { flip, offset, shift, useFloating, type Placement } from '@floating-ui/react'
+import { flip, offset, shift, useFloating } from '@floating-ui/react'
 import type { SvgGeoMapLocation } from '@/data/svg-geo-maps'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ChoroplethConfig, GeoRegionState } from './GeoMap.types'
 import { getChoroFillFn } from './GeoMap.utils'
 
 export const useGeoMap = ({
 	selectedIds,
 	choropleth,
-	tooltipPlacement = 'top',
 	hasTooltip,
 }: {
-	selectedIds: SvgGeoMapLocation['id'][]
+	selectedIds: readonly SvgGeoMapLocation['id'][]
 	choropleth?: ChoroplethConfig
-	tooltipPlacement?: Placement
 	hasTooltip: boolean
 }) => {
 	const [hoveredId, setHoveredId] = useState<SvgGeoMapLocation['id']>()
 
-	const getChoroFill = choropleth ? getChoroFillFn(choropleth) : undefined
+	const getChoroFill = choropleth ? getChoroFillFn(choropleth) : () => undefined
 
 	const pointRef = useRef({ x: 0, y: 0 })
 
-	const virtualEl = useMemo(
-		() =>
-			hasTooltip
-				? {
-						getBoundingClientRect: () => {
-							const { x, y } = pointRef.current
-							return { x, y, width: 0, height: 0, top: y, left: x, right: x, bottom: y }
-						},
-					}
-				: null,
-		[hasTooltip],
-	)
-
 	const { refs, floatingStyles, update } = useFloating({
 		open: !!hoveredId && hasTooltip,
-		placement: tooltipPlacement,
+		placement: 'top',
 		middleware: [offset(10), flip(), shift({ padding: 8 })],
 	})
 
 	useEffect(() => {
+		const virtualEl = hasTooltip
+			? {
+					getBoundingClientRect: () => {
+						const { x, y } = pointRef.current
+						return { x, y, width: 0, height: 0, top: y, left: x, right: x, bottom: y }
+					},
+				}
+			: null
 		refs.setPositionReference(virtualEl)
-	}, [virtualEl, refs])
+	}, [hasTooltip, refs])
 
 	const onRegionMouseMove = useCallback(
 		(e: React.MouseEvent) => {

@@ -2,8 +2,9 @@
 
 import { useUncontrolled } from '@mantine/hooks'
 import type { SvgGeoMapLocation } from '@/data/svg-geo-maps'
-import type { GeoMapBaseProps } from '../GeoMap.types'
-import { GeoMapStatic } from './GeoMapStatic'
+import { cn, cnFn, EMPTY_OBJ } from '@/utils'
+import type { GeoMapBaseProps, GeoRegionState } from '../GeoMap.types'
+import { GeoMapDefault } from './GeoMapDefault'
 
 export type GeoMapSingleSelectProps = GeoMapBaseProps & {
 	variant: 'single-select'
@@ -18,6 +19,7 @@ export const GeoMapSingleSelect = ({
 	defaultValue,
 	onChange,
 	name,
+	classNames = EMPTY_OBJ,
 	onRegionClick,
 	...rest
 }: GeoMapSingleSelectProps) => {
@@ -32,9 +34,13 @@ export const GeoMapSingleSelect = ({
 
 	return (
 		<>
-			<GeoMapStatic
+			<GeoMapDefault
 				{...rest}
-				variant='static'
+				variant='default'
+				classNames={{
+					...classNames,
+					region: (state: GeoRegionState) => cn('cursor-pointer', cnFn(classNames.region, state)),
+				}}
 				selectedIds={selectedId ? [selectedId] : []}
 				onRegionClick={(location, index) => {
 					toggle(location.id)

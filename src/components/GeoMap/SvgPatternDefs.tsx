@@ -1,9 +1,11 @@
+import { colorMix } from '@/utils'
+
 export const svgPatterns = ['pattern-stripe', 'pattern-crosshatch', 'pattern-dot'] as const
 
 export type SvgPattern = (typeof svgPatterns)[number]
 
-const color1 = 'color-mix(in oklab, var(--color-base-300) 25%, var(--color-base-100))'
-const color2 = 'color-mix(in oklab, var(--color-base-content) 25%, var(--color-base-100))'
+const color1 = colorMix({ color1: 'var(--color-base-300)', color2: 'var(--color-base-100)', ratio: 25 })
+const color2 = colorMix({ color1: 'var(--color-base-content)', color2: 'var(--color-base-100)', ratio: 25 })
 
 export const SvgPatternDefs = () => (
 	<defs>

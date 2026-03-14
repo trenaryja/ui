@@ -1,16 +1,12 @@
-import {
-	GeoMapMultiSelect,
-	type GeoMapMultiSelectProps,
-	GeoMapSingleSelect,
-	type GeoMapSingleSelectProps,
-	GeoMapStatic,
-	type GeoMapStaticProps,
-} from './variants'
+import { GeoMapMultiSelect, GeoMapSingleSelect, GeoMapDefault } from './variants'
+import type { GeoMapMultiSelectProps, GeoMapSingleSelectProps, GeoMapDefaultProps } from './variants'
 
-export type GeoMapProps = GeoMapStaticProps | GeoMapMultiSelectProps | GeoMapSingleSelectProps
+export type GeoMapProps = GeoMapMultiSelectProps | GeoMapSingleSelectProps | GeoMapDefaultProps
 
-export const GeoMap = (props: GeoMapProps) => {
-	if (props.variant === 'multi-select') return <GeoMapMultiSelect {...props} />
-	if (props.variant === 'single-select') return <GeoMapSingleSelect {...props} />
-	return <GeoMapStatic {...props} />
+export const GeoMap = ({ variant, ...rest }: GeoMapProps) => {
+	if (variant === 'multi-select')
+		return <GeoMapMultiSelect variant={variant} {...(rest as Omit<GeoMapMultiSelectProps, 'variant'>)} />
+	if (variant === 'single-select')
+		return <GeoMapSingleSelect variant={variant} {...(rest as Omit<GeoMapSingleSelectProps, 'variant'>)} />
+	return <GeoMapDefault {...rest} />
 }

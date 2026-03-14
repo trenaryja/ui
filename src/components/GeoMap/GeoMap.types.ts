@@ -1,11 +1,6 @@
-import type { Placement as FloatingPlacement } from '@floating-ui/react'
 import type { SvgGeoMapLocation, SvgGeoMapName } from '@/data/svg-geo-maps'
-import type { ComponentProps } from 'react'
-import type { FunctionalClassName } from '@/utils'
-import type { Placement } from '@/utils'
-import type { GeoMapTooltipProps } from './GeoMapTooltip'
-
-export const DEFAULT_ZERO_COLOR = 'var(--color-base-300)'
+import type { ColorMixSpace, FunctionalClassName } from '@/utils'
+import type { ComponentProps, ComponentType, ReactNode, RefObject } from 'react'
 
 export type GeoRegionState = {
 	location: SvgGeoMapLocation
@@ -23,29 +18,92 @@ export type ChoroplethDatum = {
 	value: number
 }
 
-export type ChoroplethLegendConfig = {
-	placement?: Placement
-	vertical?: boolean
-}
-
 export type ChoroplethConfig = {
 	data: ChoroplethDatum[]
 	scaleType?: ChoroplethScaleType
 	steps?: number
-	minColor?: string
-	maxColor?: string
-	zeroColor?: string | false
-	legend?: ChoroplethLegendConfig
+	colors?: string[]
+	colorSpace?: ColorMixSpace
+
+	valueFormat?: (value: number) => string
 }
 
-export const geoMapVariants = ['static', 'multi-select', 'single-select'] as const
+export const geoMapVariants = ['default', 'multi-select', 'single-select'] as const
 export type GeoMapVariant = (typeof geoMapVariants)[number]
+
+// ---------------------------------------------------------------------------
+// Legend
+// ---------------------------------------------------------------------------
+
+export type GeoLegendItem = {
+	key: string
+	color: string
+	label: string
+}
+
+export type GeoMapLegendClassNames = {
+	container?: string
+	item?: FunctionalClassName<GeoLegendItem>
+	swatch?: FunctionalClassName<GeoLegendItem>
+	label?: FunctionalClassName<GeoLegendItem>
+	gradient?: string
+}
+
+export type GeoMapLegendFormatters = {
+	label?: (label: string, item: GeoLegendItem) => ReactNode
+}
+
+export type GeoMapLegendComponents =
+	| ComponentType<{ items: GeoLegendItem[]; scaleType: ChoroplethScaleType; colors: string[] }>
+	| {
+			container?: ComponentType<{ items: GeoLegendItem[]; className?: string; children: ReactNode }>
+			item?: ComponentType<{ item: GeoLegendItem; className?: string; children: ReactNode }>
+			swatch?: ComponentType<{ item: GeoLegendItem; className?: string }>
+	  }
+
+// ---------------------------------------------------------------------------
+// Tooltip
+// ---------------------------------------------------------------------------
+
+export type GeoMapTooltipClassNames = {
+	container?: FunctionalClassName<GeoRegionState>
+	title?: FunctionalClassName<GeoRegionState>
+	swatch?: FunctionalClassName<GeoRegionState>
+	label?: FunctionalClassName<GeoRegionState>
+	value?: FunctionalClassName<GeoRegionState>
+}
+
+export type GeoMapTooltipFormatters = {
+	title?: (state: GeoRegionState) => ReactNode
+	value?: (value: number, state: GeoRegionState) => ReactNode
+	label?: (state: GeoRegionState) => ReactNode
+}
+
+export type GeoMapTooltipComponents =
+	| ComponentType<{ state: GeoRegionState; color?: string }>
+	| {
+			container?: ComponentType<{ state: GeoRegionState; className?: string; children: ReactNode }>
+			swatch?: ComponentType<{ state: GeoRegionState; color?: string; className?: string }>
+	  }
+
+// ---------------------------------------------------------------------------
+// Composite
+// ---------------------------------------------------------------------------
+
+export type GeoMapComponents = {
+	tooltip?: boolean | GeoMapTooltipComponents
+	legend?: boolean | GeoMapLegendComponents
+}
+
+export type GeoMapFormatters = {
+	tooltip?: GeoMapTooltipFormatters
+	legend?: GeoMapLegendFormatters
+}
 
 export type GeoMapClassNames = {
 	region?: FunctionalClassName<GeoRegionState>
-	selectedRegion?: string
-	hoveredRegion?: string
-	zeroRegion?: string
+	tooltip?: GeoMapTooltipClassNames
+	legend?: GeoMapLegendClassNames
 }
 
 export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange'> & {
@@ -53,11 +111,11 @@ export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange'> & {
 	className?: string
 	classNames?: GeoMapClassNames
 	choropleth?: ChoroplethConfig
+	components?: GeoMapComponents
+	formatters?: GeoMapFormatters
+	legendTarget?: RefObject<HTMLElement | null>
 	onRegionClick?: (location: SvgGeoMapLocation, index: number) => void
 	onRegionMouseEnter?: (location: SvgGeoMapLocation, index: number) => void
 	onRegionMouseLeave?: (location: SvgGeoMapLocation, index: number) => void
-	children?: React.ReactNode
-	renderTooltip?: boolean | ((state: GeoRegionState) => React.ReactNode)
-	defaultTooltipProps?: Pick<GeoMapTooltipProps, 'formatValue' | 'label'>
-	tooltipPlacement?: FloatingPlacement
+	children?: ReactNode
 }

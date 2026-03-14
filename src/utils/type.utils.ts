@@ -141,6 +141,9 @@ export const boolMap = <TResult>(
 /** A stable empty object. Useful as a default for optional object props to avoid re-renders. */
 export const EMPTY_OBJ = {} as const
 
+/** A stable empty array. Useful as a default for optional object props to avoid re-renders. */
+export const EMPTY_ARR = [] as const
+
 /** A no-op function that does nothing. Useful for default callbacks and placeholders. */
 export const noop = () => undefined
 

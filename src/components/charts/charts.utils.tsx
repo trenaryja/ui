@@ -1,6 +1,6 @@
 'use client'
 
-import { cn, css } from '@/utils'
+import { cn, css, interpolateColors } from '@/utils'
 import { format } from 'date-fns'
 import type { ComponentProps, ReactNode } from 'react'
 import type { Brush, CartesianGrid, XAxis, YAxis } from 'recharts'
@@ -19,11 +19,7 @@ export const resolveColor = (i: number, total: number, colors?: string[]): strin
 	if (stops.length === 1) return stops[0]
 	if (stops.length >= total) return stops[i]
 	const t = total <= 1 ? 0 : i / (total - 1)
-	const segCount = stops.length - 1
-	const seg = Math.min(Math.floor(t * segCount), segCount - 1)
-	const localT = t * segCount - seg
-	const pct = Math.round((1 - localT) * 100)
-	return `color-mix(in oklch, ${stops[seg]} ${pct}%, ${stops[seg + 1]})`
+	return interpolateColors(t, stops)
 }
 
 export const DATE_TS_KEY = '__xTs' as const

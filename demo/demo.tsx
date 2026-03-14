@@ -8,6 +8,7 @@ import { StrictMode, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { LuPanelLeft } from 'react-icons/lu'
 import { categories, demos, demosByCategory } from './meta'
+import { JTIcon } from './JTIcon'
 import { ReadMe } from './ReadMe'
 
 import './demo.css'
@@ -42,7 +43,7 @@ const App = () => {
 				<label htmlFor='sidebar' className='drawer-overlay' aria-label='toggle sidebar' />
 				<aside className='bg-base-200 h-full flex flex-col gap-4'>
 					<a href='/' className='p-4 flex justify-center m-1'>
-						<img src='https://trenary.dev/icon.svg' alt='' className='max-w-16' />
+						<JTIcon className='size-16 text-primary' />
 					</a>
 
 					<div className='px-4'>
