@@ -21,11 +21,14 @@ export type TooltipStore = {
 	hide: () => void
 	setPoint: (x: number, y: number) => void
 	getPoint: () => { x: number; y: number }
+	/** Register a callback that fires on every setPoint — used by floating-ui to reposition */
+	onMove: (cb: (() => void) | null) => void
 }
 
 export const createTooltipStore = (): TooltipStore => {
 	let snapshot: TooltipSnapshot = null
 	const point = { x: 0, y: 0 }
+	let moveCallback: (() => void) | null = null
 	const listeners = new Set<() => void>()
 	const notify = () => listeners.forEach((l) => l())
 
@@ -47,8 +50,12 @@ export const createTooltipStore = (): TooltipStore => {
 		setPoint: (x, y) => {
 			point.x = x
 			point.y = y
+			moveCallback?.()
 		},
 		getPoint: () => point,
+		onMove: (cb) => {
+			moveCallback = cb
+		},
 	}
 }
 
@@ -76,5 +83,11 @@ export const useFloatingTooltip = (store: TooltipStore, isOpen: boolean) => {
 		})
 	}, [refs, store])
 
-	return { floatingRef: refs.setFloating, floatingStyles, update }
+	// Connect mouse moves to floating-ui repositioning — no React re-render needed
+	useEffect(() => {
+		store.onMove(update)
+		return () => store.onMove(null)
+	}, [store, update])
+
+	return { floatingRef: refs.setFloating, floatingStyles }
 }
