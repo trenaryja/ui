@@ -18,14 +18,30 @@ export type GeoFeature = {
 // Projections
 // ---------------------------------------------------------------------------
 
+// prettier-ignore
 export const geoProjectionPresets = [
-	'albers-usa',
-	'equal-earth',
-	'equirectangular',
-	'mercator',
-	'natural-earth',
-	'orthographic',
-	'patterson',
+	// d3-geo built-ins
+	'albers-usa', 'azimuthal-equidistant', 'conic-conformal', 'conic-equidistant',
+	'equal-earth', 'equirectangular', 'gnomonic', 'mercator', 'natural-earth',
+	'orthographic', 'stereographic', 'transverse-mercator',
+	// d3-geo-projection
+	'airy', 'aitoff', 'armadillo', 'august', 'baker', 'berghaus', 'bertin1953',
+	'boggs', 'bonne', 'bottomley', 'bromley', 'collignon', 'craster',
+	'cylindrical-equal-area', 'cylindrical-stereographic',
+	'eckert1', 'eckert2', 'eckert3', 'eckert4', 'eckert5', 'eckert6',
+	'eisenlohr', 'fahey', 'gilbert', 'gingery', 'ginzburg4', 'ginzburg5',
+	'ginzburg6', 'ginzburg8', 'ginzburg9', 'gringorten', 'hammer', 'healpix',
+	'hill', 'homolosine', 'hufnagel',
+	'interrupted-boggs', 'interrupted-homolosine', 'interrupted-mollweide',
+	'interrupted-mollweide-hemispheres', 'interrupted-sinu-mollweide',
+	'interrupted-sinusoidal',
+	'kavrayskiy7', 'lagrange', 'larrivee', 'laskowski', 'loximuthal',
+	'miller', 'mollweide', 'mt-flat-polar-parabolic', 'mt-flat-polar-quartic',
+	'mt-flat-polar-sinusoidal', 'natural-earth2', 'nell-hammer', 'nicolosi',
+	'patterson', 'polyconic', 'rectangular-polyconic', 'robinson', 'satellite',
+	'sinu-mollweide', 'sinusoidal', 'times', 'van-der-grinten', 'van-der-grinten2',
+	'van-der-grinten3', 'van-der-grinten4', 'wagner4', 'wagner6', 'wagner7',
+	'wiechel', 'winkel3',
 ] as const
 
 export type GeoProjectionPreset = (typeof geoProjectionPresets)[number]
