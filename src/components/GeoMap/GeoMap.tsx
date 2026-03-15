@@ -1,7 +1,7 @@
-import { GeoMapMultiSelect, GeoMapSingleSelect, GeoMapDefault } from './variants'
-import type { GeoMapMultiSelectProps, GeoMapSingleSelectProps, GeoMapDefaultProps } from './variants'
+import { GeoMapDefault, GeoMapMultiSelect, GeoMapSingleSelect } from './variants'
+import type { GeoMapDefaultProps, GeoMapMultiSelectProps, GeoMapSingleSelectProps } from './variants'
 
-export type GeoMapProps = GeoMapMultiSelectProps | GeoMapSingleSelectProps | GeoMapDefaultProps
+export type GeoMapProps = GeoMapDefaultProps | GeoMapMultiSelectProps | GeoMapSingleSelectProps
 
 export const GeoMap = ({ variant, ...rest }: GeoMapProps) => {
 	if (variant === 'multi-select')

@@ -1,16 +1,15 @@
 'use client'
 
 import { useUncontrolled } from '@mantine/hooks'
-import type { SvgGeoMapLocation } from '@/data/svg-geo-maps'
 import { cn, cnFn, EMPTY_OBJ } from '@/utils'
 import type { GeoMapBaseProps, GeoRegionState } from '../GeoMap.types'
 import { GeoMapDefault } from './GeoMapDefault'
 
 export type GeoMapMultiSelectProps = GeoMapBaseProps & {
 	variant: 'multi-select'
-	value?: SvgGeoMapLocation['id'][]
-	defaultValue?: SvgGeoMapLocation['id'][]
-	onChange?: (value: SvgGeoMapLocation['id'][]) => void
+	value?: string[]
+	defaultValue?: string[]
+	onChange?: (value: string[]) => void
 	name?: string
 }
 
@@ -23,14 +22,14 @@ export const GeoMapMultiSelect = ({
 	onRegionClick,
 	...rest
 }: GeoMapMultiSelectProps) => {
-	const [selectedIds, setSelectedIds] = useUncontrolled<SvgGeoMapLocation['id'][]>({
+	const [selectedIds, setSelectedIds] = useUncontrolled<string[]>({
 		value,
 		defaultValue,
 		finalValue: [],
 		onChange,
 	})
 
-	const toggle = (id: SvgGeoMapLocation['id']) =>
+	const toggle = (id: string) =>
 		setSelectedIds(selectedIds.includes(id) ? selectedIds.filter((s) => s !== id) : [...selectedIds, id])
 
 	return (
@@ -43,9 +42,9 @@ export const GeoMapMultiSelect = ({
 					region: (state: GeoRegionState) => cn('cursor-pointer', cnFn(classNames.region, state)),
 				}}
 				selectedIds={selectedIds}
-				onRegionClick={(location, index) => {
-					toggle(location.id)
-					onRegionClick?.(location, index)
+				onRegionClick={(feature, index) => {
+					toggle(feature.id)
+					onRegionClick?.(feature, index)
 				}}
 			/>
 			{name && selectedIds.map((id) => <input key={id} type='hidden' name={name} value={id} />)}

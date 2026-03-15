@@ -1,17 +1,28 @@
 'use client'
 
-import type { SvgGeoMapLocation } from '@/data/svg-geo-maps'
-import { svgGeoMaps } from '@/data/svg-geo-maps'
 import { cn, cnFn, EMPTY_ARR, EMPTY_OBJ } from '@/utils'
 import { FloatingPortal } from '@floating-ui/react'
-import type { GeoMapBaseProps, GeoMapTooltipComponents, GeoRegionState } from '../GeoMap.types'
+import { memo, useCallback } from 'react'
+import type { GeoPath, GeoPermissibleObjects } from 'd3-geo'
+import {
+	buildPathGenerator,
+	defaultProjectionForPreset,
+	filterFeatures,
+	isGeoMapPreset,
+	resolveProjection,
+} from '../GeoMap.geo'
+import type { GeoFeature, GeoMapBaseProps, GeoMapTooltipComponents, GeoRegionState } from '../GeoMap.types'
 import { buildLegendItems } from '../GeoMap.utils'
 import { GeoMapLegend } from '../GeoMapLegend'
 import { GeoMapTooltip } from '../GeoMapTooltip'
 import { SvgPatternDefs } from '../SvgPatternDefs'
+import { useGeoData } from '../useGeoData'
 import { useGeoMap } from '../useGeoMap'
 
-/** Extract custom components from a slot value, filtering out booleans. */
+const VIEWBOX_W = 960
+const VIEWBOX_H = 500
+const VIEWBOX = `0 0 ${VIEWBOX_W} ${VIEWBOX_H}`
+
 const slotComponents = <T,>(slot: boolean | T | undefined): T | undefined =>
 	typeof slot === 'boolean' || slot == null ? undefined : slot
 
@@ -35,22 +46,87 @@ const TooltipContent = ({
 
 export type GeoMapDefaultProps = GeoMapBaseProps & {
 	variant?: 'default'
-	selectedIds?: readonly SvgGeoMapLocation['id'][]
+	selectedIds?: readonly string[]
 }
 
 const regionClassName = (state: GeoRegionState, classNames: NonNullable<GeoMapBaseProps['classNames']>) =>
 	cn(
-		'transition-colors',
 		'stroke-base-content/20',
 		'hover:stroke-base-content hover:z-10',
 		'fill-base-100',
+		!state.isSelected && 'hover:fill-base-300',
 		state.isSelected && 'fill-base-content',
-		state.isHovered && !state.isSelected && 'fill-base-300',
 		cnFn(classNames.region, state),
 	)
 
+const useGeoProjection = (props: Pick<GeoMapBaseProps, 'geo' | 'projection' | 'region'>) => {
+	const { features: allFeatures } = useGeoData(props.geo)
+	const features = props.region ? filterFeatures(allFeatures, props.region) : allFeatures
+
+	const effectiveProjection =
+		props.projection ??
+		(typeof props.geo === 'string' && isGeoMapPreset(props.geo) ? defaultProjectionForPreset(props.geo) : undefined)
+	const projection = resolveProjection(effectiveProjection, VIEWBOX_W, VIEWBOX_H)
+
+	if (features.length > 0) {
+		const fc: GeoJSON.FeatureCollection = {
+			type: 'FeatureCollection',
+			features: features.map((f) => ({ type: 'Feature' as const, geometry: f.geometry, properties: {} })),
+		}
+		projection.fitSize([VIEWBOX_W, VIEWBOX_H], fc)
+	}
+
+	return { features, pathGen: buildPathGenerator(projection) }
+}
+
+/** Extract feature index from a delegated event target's data-idx attribute */
+const getFeatureIndex = (e: React.MouseEvent): number | null => {
+	const target = (e.target as SVGElement).closest('path[data-idx]')
+	if (!target) return null
+	return Number(target.getAttribute('data-idx'))
+}
+
+/**
+ * Memoized path list — only re-renders when features, selectedIds, choropleth, or classNames change.
+ * Hover state does NOT cause this to re-render (hover is pure CSS).
+ */
+const GeoPathList = memo(
+	({
+		features,
+		pathGen,
+		getRegionState,
+		getChoroFill,
+		hasSelection,
+		classNames,
+	}: {
+		features: readonly GeoFeature[]
+		pathGen: GeoPath<unknown, GeoPermissibleObjects>
+		getRegionState: (feature: GeoFeature, index: number) => GeoRegionState
+		getChoroFill: (id: string) => string | undefined
+		hasSelection: boolean
+		classNames: NonNullable<GeoMapBaseProps['classNames']>
+	}) =>
+		features.map((feature, index) => {
+			const d = pathGen(feature.geometry)
+			if (!d) return null
+			const state = getRegionState(feature, index)
+			const choroFill = getChoroFill(feature.id)
+			return (
+				<path
+					key={feature.id}
+					data-idx={index}
+					d={d}
+					className={regionClassName(state, classNames)}
+					style={choroFill && !hasSelection ? { fill: choroFill } : undefined}
+				/>
+			)
+		}),
+)
+
 export const GeoMapDefault = ({
-	map: mapName,
+	geo,
+	projection: projectionProp,
+	region,
 	className,
 	classNames = EMPTY_OBJ,
 	choropleth,
@@ -64,64 +140,88 @@ export const GeoMapDefault = ({
 	children,
 	...svgProps
 }: GeoMapDefaultProps) => {
-	const mapData = svgGeoMaps[mapName]
+	const { features, pathGen } = useGeoProjection({ geo, projection: projectionProp, region })
 	const hasTooltip = components.tooltip !== false
-	const { hoveredId, setHoveredId, getRegionState, getChoroFill, floatingRef, floatingStyles, onRegionMouseMove } =
-		useGeoMap({ selectedIds, choropleth, hasTooltip })
+	const {
+		getRegionState,
+		getChoroFill,
+		tooltipData,
+		showTooltip,
+		hideTooltip,
+		floatingRef,
+		floatingStyles,
+		onRegionMouseMove,
+	} = useGeoMap({ selectedIds, choropleth, hasTooltip })
 
 	const hasSelection = selectedIds.length > 0
-	const hoveredIdx = hoveredId ? mapData.locations.findIndex((l) => l.id === hoveredId) : -1
-	const hoveredState = hoveredIdx >= 0 ? getRegionState(mapData.locations[hoveredIdx], hoveredIdx) : null
-	const showTooltip = hasTooltip && hoveredState
 	const showLegend = !!(components.legend && choropleth?.data.length && !hasSelection)
 	const legendItems = showLegend ? buildLegendItems(choropleth) : []
-	const tooltipSlot = slotComponents(components.tooltip)
-	const legendSlot = slotComponents(components.legend)
+
+	const handleClick = useCallback(
+		(e: React.MouseEvent) => {
+			const idx = getFeatureIndex(e)
+			if (idx != null) onRegionClick?.(features[idx], idx)
+		},
+		[features, onRegionClick],
+	)
+
+	const handleMouseOver = useCallback(
+		(e: React.MouseEvent) => {
+			const idx = getFeatureIndex(e)
+			if (idx == null) return
+			showTooltip(features[idx], idx)
+			onRegionMouseEnter?.(features[idx], idx)
+		},
+		[features, showTooltip, onRegionMouseEnter],
+	)
+
+	const handleMouseOut = useCallback(
+		(e: React.MouseEvent) => {
+			const idx = getFeatureIndex(e)
+			if (idx == null) return
+			hideTooltip()
+			onRegionMouseLeave?.(features[idx], idx)
+		},
+		[features, hideTooltip, onRegionMouseLeave],
+	)
+
+	const hoveredRegionState = tooltipData ? getRegionState(tooltipData.feature, tooltipData.index) : null
 
 	return (
 		<>
 			<svg
 				xmlns='http://www.w3.org/2000/svg'
-				viewBox={mapData.viewBox}
+				viewBox={VIEWBOX}
 				className={cn('w-full h-auto', className)}
 				{...svgProps}
 			>
-				<g>
-					{mapData.locations.map((location, index) => {
-						const state = getRegionState(location, index)
-						const choroFill = getChoroFill(location.id)
-						return (
-							<path
-								key={location.id}
-								d={location.path}
-								className={regionClassName(state, classNames)}
-								style={choroFill && !hasSelection ? { fill: choroFill } : undefined}
-								onClick={() => onRegionClick?.(location, index)}
-								onMouseEnter={() => {
-									setHoveredId(location.id)
-									onRegionMouseEnter?.(location, index)
-								}}
-								onMouseMove={onRegionMouseMove}
-								onMouseLeave={() => {
-									setHoveredId(undefined)
-									onRegionMouseLeave?.(location, index)
-								}}
-							/>
-						)
-					})}
+				<g
+					onClick={handleClick}
+					onMouseOver={handleMouseOver}
+					onMouseMove={onRegionMouseMove}
+					onMouseOut={handleMouseOut}
+				>
+					<GeoPathList
+						features={features}
+						pathGen={pathGen}
+						getRegionState={getRegionState}
+						getChoroFill={getChoroFill}
+						hasSelection={hasSelection}
+						classNames={classNames}
+					/>
 				</g>
 				<SvgPatternDefs />
 				{children}
 			</svg>
-			{showTooltip && (
+			{hasTooltip && hoveredRegionState && (
 				<FloatingPortal>
 					<div ref={floatingRef} style={{ ...floatingStyles, pointerEvents: 'none' }}>
 						<TooltipContent
-							state={hoveredState}
-							color={getChoroFill(hoveredState.location.id)}
+							state={hoveredRegionState}
+							color={getChoroFill(hoveredRegionState.feature.id)}
 							classNames={classNames.tooltip}
 							formatters={formatters.tooltip}
-							components={tooltipSlot}
+							components={slotComponents(components.tooltip)}
 						/>
 					</div>
 				</FloatingPortal>
@@ -132,7 +232,7 @@ export const GeoMapDefault = ({
 					choropleth={choropleth}
 					classNames={classNames.legend}
 					formatters={formatters.legend}
-					components={legendSlot}
+					components={slotComponents(components.legend)}
 					target={legendTarget}
 				/>
 			)}

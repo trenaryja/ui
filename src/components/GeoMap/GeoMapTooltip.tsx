@@ -33,7 +33,7 @@ export const GeoMapTooltip = ({
 	const Container = components.container
 	const Swatch = components.swatch ?? DefaultSwatch
 
-	const title = formatters.title ? formatters.title(state) : state.location.name
+	const title = formatters.title ? formatters.title(state) : state.feature.name
 	const label = formatters.label ? formatters.label(state) : 'Value'
 	const value =
 		state.value != null

@@ -1,28 +1,32 @@
 'use client'
 
 import { flip, offset, shift, useFloating } from '@floating-ui/react'
-import type { SvgGeoMapLocation } from '@/data/svg-geo-maps'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { ChoroplethConfig, GeoRegionState } from './GeoMap.types'
+import type { ChoroplethConfig, GeoFeature, GeoRegionState } from './GeoMap.types'
 import { getChoroFillFn } from './GeoMap.utils'
+
+export type TooltipData = {
+	feature: GeoFeature
+	index: number
+	value?: number
+} | null
 
 export const useGeoMap = ({
 	selectedIds,
 	choropleth,
 	hasTooltip,
 }: {
-	selectedIds: readonly SvgGeoMapLocation['id'][]
+	selectedIds: readonly string[]
 	choropleth?: ChoroplethConfig
 	hasTooltip: boolean
 }) => {
-	const [hoveredId, setHoveredId] = useState<SvgGeoMapLocation['id']>()
-
 	const getChoroFill = choropleth ? getChoroFillFn(choropleth) : () => undefined
 
+	const [tooltipData, setTooltipData] = useState<TooltipData>(null)
 	const pointRef = useRef({ x: 0, y: 0 })
 
 	const { refs, floatingStyles, update } = useFloating({
-		open: !!hoveredId && hasTooltip,
+		open: !!tooltipData && hasTooltip,
 		placement: 'top',
 		middleware: [offset(10), flip(), shift({ padding: 8 })],
 	})
@@ -48,18 +52,29 @@ export const useGeoMap = ({
 		[hasTooltip, update],
 	)
 
-	const getRegionState = (location: SvgGeoMapLocation, index: number) =>
+	const showTooltip = useCallback(
+		(feature: GeoFeature, index: number) => {
+			const value = choropleth?.data.find((d) => d.id === feature.id)?.value
+			setTooltipData({ feature, index, value })
+		},
+		[choropleth],
+	)
+
+	const hideTooltip = useCallback(() => setTooltipData(null), [])
+
+	const getRegionState = (feature: GeoFeature, index: number) =>
 		({
-			location,
+			feature,
 			index,
-			isSelected: selectedIds.includes(location.id),
-			isHovered: hoveredId === location.id,
-			value: choropleth?.data.find((d) => d.id === location.id)?.value,
+			isSelected: selectedIds.includes(feature.id),
+			isHovered: false,
+			value: choropleth?.data.find((d) => d.id === feature.id)?.value,
 		}) satisfies GeoRegionState
 
 	return {
-		hoveredId,
-		setHoveredId,
+		tooltipData,
+		showTooltip,
+		hideTooltip,
 		getRegionState,
 		getChoroFill,
 		floatingRef: refs.setFloating,

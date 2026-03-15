@@ -1,20 +1,68 @@
-import type { SvgGeoMapLocation, SvgGeoMapName } from '@/data/svg-geo-maps'
 import type { ColorMixSpace, FunctionalClassName } from '@/utils'
+import type { GeoProjection } from 'd3-geo'
 import type { ComponentProps, ComponentType, ReactNode, RefObject } from 'react'
+import type { Topology } from 'topojson-specification'
+
+// ---------------------------------------------------------------------------
+// Geo Feature (replaces SvgGeoMapLocation)
+// ---------------------------------------------------------------------------
+
+export type GeoFeature = {
+	id: string
+	name: string
+	geometry: GeoJSON.Geometry
+	properties: Record<string, unknown>
+}
+
+// ---------------------------------------------------------------------------
+// Projections
+// ---------------------------------------------------------------------------
+
+export const geoProjectionPresets = [
+	'albers-usa',
+	'equal-earth',
+	'equirectangular',
+	'mercator',
+	'natural-earth',
+	'orthographic',
+	'patterson',
+] as const
+
+export type GeoProjectionPreset = (typeof geoProjectionPresets)[number]
+
+// ---------------------------------------------------------------------------
+// Region filtering
+// ---------------------------------------------------------------------------
+
+export type GeoRegionFilter = ((feature: GeoFeature) => boolean) | string
+
+// ---------------------------------------------------------------------------
+// Geo data source
+// ---------------------------------------------------------------------------
+
+export type GeoDataSource = string | GeoJSON.FeatureCollection | Topology
+
+// ---------------------------------------------------------------------------
+// Region state
+// ---------------------------------------------------------------------------
 
 export type GeoRegionState = {
-	location: SvgGeoMapLocation
+	feature: GeoFeature
 	index: number
 	isSelected: boolean
 	isHovered: boolean
 	value?: number
 }
 
+// ---------------------------------------------------------------------------
+// Choropleth
+// ---------------------------------------------------------------------------
+
 export const choroplethScaleTypes = ['quantize', 'quantile', 'linear'] as const
 export type ChoroplethScaleType = (typeof choroplethScaleTypes)[number]
 
 export type ChoroplethDatum = {
-	id: SvgGeoMapLocation['id']
+	id: string
 	value: number
 }
 
@@ -107,15 +155,17 @@ export type GeoMapClassNames = {
 }
 
 export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange'> & {
-	map: SvgGeoMapName
+	geo?: GeoDataSource
+	projection?: ((width: number, height: number) => GeoProjection) | GeoProjectionPreset
+	region?: GeoRegionFilter
 	className?: string
 	classNames?: GeoMapClassNames
 	choropleth?: ChoroplethConfig
 	components?: GeoMapComponents
 	formatters?: GeoMapFormatters
 	legendTarget?: RefObject<HTMLElement | null>
-	onRegionClick?: (location: SvgGeoMapLocation, index: number) => void
-	onRegionMouseEnter?: (location: SvgGeoMapLocation, index: number) => void
-	onRegionMouseLeave?: (location: SvgGeoMapLocation, index: number) => void
+	onRegionClick?: (feature: GeoFeature, index: number) => void
+	onRegionMouseEnter?: (feature: GeoFeature, index: number) => void
+	onRegionMouseLeave?: (feature: GeoFeature, index: number) => void
 	children?: ReactNode
 }
