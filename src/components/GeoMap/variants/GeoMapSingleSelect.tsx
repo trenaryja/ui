@@ -1,7 +1,7 @@
 'use client'
 
 import { useUncontrolled } from '@mantine/hooks'
-import { EMPTY_OBJ } from '@/utils'
+import { cn, EMPTY_OBJ } from '@/utils'
 import type { GeoMapBaseProps } from '../GeoMap.types'
 import { GeoMapDefault } from './GeoMapDefault'
 
@@ -36,7 +36,7 @@ export const GeoMapSingleSelect = ({
 			<GeoMapDefault
 				{...rest}
 				variant='default'
-				className={rest.className ? `${rest.className} cursor-pointer` : 'cursor-pointer'}
+				className={cn(rest.className, '[&_path]:cursor-pointer')}
 				classNames={classNames}
 				selectedIds={selectedId ? [selectedId] : []}
 				onRegionClick={(feature, index) => {
