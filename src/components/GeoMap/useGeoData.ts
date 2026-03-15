@@ -1,10 +1,12 @@
 'use client'
 
 import { use } from 'react'
+import type { GeoMapPreset } from './GeoMap.geo'
 import { isGeoMapPreset, resolveGeoData, resolveGeoPreset } from './GeoMap.geo'
 import type { GeoDataSource, GeoFeature } from './GeoMap.types'
 
 const fetchCache = new Map<string, Promise<GeoFeature[]>>()
+const presetCache = new Map<GeoMapPreset, GeoFeature[]>()
 
 const fetchGeoData = (url: string): Promise<GeoFeature[]> => {
 	const cached = fetchCache.get(url)
@@ -21,9 +23,17 @@ const fetchGeoData = (url: string): Promise<GeoFeature[]> => {
 	return promise
 }
 
+const getCachedPreset = (preset: GeoMapPreset): GeoFeature[] => {
+	const cached = presetCache.get(preset)
+	if (cached) return cached
+	const features = resolveGeoPreset(preset)
+	presetCache.set(preset, features)
+	return features
+}
+
 export const useGeoData = (geo: GeoDataSource | undefined) => {
 	if (typeof geo === 'string' && isGeoMapPreset(geo)) {
-		return { features: resolveGeoPreset(geo) }
+		return { features: getCachedPreset(geo) }
 	}
 
 	if (typeof geo === 'string') {
