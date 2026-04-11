@@ -4,7 +4,7 @@ import type { ComponentProps, ComponentType, ReactNode, RefObject } from 'react'
 import type { Topology } from 'topojson-specification'
 
 // ---------------------------------------------------------------------------
-// Geo Feature (replaces SvgGeoMapLocation)
+// Geo Feature
 // ---------------------------------------------------------------------------
 
 export type GeoFeature = {

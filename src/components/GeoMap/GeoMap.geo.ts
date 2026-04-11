@@ -1,4 +1,3 @@
-import { usCountiesTopo, usStatesTopo, worldTopo } from '@/data/geo'
 import type { GeoPermissibleObjects, GeoProjection } from 'd3-geo'
 import * as d3Geo from 'd3-geo'
 import * as d3GeoProjection from 'd3-geo-projection'
@@ -135,26 +134,37 @@ const topoToFeatures = (topology: Topology, objectName?: string): GeoFeature[] =
 }
 
 // ---------------------------------------------------------------------------
-// Built-in map presets
+// Built-in map presets — dynamic imports so each TopoJSON becomes its own chunk
 // ---------------------------------------------------------------------------
 
 export type GeoMapPreset = 'us-counties' | 'us-states' | 'world'
 
-const builtInMaps: Record<GeoMapPreset, () => GeoFeature[]> = {
-	world: () => topoToFeatures(worldTopo as unknown as Topology, 'countries'),
-	'us-states': () => topoToFeatures(usStatesTopo as unknown as Topology, 'states'),
-	'us-counties': () => topoToFeatures(usCountiesTopo as unknown as Topology, 'counties'),
+type TopoModule = { default: unknown }
+
+const topoLoaders: Record<GeoMapPreset, () => Promise<TopoModule>> = {
+	world: () => import('@/data/geo/world-110m.topo.json'),
+	'us-states': () => import('@/data/geo/us-states.topo.json'),
+	'us-counties': () => import('@/data/geo/us-counties.topo.json'),
 }
 
-export const isGeoMapPreset = (v: unknown): v is GeoMapPreset => typeof v === 'string' && v in builtInMaps
+const topoObjectNames: Record<GeoMapPreset, string> = {
+	world: 'countries',
+	'us-states': 'states',
+	'us-counties': 'counties',
+}
+
+export const isGeoMapPreset = (v: unknown): v is GeoMapPreset => typeof v === 'string' && v in topoLoaders
+
+export const loadPresetFeatures = async (preset: GeoMapPreset): Promise<GeoFeature[]> => {
+	const mod = await topoLoaders[preset]()
+	return topoToFeatures(mod.default as Topology, topoObjectNames[preset])
+}
 
 // ---------------------------------------------------------------------------
-// Resolve geo data source → GeoFeature[]
+// Resolve inline geo data (FeatureCollection or Topology) → GeoFeature[]
 // ---------------------------------------------------------------------------
 
-export const resolveGeoData = (geo: Exclude<GeoDataSource, string> | undefined): GeoFeature[] => {
-	if (!geo) return builtInMaps.world()
-
+export const resolveGeoData = (geo: Exclude<GeoDataSource, string>): GeoFeature[] => {
 	if ('type' in geo && geo.type === 'FeatureCollection') {
 		const fc = geo as GeoJSON.FeatureCollection
 		return fc.features.map((f, i) => {
@@ -172,10 +182,8 @@ export const resolveGeoData = (geo: Exclude<GeoDataSource, string> | undefined):
 		return topoToFeatures(geo as Topology)
 	}
 
-	return builtInMaps.world()
+	return []
 }
-
-export const resolveGeoPreset = (preset: GeoMapPreset): GeoFeature[] => builtInMaps[preset]()
 
 // ---------------------------------------------------------------------------
 // Region filtering

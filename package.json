@@ -23,7 +23,6 @@
 		"build:use-client": "bun scripts/build-use-client.ts",
 		"build:css": "bun scripts/build-css.ts",
 		"build:nf": "bun scripts/build-nf.ts",
-		"build:geo": "bun scripts/build-geo-maps.ts",
 		"build:demo": "vite build",
 		"postbuild": "bun run build:use-client && bun run build:css && bun run build:nf && bun run build:demo",
 		"get-latest": "bun update --latest -i",

@@ -3,12 +3,12 @@
 import type { ChoroplethDatum, ChoroplethScaleType, GeoMapProps, GeoMapVariant } from '@/components'
 import { Button, Field, Fieldset, GeoMap, Select, Toggle } from '@/components'
 import type { GeoMapPreset } from './GeoMap.geo'
-import { filterFeatures, resolveGeoPreset } from './GeoMap.geo'
+import { filterFeatures, loadPresetFeatures } from './GeoMap.geo'
 import { geoProjectionPresets } from './GeoMap.types'
 import type { GeoProjectionPreset } from './GeoMap.types'
 import type { DemoMeta } from '@demo'
 import { faker } from '@faker-js/faker'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export const meta: DemoMeta = { title: 'GeoMap', category: 'components' }
 
@@ -47,10 +47,21 @@ const randChoroplethData = (ids: readonly string[]): ChoroplethDatum[] => {
 	return ids.map((id, i) => ({ id, value: Math.round(((raw[i] - min) / span) * 100) / 100 }))
 }
 
-const getFeatureIds = (geo: GeoMapPreset, region: string): readonly string[] => {
-	const features = resolveGeoPreset(geo)
-	const filtered = region ? filterFeatures(features, region) : features
-	return filtered.map((f) => f.id)
+const useFeatureIds = (geo: GeoMapPreset, region: string): readonly string[] => {
+	const [ids, setIds] = useState<readonly string[]>([])
+	useEffect(() => {
+		let cancelled = false
+		loadPresetFeatures(geo).then((features) => {
+			if (cancelled) return
+			const filtered = region ? filterFeatures(features, region) : features
+			setIds(filtered.map((f) => f.id))
+		})
+
+		return () => {
+			cancelled = true
+		}
+	}, [geo, region])
+	return ids
 }
 
 const fmtPct = (v: number) => `${(v * 100).toFixed(0)}%`
@@ -214,8 +225,8 @@ export function Demo() {
 	const isUsRegion = s.regionFilter.startsWith('US-')
 	const effectiveGeo = isUsRegion ? ('us-counties' as GeoMapPreset) : s.mapPreset
 
-	const featureIds = useMemo(() => getFeatureIds(effectiveGeo, s.regionFilter), [effectiveGeo, s.regionFilter])
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const featureIds = useFeatureIds(effectiveGeo, s.regionFilter)
+	// eslint-disable-next-line react-hooks/exhaustive-deps -- randomSeed is intentional for re-randomization on button click
 	const choroplethData = useMemo(() => randChoroplethData(featureIds), [featureIds, randomSeed])
 
 	const choropleth = s.showChoropleth
