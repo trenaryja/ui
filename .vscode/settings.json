@@ -7,5 +7,6 @@
 	],
 	"search.exclude": {
 		"**/glyphnames.json": true
-	}
+	},
+	"biome.enabled": false
 }

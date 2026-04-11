@@ -14,3 +14,4 @@ export const Select = ({ className, readOnly, tabIndex, nativeDropdown, ...props
 // TODO: options prop for simplification of children (make mutually exclusive of children, or no?)
 // TODO: allowDeselect
 // TODO: allowSearch
+// TODO: generic/type inference from value/defaultValue
