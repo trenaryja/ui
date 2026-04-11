@@ -109,6 +109,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 
 	const preRef = useRef<HTMLPreElement>(null)
 	const sourceRef = useRef<CanvasImageSource | null>(null)
+	const canvasRef = useRef<HTMLCanvasElement | null>(null)
 	const configRef = useRef<{
 		fontHeight: number
 		fontWidth: number
@@ -144,9 +145,14 @@ export const useAscii = (options: AsciiProcessOptions) => {
 			maxWidth: cfgMaxWidth,
 		})
 
-		const canvas = document.createElement('canvas')
-		canvas.width = width
-		canvas.height = height
+		canvasRef.current ??= document.createElement('canvas')
+		const canvas = canvasRef.current
+
+		if (canvas.width !== width || canvas.height !== height) {
+			canvas.width = width
+			canvas.height = height
+		}
+
 		const context = canvas.getContext('2d', { willReadFrequently: true })!
 		context.drawImage(source, 0, 0, width, height)
 		const { data } = context.getImageData(0, 0, width || 1, height || 1)
