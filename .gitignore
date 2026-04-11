@@ -12,3 +12,4 @@ _generated
 .env*.local
 project-memory
 demo-dist
+.test-sandbox

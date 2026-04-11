@@ -1,4 +1,4 @@
-import _daisyThemes from 'daisyui/theme/object'
+import _daisyThemes from 'daisyui/theme/object.js'
 import * as R from 'remeda'
 import type { OmitIndexSignature } from 'type-fest'
 import { makeTypeGuard } from './type.utils'
