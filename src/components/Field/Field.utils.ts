@@ -1,8 +1,7 @@
 import type { FlexPlacement, Placement } from '@/utils'
 import { css, flexPlacements, splitPlacement } from '@/utils'
 
-export const fieldSlots = ['label', 'hint', 'error'] as const
-export type FieldSlot = (typeof fieldSlots)[number]
+import type { FieldSlot } from './Field.types'
 
 export const slotBaseClasses: Record<FieldSlot, string> = {
 	label: '',

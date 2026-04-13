@@ -4,8 +4,11 @@ import { cn } from '@/utils'
 import type { ReactNode } from 'react'
 import type { FieldsetProps } from '../Fieldset/Fieldset'
 import { Fieldset } from '../Fieldset/Fieldset'
-import type { FieldSlot } from './Field.utils'
-import { buildGrid, fieldSlots, getGridAlignment, getItemsAlign, placementToArea, slotBaseClasses } from './Field.utils'
+import type { FieldSlot } from './Field.types'
+import { fieldSlots } from './Field.types'
+import { buildGrid, getGridAlignment, getItemsAlign, placementToArea, slotBaseClasses } from './Field.utils'
+
+export * from './Field.types'
 
 export const fieldClassNames = ['control', 'error', 'group', 'hint', 'label']
 

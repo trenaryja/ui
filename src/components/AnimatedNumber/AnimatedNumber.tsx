@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import type { AnimationTiming, DigitsConfig, FormattedSegment } from './AnimatedNumber.types'
 import { digitRange, parseFormattedNumber, resolveTiming } from './AnimatedNumber.utils'
 
+export * from './AnimatedNumber.types'
+
 export type AnimatedNumberProps = ComponentProps<'span'> & {
 	value: number
 	prefix?: string
