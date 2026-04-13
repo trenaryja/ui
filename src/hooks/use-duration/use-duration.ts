@@ -9,7 +9,9 @@ export type UseDurationOptions<TUnits extends readonly DurationUnit[]> = {
 	readonly enabled?: boolean
 }
 
-export const useDuration = <TUnits extends readonly DurationUnit[]>(options: UseDurationOptions<TUnits>): Duration<TUnits> => {
+export const useDuration = <TUnits extends readonly DurationUnit[]>(
+	options: UseDurationOptions<TUnits>,
+): Duration<TUnits> => {
 	const { targetDate, units, intervalMs = 100, enabled = true } = options
 
 	const [duration, setDuration] = useState<Duration<TUnits>>(() =>

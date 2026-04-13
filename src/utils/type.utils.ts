@@ -37,7 +37,8 @@ export const makeDiscriminatedGuard = <TProp extends string, const TAllowed exte
 	allowed: TAllowed,
 ) => {
 	const set = new Set<string>(allowed as readonly string[])
-	return <TRecord extends Record<TProp, string>>(x: TRecord): x is Extract<TRecord, Record<TProp, TAllowed[number]>> => set.has(x[prop])
+	return <TRecord extends Record<TProp, string>>(x: TRecord): x is Extract<TRecord, Record<TProp, TAllowed[number]>> =>
+		set.has(x[prop])
 }
 
 /**
@@ -66,10 +67,19 @@ export const makeDiscriminatedGuard = <TProp extends string, const TAllowed exte
  * })
  * ```
  */
-export function attempt<TResult>(fn: () => TResult, options: { fallback: TResult; onError?: (error: unknown) => void }): TResult
-export function attempt<TResult>(fn: () => TResult, options?: { fallback?: TResult; onError?: (error: unknown) => void }): TResult | undefined
+export function attempt<TResult>(
+	fn: () => TResult,
+	options: { fallback: TResult; onError?: (error: unknown) => void },
+): TResult
+export function attempt<TResult>(
+	fn: () => TResult,
+	options?: { fallback?: TResult; onError?: (error: unknown) => void },
+): TResult | undefined
 
-export function attempt<TResult>(fn: () => TResult, options?: { fallback?: TResult; onError?: (error: unknown) => void }): TResult | undefined {
+export function attempt<TResult>(
+	fn: () => TResult,
+	options?: { fallback?: TResult; onError?: (error: unknown) => void },
+): TResult | undefined {
 	try {
 		return fn()
 	} catch (error) {
@@ -103,11 +113,16 @@ export const isIn = <TValue, TElement extends TValue>(x: TValue, array: TElement
  * // readonly ("top-left" | "top-right" | "bottom-left" | "bottom-right")[]
  * ```
  */
-export const joinTyped = <const TFirst extends readonly string[], const TSecond extends readonly string[], const TDelimiter extends string>(
+export const joinTyped = <
+	const TFirst extends readonly string[],
+	const TSecond extends readonly string[],
+	const TDelimiter extends string,
+>(
 	a: TFirst,
 	b: TSecond,
 	delimiter: TDelimiter,
-): `${TFirst[number]}${TDelimiter}${TSecond[number]}`[] => a.flatMap((x) => b.map((y) => `${x}${delimiter}${y}` as const))
+): `${TFirst[number]}${TDelimiter}${TSecond[number]}`[] =>
+	a.flatMap((x) => b.map((y) => `${x}${delimiter}${y}` as const))
 
 /**
  * Maps a nullable optional boolean to one of three values.
@@ -118,8 +133,10 @@ export const joinTyped = <const TFirst extends readonly string[], const TSecond 
  * boolMap(isEnabled, ['On', 'Off', 'Default'])
  * ```
  */
-export const boolMap = <TResult>(value: boolean | null | undefined, [onTrue, onFalse, onNullOrUndefined]: [TResult, TResult, TResult]) =>
-	value === true ? onTrue : value === false ? onFalse : onNullOrUndefined
+export const boolMap = <TResult>(
+	value: boolean | null | undefined,
+	[onTrue, onFalse, onNullOrUndefined]: [TResult, TResult, TResult],
+) => (value === true ? onTrue : value === false ? onFalse : onNullOrUndefined)
 
 /** A stable empty object. Useful as a default for optional object props to avoid re-renders. */
 export const EMPTY_OBJ = {} as const
