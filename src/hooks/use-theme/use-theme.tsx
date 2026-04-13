@@ -85,13 +85,13 @@ export const ThemeScript = memo(
 	},
 )
 
-const Theme = <TThemes extends readonly string[] = never>({
+const Theme = ({
 	forcedTheme,
 	disableTransitionOnChange = false,
 	enableSystem = true,
 	enableColorScheme = true,
 	storageKey = 'theme',
-	themes = daisyThemeNames as unknown as TThemes,
+	themes = daisyThemeNames,
 	defaultTheme = enableSystem ? SYSTEM_THEME : 'dark',
 	attribute = 'data-theme',
 	value,
@@ -100,7 +100,7 @@ const Theme = <TThemes extends readonly string[] = never>({
 	scriptProps,
 	defaultLight = 'light',
 	defaultDark = 'dark',
-}: ThemeProviderProps<TThemes>) => {
+}: ThemeProviderProps<readonly string[]>) => {
 	const [theme, setThemeState] = useLocalStorage({
 		key: storageKey,
 		defaultValue: defaultTheme,
@@ -173,19 +173,18 @@ const Theme = <TThemes extends readonly string[] = never>({
 		applyTheme(forcedTheme ?? (theme || ''))
 	}, [forcedTheme, theme, applyTheme])
 
-	const providerValue = useMemo(
-		() =>
-			({
-				theme,
-				setTheme,
-				forcedTheme,
-				resolvedTheme: theme === SYSTEM_THEME ? resolvedTheme : theme,
-				themes: enableSystem ? ([SYSTEM_THEME, ...themes] as const) : themes,
-				systemTheme: (enableSystem ? resolvedTheme : undefined) as 'dark' | 'light' | undefined,
-				defaultLight,
-				defaultDark,
-			}) as UseThemeProps<TThemes>,
-		[theme, setTheme, forcedTheme, resolvedTheme, enableSystem, themes, defaultLight, defaultDark],
+	const providerValue: UseThemeProps<any> = useMemo(
+		() => ({
+			theme,
+			setTheme,
+			forcedTheme,
+			resolvedTheme: theme === SYSTEM_THEME ? resolvedTheme : theme,
+			themes: enableSystem ? [SYSTEM_THEME, ...themes] : themes,
+			systemTheme: enableSystem ? systemTheme : undefined,
+			defaultLight,
+			defaultDark,
+		}),
+		[theme, setTheme, forcedTheme, resolvedTheme, enableSystem, themes, systemTheme, defaultLight, defaultDark],
 	)
 
 	return (
@@ -216,5 +215,5 @@ export const ThemeProvider = <TThemes extends readonly string[] = never>({
 }: ThemeProviderProps<TThemes>) => {
 	const context = use(ThemeContext)
 	if (context) return <>{children}</>
-	return <Theme<TThemes> {...props}>{children}</Theme>
+	return <Theme {...props}>{children}</Theme>
 }

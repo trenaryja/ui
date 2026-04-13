@@ -153,8 +153,7 @@ export const LineChart = <
 							stroke={s.color}
 							fill={getAreaFill(s.fill, s.color, `${chartId}-gradient-${i}`)}
 							{...subProps.area}
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-							dataKey={key as string}
+							dataKey={key}
 						/>
 					))}
 					{components.brush && (

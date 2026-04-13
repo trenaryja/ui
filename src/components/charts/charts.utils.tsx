@@ -1,6 +1,6 @@
 'use client'
 
-import { cn, css, interpolateColors } from '@/utils'
+import { cn, css } from '@/utils'
 import { format } from 'date-fns'
 import type { ComponentProps, ReactNode } from 'react'
 import type { Brush, CartesianGrid, XAxis, YAxis } from 'recharts'

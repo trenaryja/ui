@@ -79,7 +79,7 @@ export const RadarChart = <TData extends Record<string, unknown>>({
 						<PolarAngleAxis
 							className={cn('stroke-current/50 text-sm', classNames.polarAngleAxis)}
 							{...subProps.polarAngleAxis}
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- recharts dataKey requires string but angleKey is string & keyof TData
 							dataKey={angleKey as string}
 							{...(formatters.label && { tickFormatter: formatters.label })}
 						/>
@@ -113,7 +113,7 @@ export const RadarChart = <TData extends Record<string, unknown>>({
 							stroke={s.color}
 							fill={getAreaFill(s.fill, s.color, `${chartId}-gradient-${i}`)}
 							{...subProps.radar}
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- recharts dataKey requires string but key is string & keyof TData
 							dataKey={key as string}
 						/>
 					))}

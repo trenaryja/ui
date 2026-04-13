@@ -54,7 +54,7 @@ export const RadialBarChart = <TData extends Record<string, unknown>>({
 						background={{ fill: 'currentColor', opacity: 0.05 }}
 						className={classNames.radialBar}
 						{...subProps?.radialBar}
-						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+						// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- recharts dataKey requires string but valueKey is string & keyof TData
 						dataKey={valueKey as string}
 					/>
 					{components.tooltip !== false && (

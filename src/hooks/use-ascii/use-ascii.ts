@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { characterRamps, rgbToLuma } from '@/utils'
 
+type AsciiImageSource = HTMLCanvasElement | HTMLImageElement | HTMLVideoElement | ImageBitmap | OffscreenCanvas
+
 const getFontDimensions = (ref: HTMLPreElement | null) => {
 	if (!ref) return { fontWidth: 0, fontHeight: 0 }
 	const pre = document.createElement('pre')
@@ -108,7 +110,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 	const { characterRamp = characterRamps[0], reverseRamp, maxHeight, maxWidth } = options
 
 	const preRef = useRef<HTMLPreElement>(null)
-	const sourceRef = useRef<CanvasImageSource | null>(null)
+	const sourceRef = useRef<AsciiImageSource | null>(null)
 	const canvasRef = useRef<HTMLCanvasElement | null>(null)
 	const configRef = useRef<{
 		fontHeight: number
@@ -127,14 +129,14 @@ export const useAscii = (options: AsciiProcessOptions) => {
 	const [ascii, setAscii] = useState('')
 	const [fontDimensions, setFontDimensions] = useState(() => getFontDimensions(null))
 
-	const processSource = (source: CanvasImageSource) => {
+	const processSource = (source: AsciiImageSource) => {
 		sourceRef.current = source
 		const { fontHeight, fontWidth, maxHeight: cfgMaxHeight, maxWidth: cfgMaxWidth, lookupTable } = configRef.current
 
 		const { width: sourceWidth, height: sourceHeight } =
 			source instanceof HTMLVideoElement
 				? { width: source.videoWidth, height: source.videoHeight }
-				: { width: (source as { width: number }).width, height: (source as { height: number }).height }
+				: { width: source.width, height: source.height }
 
 		const { width, height } = clampDimensions({
 			sourceWidth,

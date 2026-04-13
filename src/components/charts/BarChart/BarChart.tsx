@@ -142,7 +142,7 @@ export const BarChart = <
 							fill={s.color}
 							radius={getBarRadius(seriesWithColors, i, { stacked: isStacked, layout })}
 							{...subProps.bar}
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+							// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- recharts dataKey requires string but key is string & keyof TData
 							dataKey={key as string}
 						/>
 					))}
