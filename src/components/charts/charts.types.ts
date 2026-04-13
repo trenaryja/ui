@@ -59,12 +59,6 @@ export type ChartTooltipProps = {
 	}[]
 }
 
-export type SankeyLinkPayload = {
-	source: { name: string; count?: number; value: number }
-	target: { name: string; count?: number; value: number }
-	value: number
-}
-
 export type LegendItem = {
 	key: string
 	color?: string

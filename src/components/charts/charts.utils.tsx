@@ -1,7 +1,7 @@
 'use client'
 
-import { cn, css } from '@/utils'
-import { format, parseISO } from 'date-fns'
+import { cn, css, interpolateColors } from '@/utils'
+import { format } from 'date-fns'
 import type { ComponentProps, ReactNode } from 'react'
 import type { Brush, CartesianGrid, XAxis, YAxis } from 'recharts'
 import { ResponsiveContainer } from 'recharts'
@@ -44,9 +44,6 @@ export const resolveDateData = <TData extends Record<string, unknown>>(
 	const timestamps = chartData.map((d) => d[DATE_TS_KEY]).sort((a, b) => a - b)
 	return { chartData, timestamps }
 }
-
-export const formatDate = (v: string) => format(parseISO(v), 'MMM d')
-export const formatDateFull = (v: string) => format(parseISO(v), 'MMM d, yyyy')
 
 type ChartContainerProps = Omit<ComponentProps<typeof ResponsiveContainer>, 'className' | 'minWidth' | 'style'> & {
 	className?: string
