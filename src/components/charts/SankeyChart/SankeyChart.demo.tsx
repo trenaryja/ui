@@ -1,9 +1,9 @@
-import { SankeyChart } from '@/components'
+import { SankeyChart, toast } from '@/components'
 import type { DemoMeta, Density } from '@demo'
 import { ChartCard } from '@demo'
 import { faker } from '@faker-js/faker'
-import { capitalize, groupBy, sum } from 'remeda'
 import { useState } from 'react'
+import { capitalize, groupBy, sum } from 'remeda'
 import type { SankeyLink } from './SankeyChart'
 
 export const meta: DemoMeta = { title: 'SankeyChart', category: 'components', tags: ['chart'] }
@@ -146,10 +146,13 @@ const randFunnel = (d: Density): SankeyLink[] => {
 }
 
 export function Demo() {
+	const [flow, setFlow] = useState(() => randFlow('Low'))
 	const [diverging, setDiverging] = useState(() => randDiverging('Low'))
 	const [converging, setConverging] = useState(() => randConverging('Low'))
-	const [flow, setFlow] = useState(() => randFlow('Low'))
 	const [funnel, setFunnel] = useState(() => randFunnel('Low'))
+	const [themeColors, setThemeColors] = useState(() => randFlow('Low'))
+	const [customColors, setCustomColors] = useState(() => randFlow('Low'))
+	const [clickHandler, setClickHandler] = useState(() => randFlow('Low'))
 
 	return (
 		<div className='demo'>
@@ -167,6 +170,33 @@ export function Demo() {
 
 			<ChartCard title='Funnel' onRandomize={(d) => setFunnel(randFunnel(d))}>
 				{(key) => <SankeyChart key={key} data={funnel} />}
+			</ChartCard>
+
+			<ChartCard title='Colors (theme)' onRandomize={(d) => setThemeColors(randFlow(d))}>
+				{(key) => (
+					<SankeyChart
+						key={key}
+						data={themeColors}
+						colors={['var(--color-primary)', 'var(--color-secondary)', 'var(--color-accent)']}
+					/>
+				)}
+			</ChartCard>
+
+			<ChartCard title='Colors (no animation)' onRandomize={(d) => setCustomColors(randFlow(d))}>
+				{(key) => <SankeyChart key={key} data={customColors} disableAnimation colors={['#f00', '#0f0', '#00f']} />}
+			</ChartCard>
+
+			<ChartCard title='Click handler' onRandomize={(d) => setClickHandler(randFlow(d))}>
+				{(key) => (
+					<SankeyChart
+						key={key}
+						data={clickHandler}
+						classNames={{ node: 'cursor-pointer', link: 'cursor-pointer' }}
+						onDataClick={(d) =>
+							toast(d.type === 'node' ? `${d.name}: ${d.value}` : `${d.source} → ${d.target}: ${d.value}`)
+						}
+					/>
+				)}
 			</ChartCard>
 		</div>
 	)
