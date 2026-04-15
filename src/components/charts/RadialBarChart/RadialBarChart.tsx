@@ -4,20 +4,21 @@ import { EMPTY_OBJ } from '@/utils'
 import { RadialBar, RadialBarChart as RechartsRadialBarChart } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
 import type { ChartTooltipProps, DeriveProps, PolarChartBaseProps } from '../charts.types'
-import { ChartContainer, colorizeData, slotComponents } from '../charts.utils'
+import { ChartContainer, colorizeData, getClickProps, slotComponents } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 
 export type RadialBarChartSubProps = {
 	radialBar?: DeriveProps<typeof RadialBar, 'dataKey'>
 }
 
-export type RadialBarChartProps<TData extends Record<string, unknown>> = PolarChartBaseProps<
-	TData,
-	typeof RechartsRadialBarChart
+export type RadialBarChartProps<TData extends Record<string, unknown>> = Omit<
+	PolarChartBaseProps<TData, typeof RechartsRadialBarChart>,
+	'onMouseDown' | 'onTouchStart'
 > & {
 	classNames?: {
 		radialBar?: string
 	}
+	onDataClick?: (data: TData, index: number) => void
 	valueKey: string & keyof TData
 	nameKey: string & keyof TData
 	subProps?: RadialBarChartSubProps
@@ -26,6 +27,7 @@ export type RadialBarChartProps<TData extends Record<string, unknown>> = PolarCh
 export const RadialBarChart = <TData extends Record<string, unknown>>({
 	data,
 	children,
+	onDataClick,
 	valueKey,
 	nameKey,
 	subProps,
@@ -49,7 +51,7 @@ export const RadialBarChart = <TData extends Record<string, unknown>>({
 	return (
 		<>
 			<ChartContainer className={className} cssVars={cssVars}>
-				<RechartsRadialBarChart {...chartProps} data={colorizedData}>
+				<RechartsRadialBarChart {...chartProps} data={colorizedData} {...getClickProps(data, onDataClick)}>
 					<RadialBar
 						background={{ fill: 'currentColor', opacity: 0.05 }}
 						className={classNames.radialBar}

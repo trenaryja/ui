@@ -1,4 +1,4 @@
-import { RadialBarChart } from '@/components'
+import { RadialBarChart, toast } from '@/components'
 import type { DemoMeta, Density } from '@demo'
 import { ChartCard, randChartData } from '@demo'
 import { useState } from 'react'
@@ -15,6 +15,19 @@ export function Demo() {
 		<div className='demo'>
 			<ChartCard title='Default' onRandomize={(d) => setData(rand(d))}>
 				{(key) => <RadialBarChart key={key} data={data.data} valueKey='a' nameKey='name' />}
+			</ChartCard>
+
+			<ChartCard title='Click handler' onRandomize={(d) => setData(rand(d))}>
+				{(key) => (
+					<RadialBarChart
+						key={key}
+						data={data.data}
+						valueKey='a'
+						nameKey='name'
+						classNames={{ radialBar: 'cursor-pointer' }}
+						onDataClick={(d) => toast(`${d.name}: ${d.a}`)}
+					/>
+				)}
 			</ChartCard>
 		</div>
 	)

@@ -1,4 +1,4 @@
-import { RadarChart } from '@/components'
+import { RadarChart, toast } from '@/components'
 import type { DemoMeta, Density } from '@demo'
 import { ChartCard, randChartData } from '@demo'
 import { useState } from 'react'
@@ -21,6 +21,19 @@ export function Demo() {
 			<ChartCard title='Multi-series' onRandomize={(d) => setMulti(rand(d))}>
 				{(key) => (
 					<RadarChart key={key} data={multi.data} angleKey='name' series={multi.series} components={{ legend: true }} />
+				)}
+			</ChartCard>
+
+			<ChartCard title='Click handler' onRandomize={(d) => setSingle(rand(d))}>
+				{(key) => (
+					<RadarChart
+						key={key}
+						data={single.data}
+						angleKey='name'
+						rangeKey='a'
+						classNames={{ radar: 'cursor-pointer' }}
+						onDataClick={(d) => toast(`${d.name}: ${d.a}`)}
+					/>
 				)}
 			</ChartCard>
 		</div>

@@ -1,4 +1,4 @@
-import { Input, ThemePicker } from '@/components'
+import { Input, ThemePicker, Toaster } from '@/components'
 import { ThemeProvider } from '@/hooks'
 import { cn } from '@/utils'
 import { useHash, useHotkeys } from '@mantine/hooks'
@@ -100,6 +100,7 @@ const App = () => {
 				</header>
 
 				<main className='full-bleed-container overflow-fade size-full'>{PageContent}</main>
+				{currentDemo?.meta.title !== 'Toaster' && <Toaster />}
 			</div>
 		</div>
 	)

@@ -1,4 +1,4 @@
-import { BarChart } from '@/components'
+import { BarChart, toast } from '@/components'
 import type { DemoMeta, Density } from '@demo'
 import { ChartCard, randChartData } from '@demo'
 import { useState } from 'react'
@@ -87,6 +87,19 @@ export function Demo() {
 
 			<ChartCard title='With grid' onRandomize={(d) => setGrid(rand(d))}>
 				{(key) => <BarChart key={key} data={grid.data} domainKey='label' rangeKey='a' components={{ grid: true }} />}
+			</ChartCard>
+
+			<ChartCard title='Click handler' onRandomize={(d) => setSingle(rand(d))}>
+				{(key) => (
+					<BarChart
+						key={key}
+						data={single.data}
+						domainKey='label'
+						rangeKey='a'
+						classNames={{ bar: 'cursor-pointer' }}
+						onDataClick={(d) => toast(`${d.label}: ${d.a}`)}
+					/>
+				)}
 			</ChartCard>
 		</div>
 	)

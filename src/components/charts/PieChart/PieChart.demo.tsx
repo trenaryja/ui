@@ -1,4 +1,4 @@
-import { PieChart } from '@/components'
+import { PieChart, toast } from '@/components'
 import type { DemoMeta, Density } from '@demo'
 import { ChartCard, randChartData } from '@demo'
 import { useState } from 'react'
@@ -55,6 +55,19 @@ export function Demo() {
 						nameKey='name'
 						donut
 						colors={['var(--color-base-content)', 'var(--color-base-300)']}
+					/>
+				)}
+			</ChartCard>
+
+			<ChartCard title='Click handler' onRandomize={(d) => setPie(rand(d))}>
+				{(key) => (
+					<PieChart
+						key={key}
+						data={pie.data}
+						valueKey='a'
+						nameKey='name'
+						classNames={{ pie: 'cursor-pointer' }}
+						onDataClick={(d) => toast(`${d.name}: ${d.a}`)}
 					/>
 				)}
 			</ChartCard>

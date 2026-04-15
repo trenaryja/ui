@@ -94,15 +94,16 @@ export const getXFormatters = (
 	return { formatX: formatters?.domainTick as ((v: any) => string) | undefined, formatXFull: undefined }
 }
 
-export const makeClickHandler =
-	<TData,>(fn: (data: TData, index: number) => void) =>
-	(e: Record<string, unknown>) => {
-		const payload = e?.activePayload as { payload: TData }[] | undefined
-		if (payload?.[0]) fn(payload[0].payload, Number(e.activeTooltipIndex ?? 0))
+export const getClickProps = <TData,>(data: readonly TData[], fn?: (data: TData, index: number) => void) => {
+	if (!fn) return undefined
+
+	const handler = (e: Record<string, unknown>) => {
+		const index = Number(e?.activeTooltipIndex ?? -1)
+		if (index >= 0 && index < data.length) fn(data[index], index)
 	}
 
-export const getClickHandler = <TData,>(fn?: (data: TData, index: number) => void) =>
-	fn ? makeClickHandler(fn) : undefined
+	return { onMouseDown: handler, onTouchStart: handler }
+}
 
 export const defaultAxisProps: ComponentProps<typeof XAxis> & ComponentProps<typeof YAxis> = {
 	stroke: 'currentColor',

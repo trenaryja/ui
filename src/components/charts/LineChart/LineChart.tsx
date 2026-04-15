@@ -19,7 +19,7 @@ import {
 	defaultBrushProps,
 	defaultGridProps,
 	getAreaFill,
-	getClickHandler,
+	getClickProps,
 	getXFormatters,
 	makeTooltipResolver,
 	normalizeSeries,
@@ -118,7 +118,7 @@ export const LineChart = <
 					stackOffset={stackOffset}
 					{...chartProps}
 					data={chartData}
-					onClick={getClickHandler(onDataClick)}
+					{...getClickProps(data, onDataClick)}
 				>
 					{renderGradientDefs(seriesWithColors, chartId)}
 					{components.grid && <CartesianGrid {...defaultGridProps} className={classNames.grid} {...subProps.grid} />}

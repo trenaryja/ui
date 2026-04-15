@@ -113,7 +113,7 @@ export type CartesianChartBaseProps<
 	TDomainKey extends string & keyof TData = string & keyof TData,
 	Chart extends React.ElementType = React.ElementType,
 > = ChartBaseProps<TData> &
-	DeriveProps<Chart, 'data' | 'onClick' | 'stackOffset'> & {
+	DeriveProps<Chart, 'data' | 'onMouseDown' | 'onTouchStart' | 'stackOffset'> & {
 		classNames?: CartesianChartClassNames
 		components?: {
 			grid?: true

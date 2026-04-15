@@ -16,7 +16,7 @@ import {
 	defaultAxisProps,
 	defaultBrushProps,
 	defaultGridProps,
-	getClickHandler,
+	getClickProps,
 	getXFormatters,
 	makeTooltipResolver,
 	normalizeSeries,
@@ -116,7 +116,7 @@ export const BarChart = <
 					barSize={resolvedBarSize}
 					{...chartProps}
 					data={chartData}
-					onClick={getClickHandler(onDataClick)}
+					{...getClickProps(data, onDataClick)}
 				>
 					{components.grid && <CartesianGrid {...defaultGridProps} className={classNames.grid} {...subProps.grid} />}
 					{components.xAxis !== false && (

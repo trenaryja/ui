@@ -18,6 +18,7 @@ export type PieChartProps<TData extends Record<string, unknown>> = Pick<
 		classNames?: {
 			pie?: string
 		}
+		onDataClick?: (data: TData, index: number) => void
 		valueKey?: string & keyof TData
 		nameKey?: string & keyof TData
 		series?: (PieSliceProps & {
@@ -39,6 +40,7 @@ export const PieChart = <TData extends Record<string, unknown>>({
 	cornerRadius,
 	paddingAngle,
 	series,
+	onDataClick,
 	subProps,
 	donut,
 	noGap,
@@ -95,6 +97,7 @@ export const PieChart = <TData extends Record<string, unknown>>({
 							startAngle={startAngle}
 							endAngle={endAngle}
 							className={classNames.pie}
+							onClick={onDataClick && ((_, index) => onDataClick(data[index], index))}
 							{...subProps?.pie}
 							{...s}
 							data={colorizedData}

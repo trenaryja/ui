@@ -8,6 +8,7 @@ import type { ChartSeries, ChartTooltipProps, DeriveProps, FillType, PolarChartB
 import {
 	ChartContainer,
 	getAreaFill,
+	getClickProps,
 	normalizeSeries,
 	renderGradientDefs,
 	resolveColor,
@@ -15,9 +16,9 @@ import {
 } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 
-export type RadarChartProps<TData extends Record<string, unknown>> = PolarChartBaseProps<
-	TData,
-	typeof RechartsRadarChart
+export type RadarChartProps<TData extends Record<string, unknown>> = Omit<
+	PolarChartBaseProps<TData, typeof RechartsRadarChart>,
+	'onMouseDown' | 'onTouchStart'
 > & {
 	classNames?: {
 		polarGrid?: string
@@ -29,6 +30,7 @@ export type RadarChartProps<TData extends Record<string, unknown>> = PolarChartB
 		polarAngleAxis?: false
 	}
 	angleKey: string & keyof TData
+	onDataClick?: (data: TData, index: number) => void
 	rangeKey?: string & keyof TData
 	series?: (ChartSeries<TData> &
 		DeriveProps<typeof Radar, 'dataKey'> & {
@@ -45,6 +47,7 @@ export const RadarChart = <TData extends Record<string, unknown>>({
 	data,
 	children,
 	angleKey,
+	onDataClick,
 	rangeKey,
 	series,
 	colors,
@@ -70,7 +73,7 @@ export const RadarChart = <TData extends Record<string, unknown>>({
 	return (
 		<>
 			<ChartContainer className={className} cssVars={cssVars}>
-				<RechartsRadarChart {...chartProps} data={data}>
+				<RechartsRadarChart {...chartProps} data={data} {...getClickProps(data, onDataClick)}>
 					{renderGradientDefs(seriesWithColors, chartId)}
 					{components.polarGrid !== false && (
 						<PolarGrid className={cn('stroke-current/25', classNames.polarGrid)} {...subProps.polarGrid} />
