@@ -7,6 +7,7 @@ import type { ComponentProps, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { LuCheck, LuCircleAlert, LuClipboard } from 'react-icons/lu'
 import { Button } from '../Button/Button'
+import { TimeoutBar } from '../TimeoutBar/TimeoutBar'
 
 const DefaultIcon = <LuClipboard />
 const DefaultCopiedIcon = <LuCheck />
@@ -88,13 +89,12 @@ export const ClipboardButton = ({
 			{...props}
 		>
 			{renderChildren()}
-			{showTimeoutBar && (copied || !!error) && (
-				<span
-					key={copyCount}
-					className={cn('timeout-bar', classNames?.timeoutBar)}
-					style={{ animationDuration: `${timeout}ms` }}
-				/>
-			)}
+			<TimeoutBar
+				active={!!showTimeoutBar && (copied || !!error)}
+				className={classNames?.timeoutBar}
+				duration={timeout}
+				resetKey={copyCount}
+			/>
 		</Button>
 	)
 }

@@ -6,6 +6,7 @@ import { useClickOutside, useMergedRef, useUncontrolled } from '@mantine/hooks'
 import type { ComponentProps, FocusEvent, MouseEvent, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Button } from '../Button/Button'
+import { TimeoutBar } from '../TimeoutBar/TimeoutBar'
 
 export const confirmButtonClassNames = ['confirm', 'default', 'pending', 'timeoutBar'] as const
 export type ConfirmButtonClassNames = (typeof confirmButtonClassNames)[number]
@@ -157,9 +158,11 @@ export const ConfirmButton = ({
 			{...props}
 		>
 			{renderChildren()}
-			{showTimeoutBar && isAwaitingConfirmation && (
-				<span className={cn('timeout-bar', classNames?.timeoutBar)} style={{ animationDuration: `${timeout}ms` }} />
-			)}
+			<TimeoutBar
+				active={!!showTimeoutBar && isAwaitingConfirmation}
+				className={classNames?.timeoutBar}
+				duration={timeout}
+			/>
 		</Button>
 	)
 }
