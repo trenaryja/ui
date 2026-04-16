@@ -1,14 +1,15 @@
 'use client'
 
-import type { ChoroplethDatum, ChoroplethScaleType, GeoMapProps, GeoMapVariant } from '@/components'
+import type { ChoroplethDatum, ChoroplethScaleType, GeoMapProps } from '@/components'
 import { Button, Field, Fieldset, GeoMap, Select, Toggle } from '@/components'
-import type { GeoMapPreset } from './GeoMap.geo'
-import { filterFeatures, loadPresetFeatures } from './GeoMap.geo'
-import { geoProjectionPresets } from './GeoMap.types'
-import type { GeoProjectionPreset } from './GeoMap.types'
+import { formatPercent } from '@/utils'
 import type { DemoMeta } from '@demo'
 import { faker } from '@faker-js/faker'
 import { useEffect, useMemo, useState } from 'react'
+import * as R from 'remeda'
+import type { GeoMapPreset } from './GeoMap.geo'
+import { filterFeatures, getProjectionsByTag, loadPresetFeatures } from './GeoMap.geo'
+import type { GeoProjectionPreset } from './GeoMap.types'
 
 export const meta: DemoMeta = { title: 'GeoMap', category: 'components' }
 
@@ -39,6 +40,10 @@ const REGION_PRESETS: { value: string; label: string }[] = [
 	{ value: 'US-NY', label: 'New York (counties)' },
 ]
 
+const projectionsByTag = getProjectionsByTag()
+
+const fmtPct = (v: number) => formatPercent(v, { decimals: 0 })
+
 const randChoroplethData = (ids: readonly string[]): ChoroplethDatum[] => {
 	const raw = ids.map(() => faker.number.float({ min: 0, max: 1 }))
 	const min = Math.min(...raw)
@@ -64,19 +69,22 @@ const useFeatureIds = (geo: GeoMapPreset, region: string): readonly string[] => 
 	return ids
 }
 
-const fmtPct = (v: number) => `${(v * 100).toFixed(0)}%`
+type SelectionMode = '' | 'multi' | 'single'
 
 type DemoState = {
 	mapPreset: GeoMapPreset
 	projectionPreset: '' | GeoProjectionPreset
 	regionFilter: string
-	variant: GeoMapVariant
+	selection: SelectionMode
 	colorPreset: string
 	scaleType: ChoroplethScaleType
 	steps: number
 	showChoropleth: boolean
 	showTooltip: boolean
 	showLegend: boolean
+	showGraticule: boolean
+	showZoom: boolean
+	showDraggable: boolean
 }
 
 const MapControls = ({
@@ -116,10 +124,14 @@ const MapControls = ({
 					onChange={(e) => set('projectionPreset', e.target.value as '' | GeoProjectionPreset)}
 				>
 					<option value=''>Auto</option>
-					{geoProjectionPresets.map((p) => (
-						<option key={p} value={p}>
-							{p}
-						</option>
+					{R.entries(projectionsByTag).map(([tag, presets]) => (
+						<optgroup key={tag} label={tag}>
+							{presets.map((p) => (
+								<option key={p} value={p}>
+									{p}
+								</option>
+							))}
+						</optgroup>
 					))}
 				</Select>
 			</Field>
@@ -139,18 +151,18 @@ const MapControls = ({
 					))}
 				</Select>
 			</Field>
-			<Field label='Variant'>
+			<Field label='Selection'>
 				<Select
 					className='select-sm'
-					value={s.variant}
+					value={s.selection}
 					onChange={(e) => {
-						set('variant', e.target.value as GeoMapVariant)
+						set('selection', e.target.value as SelectionMode)
 						onReset()
 					}}
 				>
-					<option value='default'>Default</option>
-					<option value='multi-select'>Multi Select</option>
-					<option value='single-select'>Single Select</option>
+					<option value=''>None</option>
+					<option value='single'>Single</option>
+					<option value='multi'>Multi</option>
 				</Select>
 			</Field>
 			<Field label='Colors'>
@@ -195,6 +207,15 @@ const MapControls = ({
 			<Field label='Legend' labelPlacement='right-center'>
 				<Toggle checked={s.showLegend} onChange={(e) => set('showLegend', e.target.checked)} />
 			</Field>
+			<Field label='Graticule' labelPlacement='right-center'>
+				<Toggle checked={s.showGraticule} onChange={(e) => set('showGraticule', e.target.checked)} />
+			</Field>
+			<Field label='Zoom' labelPlacement='right-center'>
+				<Toggle checked={s.showZoom} onChange={(e) => set('showZoom', e.target.checked)} />
+			</Field>
+			<Field label='Draggable' labelPlacement='right-center'>
+				<Toggle checked={s.showDraggable} onChange={(e) => set('showDraggable', e.target.checked)} />
+			</Field>
 			<Button className='btn-sm' onClick={onRandomize}>
 				Randomize
 			</Button>
@@ -207,13 +228,16 @@ export function Demo() {
 		mapPreset: 'world',
 		projectionPreset: '',
 		regionFilter: '',
-		variant: 'default',
+		selection: '',
 		colorPreset: 'default',
 		scaleType: 'quantize',
 		steps: 4,
 		showChoropleth: true,
 		showTooltip: true,
 		showLegend: true,
+		showGraticule: false,
+		showZoom: false,
+		showDraggable: false,
 	})
 	const [selected, setSelected] = useState<string[]>([])
 	const [singleSelected, setSingleSelected] = useState<string | null>(null)
@@ -245,7 +269,10 @@ export function Demo() {
 		region: s.regionFilter || undefined,
 		choropleth,
 		formatters: { tooltip: { value: (v: number) => fmtPct(v) } },
-		components: { tooltip: s.showTooltip, legend: s.showLegend },
+		draggable: s.showDraggable,
+		zoomable: s.showZoom,
+		components: { tooltip: s.showTooltip, legend: s.showLegend, graticule: s.showGraticule, zoom: s.showZoom },
+		classNames: { zoom: 'absolute right-1 bottom-1' },
 	}
 
 	const resetSelection = () => {
@@ -254,22 +281,26 @@ export function Demo() {
 	}
 
 	const geoMapProps: GeoMapProps =
-		s.variant === 'multi-select'
-			? { ...sharedProps, variant: s.variant, value: selected, onChange: setSelected }
-			: s.variant === 'single-select'
-				? { ...sharedProps, variant: s.variant, value: singleSelected, onChange: setSingleSelected }
+		s.selection === 'multi'
+			? { ...sharedProps, selection: 'multi', value: selected, onChange: setSelected }
+			: s.selection === 'single'
+				? { ...sharedProps, selection: 'single', value: singleSelected, onChange: setSingleSelected }
 				: sharedProps
 
 	return (
-		<div className='flex flex-col gap-4'>
+		<div className='grid size-full grid-rows-[auto_1fr] gap-4 overflow-hidden p-4'>
 			<MapControls s={s} set={set} onReset={resetSelection} onRandomize={() => setRandomSeed((x) => x + 1)} />
-			<GeoMap {...geoMapProps} />
-			{s.variant === 'multi-select' && selected.length > 0 && (
-				<div className='text-sm opacity-75'>Selected: {selected.join(', ')}</div>
-			)}
-			{s.variant === 'single-select' && singleSelected && (
-				<div className='text-sm opacity-75'>Selected: {singleSelected}</div>
-			)}
+			<div className='flex min-h-0 flex-col items-center justify-center overflow-hidden'>
+				<div className='relative h-full max-h-full max-w-full'>
+					<GeoMap {...geoMapProps} className='h-full w-auto max-h-full max-w-full' />
+				</div>
+				{s.selection === 'multi' && selected.length > 0 && (
+					<div className='text-sm opacity-75'>Selected: {selected.join(', ')}</div>
+				)}
+				{s.selection === 'single' && singleSelected && (
+					<div className='text-sm opacity-75'>Selected: {singleSelected}</div>
+				)}
+			</div>
 		</div>
 	)
 }

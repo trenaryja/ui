@@ -1,6 +1,5 @@
-import { cn, cnFn, EMPTY_OBJ } from '@/utils'
-import type { ComponentType, ReactNode, RefObject } from 'react'
-import { createPortal } from 'react-dom'
+import { cn, cnFn, EMPTY_OBJ, maybeContainer, maybePortal } from '@/utils'
+import type { ComponentType, RefObject } from 'react'
 import type {
 	ChoroplethConfig,
 	GeoLegendItem,
@@ -24,9 +23,6 @@ const GradientBar = ({ colors, className }: { colors: string[]; className?: stri
 	/>
 )
 
-const maybePortal = (content: ReactNode, target?: RefObject<HTMLElement | null>) =>
-	target?.current ? createPortal(content, target.current) : content
-
 export const GeoMapLegend = ({
 	items,
 	choropleth,
@@ -46,7 +42,6 @@ export const GeoMapLegend = ({
 	const stops = colors?.length ? colors : DEFAULT_CHORO_COLORS
 	const isLinear = scaleType === 'linear'
 
-	// Full replacement component
 	if (typeof components === 'function') {
 		const Component = components
 		return maybePortal(<Component items={items} scaleType={scaleType} colors={stops} />, target)
@@ -95,13 +90,5 @@ export const GeoMapLegend = ({
 		})
 	)
 
-	const content = Container ? (
-		<Container items={items} className={containerClassName}>
-			{children}
-		</Container>
-	) : (
-		<ul className={containerClassName}>{children}</ul>
-	)
-
-	return maybePortal(content, target)
+	return maybePortal(maybeContainer(Container, 'ul', { items, className: containerClassName, children }), target)
 }

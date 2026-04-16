@@ -1,4 +1,4 @@
-import { cn, cnFn, EMPTY_OBJ } from '@/utils'
+import { cn, cnFn, EMPTY_OBJ, maybeContainer } from '@/utils'
 import type { ComponentType } from 'react'
 import type {
 	GeoMapTooltipClassNames,
@@ -62,11 +62,5 @@ export const GeoMapTooltip = ({
 		</>
 	)
 
-	return Container ? (
-		<Container state={state} className={containerClassName}>
-			{children}
-		</Container>
-	) : (
-		<div className={containerClassName}>{children}</div>
-	)
+	return maybeContainer(Container, 'div', { state, className: containerClassName, children })
 }

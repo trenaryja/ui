@@ -1,20 +1,80 @@
+'use client'
+
+import { cn, EMPTY_OBJ } from '@/utils'
+import { useUncontrolled } from '@mantine/hooks'
 import { Suspense } from 'react'
-import { GeoMapDefault, GeoMapMultiSelect, GeoMapSingleSelect } from './variants'
-import type { GeoMapDefaultProps, GeoMapMultiSelectProps, GeoMapSingleSelectProps } from './variants'
+import type { GeoMapBaseProps } from './GeoMap.types'
+import type { GeoMapViewProps } from './GeoMapView'
+import { GeoMapView } from './GeoMapView'
 
-export type GeoMapProps = GeoMapDefaultProps | GeoMapMultiSelectProps | GeoMapSingleSelectProps
+type SingleSelection = {
+	selection: 'single'
+	value?: string | null
+	defaultValue?: string | null
+	onChange?: (value: string | null) => void
+	name?: string
+}
 
-// Internal Suspense boundary handles the one-time lazy load of TopoJSON data for
-// preset maps, so consumers don't need to wrap GeoMap themselves. After the preset
-// is loaded, the cached promise resolves synchronously and suspension is a no-op.
-export const GeoMap = ({ variant, ...rest }: GeoMapProps) => (
+type MultiSelection = {
+	selection: 'multi'
+	value?: string[]
+	defaultValue?: string[]
+	onChange?: (value: string[]) => void
+	name?: string
+}
+
+export type GeoMapProps =
+	| (GeoMapBaseProps & { selection?: never })
+	| (GeoMapBaseProps & MultiSelection)
+	| (GeoMapBaseProps & SingleSelection)
+
+const GeoMapSelectable = ({
+	selection,
+	value,
+	defaultValue,
+	onChange,
+	name,
+	className,
+	classNames = EMPTY_OBJ,
+	onRegionClick,
+	...rest
+}: GeoMapBaseProps & (MultiSelection | SingleSelection)) => {
+	const isMulti = selection === 'multi'
+	const [selectedIds, setSelectedIds] = useUncontrolled<string[]>({
+		value: value === undefined ? undefined : isMulti ? value : value ? [value] : [],
+		defaultValue: defaultValue === undefined ? undefined : isMulti ? defaultValue : defaultValue ? [defaultValue] : [],
+		finalValue: [],
+		onChange: (next) => {
+			if (isMulti) onChange?.(next)
+			else onChange?.(next[0] ?? null)
+		},
+	})
+
+	const toggle = (id: string) => {
+		if (isMulti) setSelectedIds(selectedIds.includes(id) ? selectedIds.filter((s) => s !== id) : [...selectedIds, id])
+		else setSelectedIds(selectedIds[0] === id ? [] : [id])
+	}
+
+	return (
+		<>
+			<GeoMapView
+				{...rest}
+				className={cn(className, '[&_path]:cursor-pointer')}
+				classNames={classNames}
+				selectedIds={selectedIds}
+				onRegionClick={(feature, index) => {
+					toggle(feature.id)
+					onRegionClick?.(feature, index)
+				}}
+			/>
+			{name && selectedIds.map((id) => <input key={id} type='hidden' name={name} value={id} />)}
+		</>
+	)
+}
+
+// Internal Suspense boundary handles the one-time lazy load of TopoJSON data
+export const GeoMap = ({ ...props }: GeoMapProps) => (
 	<Suspense fallback={null}>
-		{variant === 'multi-select' ? (
-			<GeoMapMultiSelect variant={variant} {...(rest as Omit<GeoMapMultiSelectProps, 'variant'>)} />
-		) : variant === 'single-select' ? (
-			<GeoMapSingleSelect variant={variant} {...(rest as Omit<GeoMapSingleSelectProps, 'variant'>)} />
-		) : (
-			<GeoMapDefault {...rest} />
-		)}
+		{props.selection ? <GeoMapSelectable {...props} /> : <GeoMapView {...(props as GeoMapViewProps)} />}
 	</Suspense>
 )

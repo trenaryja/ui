@@ -1,7 +1,7 @@
 @utility overflow-fade {
 	--fade-size: 2rem;
 	--fade-start: 0;
-	--fade-end: 1;
+	--fade-end: 0;
 	overflow: auto;
 	scroll-timeline:
 		--overflow-fade-y y,
@@ -31,7 +31,7 @@
 @utility overflow-y-fade {
 	--fade-size: 2rem;
 	--fade-start: 0;
-	--fade-end: 1;
+	--fade-end: 0;
 	overflow-y: auto;
 	scroll-timeline: --overflow-fade-y y;
 	animation: overflow-fade-y linear;
@@ -48,7 +48,7 @@
 @utility overflow-x-fade {
 	--fade-size: 2rem;
 	--fade-left: 0;
-	--fade-right: 1;
+	--fade-right: 0;
 	overflow-x: auto;
 	scroll-timeline: --overflow-fade-x x;
 	animation: overflow-fade-x linear;
