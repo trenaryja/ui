@@ -195,10 +195,6 @@ export const makeTooltipResolver = <T extends { key: string; color: string; name
 	}
 }
 
-/** Extract custom components from a slot value, filtering out booleans. */
-export const slotComponents = <T,>(slot: boolean | T | undefined): T | undefined =>
-	typeof slot === 'boolean' || slot == null ? undefined : slot
-
 export const getAreaFill = (fill: string, color: string, gradientId: string) => {
 	if (fill === 'gradient') return `url(#${gradientId})`
 	if (fill === 'solid') return color

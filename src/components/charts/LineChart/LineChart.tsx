@@ -1,6 +1,6 @@
 'use client'
 
-import { EMPTY_OBJ } from '@/utils'
+import { EMPTY_OBJ, slotComponents } from '@/utils'
 import { useId } from 'react'
 import { Area, Brush, CartesianGrid, AreaChart as RechartsAreaChart, XAxis, YAxis } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
@@ -26,7 +26,6 @@ import {
 	renderGradientDefs,
 	resolveBrushRangeDomain,
 	resolveDateData,
-	slotComponents,
 } from '../charts.utils'
 import { ChartSwatch } from '../ChartSwatch'
 import { ChartTooltip } from '../ChartTooltip'

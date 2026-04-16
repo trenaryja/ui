@@ -1,10 +1,10 @@
 'use client'
 
-import { EMPTY_OBJ } from '@/utils'
+import { EMPTY_OBJ, slotComponents } from '@/utils'
 import { Pie, PieChart as RechartsPieChart } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
 import type { ChartTooltipProps, DeriveProps, PolarChartBaseProps } from '../charts.types'
-import { ChartContainer, colorizeData, slotComponents } from '../charts.utils'
+import { ChartContainer, colorizeData } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 import { normalizePieSeries } from './PieChart.utils'
 

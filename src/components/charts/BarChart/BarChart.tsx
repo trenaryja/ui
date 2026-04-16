@@ -1,6 +1,6 @@
 'use client'
 
-import { EMPTY_OBJ } from '@/utils'
+import { EMPTY_OBJ, slotComponents } from '@/utils'
 import { useState } from 'react'
 import { Bar, Brush, CartesianGrid, BarChart as RechartsBarChart, XAxis, YAxis } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
@@ -23,7 +23,6 @@ import {
 	resolveBrushRangeDomain,
 	resolveColor,
 	resolveDateData,
-	slotComponents,
 } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 import { getBarAxisProps, getBarRadius, resolveBarSize } from './BarChart.utils'

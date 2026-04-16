@@ -1,5 +1,7 @@
 import { cn } from '@/utils'
 
+// TODO: promote to shared <Swatch> in src/components/, parameterize size/border/rounded; replaces DefaultSwatch in GeoMapLegend + GeoMapTooltip
+
 type ChartSwatchVariant = 'area' | 'line' | 'square'
 
 export const ChartSwatch = ({

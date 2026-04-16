@@ -1,7 +1,6 @@
 import type { FunctionalClassName } from '@/utils'
-import { cn, cnFn } from '@/utils'
+import { cn, cnFn, maybeContainer, maybePortal } from '@/utils'
 import type { ComponentType, ReactNode, RefObject } from 'react'
-import { createPortal } from 'react-dom'
 import type { ChartLegendComponents, LegendItem } from './charts.types'
 import { ChartSwatch } from './ChartSwatch'
 
@@ -38,9 +37,7 @@ export const ChartLegend = ({
 	// Full replacement component
 	if (typeof components === 'function') {
 		const Component = components
-		const content = <Component items={items} />
-		if (target?.current) return createPortal(content, target.current)
-		return content
+		return maybePortal(<Component items={items} />, target)
 	}
 
 	const slots = components
@@ -74,14 +71,5 @@ export const ChartLegend = ({
 		)
 	})
 
-	const content = Container ? (
-		<Container items={items} className={containerClassName}>
-			{children}
-		</Container>
-	) : (
-		<ul className={containerClassName}>{children}</ul>
-	)
-
-	if (target?.current) return createPortal(content, target.current)
-	return content
+	return maybePortal(maybeContainer(Container, 'ul', { items, className: containerClassName, children }), target)
 }

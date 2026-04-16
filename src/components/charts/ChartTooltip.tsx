@@ -1,7 +1,7 @@
 'use client'
 
 import type { FunctionalClassName } from '@/utils'
-import { cn, cnFn } from '@/utils'
+import { cn, cnFn, maybeContainer } from '@/utils'
 import { flip, FloatingPortal, offset, shift, useFloating } from '@floating-ui/react'
 import type { ComponentType, ReactNode } from 'react'
 import { useEffect, useRef } from 'react'
@@ -140,13 +140,7 @@ const DefaultTooltipContent = ({
 		</>
 	)
 
-	return Container ? (
-		<Container data={data} className={containerClassName}>
-			{children}
-		</Container>
-	) : (
-		<div className={containerClassName}>{children}</div>
-	)
+	return maybeContainer(Container, 'div', { data, className: containerClassName, children })
 }
 
 export const ChartTooltip = ({

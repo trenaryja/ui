@@ -1,10 +1,10 @@
 'use client'
 
-import { EMPTY_OBJ } from '@/utils'
+import { EMPTY_OBJ, slotComponents } from '@/utils'
 import { RadialBar, RadialBarChart as RechartsRadialBarChart } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
 import type { ChartTooltipProps, DeriveProps, PolarChartBaseProps } from '../charts.types'
-import { ChartContainer, colorizeData, getClickProps, slotComponents } from '../charts.utils'
+import { ChartContainer, colorizeData, getClickProps } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 
 export type RadialBarChartSubProps = {

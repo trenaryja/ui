@@ -1,6 +1,6 @@
 'use client'
 
-import { cn, EMPTY_OBJ } from '@/utils'
+import { cn, EMPTY_OBJ, slotComponents } from '@/utils'
 import { useId } from 'react'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart as RechartsRadarChart } from 'recharts'
 import { ChartLegend } from '../ChartLegend'
@@ -12,7 +12,6 @@ import {
 	normalizeSeries,
 	renderGradientDefs,
 	resolveColor,
-	slotComponents,
 } from '../charts.utils'
 import { ChartTooltip } from '../ChartTooltip'
 
