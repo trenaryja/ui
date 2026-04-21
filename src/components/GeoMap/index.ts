@@ -1,4 +1,4 @@
 export * from './GeoMap'
-export * from './GeoMap.geo'
 export * from './GeoMap.types'
-export * from './useGeoMap'
+export * from './GeoMap.utils'
+export * from './hooks/useGeoMapView'

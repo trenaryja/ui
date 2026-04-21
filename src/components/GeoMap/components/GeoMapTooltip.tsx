@@ -5,9 +5,7 @@ import type {
 	GeoMapTooltipComponents,
 	GeoMapTooltipFormatters,
 	GeoRegionState,
-} from './GeoMap.types'
-
-const defaultValueFormat = (v: number) => v.toLocaleString()
+} from '../GeoMap.types'
 
 const DefaultSwatch = ({ color, className }: { state: GeoRegionState; color?: string; className?: string }) =>
 	color ? (
@@ -30,16 +28,14 @@ export const GeoMapTooltip = ({
 	formatters?: GeoMapTooltipFormatters
 	components?: Exclude<GeoMapTooltipComponents, ComponentType<any>>
 }) => {
-	const Container = components.container
 	const Swatch = components.swatch ?? DefaultSwatch
-
 	const title = formatters.title ? formatters.title(state) : state.feature.name
 	const label = formatters.label ? formatters.label(state) : 'Value'
 	const value =
 		state.value != null
 			? formatters.value
 				? formatters.value(state.value, state)
-				: defaultValueFormat(state.value)
+				: state.value.toLocaleString()
 			: null
 
 	const containerClassName = cn(
@@ -62,5 +58,5 @@ export const GeoMapTooltip = ({
 		</>
 	)
 
-	return maybeContainer(Container, 'div', { state, className: containerClassName, children })
+	return maybeContainer(components.container, 'div', { state, className: containerClassName, children })
 }

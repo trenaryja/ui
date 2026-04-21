@@ -31,9 +31,7 @@ export const geoProjectionPresets = [
 ] as const
 
 export type GeoProjectionPreset = (typeof geoProjectionPresets)[number]
-
 export type GeoRegionFilter = ((feature: GeoFeature) => boolean) | string
-
 export type GeoDataSource = string | GeoJSON.FeatureCollection | Topology
 
 export type GeoRegionState = {
@@ -46,11 +44,7 @@ export type GeoRegionState = {
 
 export const choroplethScaleTypes = ['quantize', 'quantile', 'linear'] as const
 export type ChoroplethScaleType = (typeof choroplethScaleTypes)[number]
-
-export type ChoroplethDatum = {
-	id: string
-	value: number
-}
+export type ChoroplethDatum = { id: string; value: number }
 
 export type ChoroplethConfig = {
 	data: ChoroplethDatum[]
@@ -61,11 +55,7 @@ export type ChoroplethConfig = {
 	valueFormat?: (value: number) => string
 }
 
-export type GeoLegendItem = {
-	key: string
-	color: string
-	label: string
-}
+export type GeoLegendItem = { key: string; color: string; label: string }
 
 export type GeoMapLegendClassNames = {
 	container?: string

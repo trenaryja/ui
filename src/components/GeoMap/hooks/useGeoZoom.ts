@@ -7,8 +7,66 @@ import 'd3-transition' // extends Selection with .transition()
 import type { ZoomBehavior } from 'd3-zoom'
 import { zoom as d3Zoom, zoomIdentity, zoomTransform } from 'd3-zoom'
 import { useEffect, useRef, useState } from 'react'
-import type { DragBehavior } from './GeoMap.geo'
-import type { GeoZoomState } from './GeoMap.types'
+import type { DragBehavior } from '../GeoMap.utils'
+import type { GeoZoomState } from '../GeoMap.types'
+
+const MIN_SCALE = 1
+const MAX_SCALE = 8
+const ZOOM_EQ_TOLERANCE = 1e-6
+
+const isZoomEqual = (a: GeoZoomState | undefined, b: GeoZoomState | undefined) => {
+	if (!a || !b) return a === b
+	return (
+		Math.abs(a.scale - b.scale) < ZOOM_EQ_TOLERANCE &&
+		Math.abs(a.center[0] - b.center[0]) < ZOOM_EQ_TOLERANCE &&
+		Math.abs(a.center[1] - b.center[1]) < ZOOM_EQ_TOLERANCE
+	)
+}
+
+type ZoomTransform = { x: number; y: number; k: number }
+
+type ProjectionGeometry = { projection: GeoProjection; viewBoxCenter: [number, number]; dragBehavior: DragBehavior }
+
+/**
+ * 'rotate' uses a centered transform (viewport center maps to projection-space (vbCx, vbCy)).
+ * 'pan' / 'rotate-lambda' use translate+scale — undo to find the projection-space point under the viewport center.
+ */
+const computeZoomFromTransform = ({
+	transform,
+	projection,
+	viewBoxCenter,
+	dragBehavior,
+}: ProjectionGeometry & { transform: ZoomTransform }): GeoZoomState => {
+	const [vbCx, vbCy] = viewBoxCenter
+	const px = dragBehavior === 'rotate' ? vbCx : (vbCx - transform.x) / transform.k
+	const py = dragBehavior === 'rotate' ? vbCy : (vbCy - transform.y) / transform.k
+	const inverted = projection.invert?.([px, py]) ?? [0, 0]
+	return { scale: transform.k, center: [inverted[0], inverted[1]] }
+}
+
+/**
+ * Pan: full bidirectional sync via projection.
+ * Rotate: scale via transform; center maps to rotation as [-lon, -lat].
+ * Rotate-lambda: scale via transform; center.x maps to lambda rotation; center.y is best-effort.
+ */
+const computeTransformForZoom = ({
+	zoomState,
+	projection,
+	viewBoxCenter,
+	dragBehavior,
+}: ProjectionGeometry & { zoomState: GeoZoomState }): { transform: ZoomTransform; rotation?: [number, number] } => {
+	const { scale, center } = zoomState
+
+	if (dragBehavior === 'pan') {
+		const projected = projection([center[0], center[1]]) ?? viewBoxCenter
+		return {
+			transform: { x: viewBoxCenter[0] - projected[0] * scale, y: viewBoxCenter[1] - projected[1] * scale, k: scale },
+		}
+	}
+
+	const rotation: [number, number] = dragBehavior === 'rotate' ? [-center[0], -center[1]] : [-center[0], 0]
+	return { transform: { x: 0, y: 0, k: scale }, rotation }
+}
 
 type UseGeoZoomOpts = {
 	svgRef: React.RefObject<SVGSVGElement | null>
@@ -29,10 +87,6 @@ type UseGeoZoomOpts = {
 	subPropsZoom?: Record<string, unknown>
 }
 
-type DragState = { startRotation: [number, number]; startPoint: [number, number]; lastY: number }
-
-type ZoomBehaviorRef = React.RefObject<ZoomBehavior<SVGSVGElement, unknown> | null>
-
 type ZoomCtx = {
 	svg: SVGSVGElement
 	zoomG: SVGGElement
@@ -40,13 +94,13 @@ type ZoomCtx = {
 	zoomEnabled: boolean
 	dragEnabled: boolean
 	dragBehavior: DragBehavior
-	behaviorRef: ZoomBehaviorRef
-	dragStateRef: React.RefObject<DragState | null>
+	behaviorRef: React.RefObject<ZoomBehavior<SVGSVGElement, unknown> | null>
+	dragStateRef: React.RefObject<{ startRotation: [number, number]; startPoint: [number, number]; lastY: number } | null>
 	rotationRef: React.RefObject<[number, number] | undefined>
 	viewBoxSizeRef: React.RefObject<[number, number]>
 	projectionScaleRef: React.RefObject<number>
 	projectionRef: React.RefObject<GeoProjection>
-	setScale: (k: number) => void
+	deferScale: (k: number) => void
 	emitZoom: (z: GeoZoomState) => void
 	onRotate?: (rotation: [number, number] | undefined) => void
 	onDragStart?: () => void
@@ -54,66 +108,7 @@ type ZoomCtx = {
 	subPropsZoom?: Record<string, unknown>
 }
 
-const MIN_SCALE = 1
-const MAX_SCALE = 8
-const ZOOM_EQ_TOLERANCE = 1e-6
-
 const noDragFilter = (e: Event) => e.type !== 'mousedown' && e.type !== 'touchstart'
-
-const isZoomEqual = (a: GeoZoomState | undefined, b: GeoZoomState | undefined) => {
-	if (!a || !b) return a === b
-	return (
-		Math.abs(a.scale - b.scale) < ZOOM_EQ_TOLERANCE &&
-		Math.abs(a.center[0] - b.center[0]) < ZOOM_EQ_TOLERANCE &&
-		Math.abs(a.center[1] - b.center[1]) < ZOOM_EQ_TOLERANCE
-	)
-}
-
-type ProjectionCtx = {
-	svg: SVGSVGElement
-	projection: GeoProjection
-	viewBoxCenter: [number, number]
-	dragBehavior: DragBehavior
-}
-
-const readZoomState = ({ svg, projection, viewBoxCenter, dragBehavior }: ProjectionCtx): GeoZoomState => {
-	const t = zoomTransform(svg)
-	const [vbCx, vbCy] = viewBoxCenter
-	// 'rotate' uses a centered transform — the viewport center always maps to projection-space (vbCx, vbCy).
-	// 'pan' / 'rotate-λ' use translate+scale — undo to find the projection-space point under the viewport center.
-	const px = dragBehavior === 'rotate' ? vbCx : (vbCx - t.x) / t.k
-	const py = dragBehavior === 'rotate' ? vbCy : (vbCy - t.y) / t.k
-	const inverted = projection.invert?.([px, py]) ?? [0, 0]
-	return { scale: t.k, center: [inverted[0], inverted[1]] }
-}
-
-const applyZoomState = ({
-	svg,
-	behavior,
-	zoomState,
-	projection,
-	viewBoxCenter,
-	dragBehavior,
-	onRotate,
-}: ProjectionCtx & {
-	behavior: ZoomBehavior<SVGSVGElement, unknown>
-	zoomState: GeoZoomState
-	onRotate?: (rotation: [number, number] | undefined) => void
-}) => {
-	const { scale, center } = zoomState
-
-	if (dragBehavior === 'pan') {
-		const projected = projection([center[0], center[1]]) ?? viewBoxCenter
-		const tx = viewBoxCenter[0] - projected[0] * scale
-		const ty = viewBoxCenter[1] - projected[1] * scale
-		select(svg).call(behavior.transform, zoomIdentity.translate(tx, ty).scale(scale))
-		return
-	}
-	// Rotate variants: scale via d3-zoom; center is best-effort via rotation (lambda for rotate-λ, both for rotate).
-	if (dragBehavior === 'rotate') onRotate?.([-center[0], -center[1]])
-	else if (dragBehavior === 'rotate-λ') onRotate?.([-center[0], 0])
-	select(svg).call(behavior.transform, zoomIdentity.scale(scale))
-}
 
 const setupPanZoom = ({
 	svg,
@@ -150,36 +145,13 @@ const setupPanZoom = ({
 			onScaleChange?.(k)
 			if (e.sourceEvent) onUserZoom?.()
 		})
-
 	if (!dragEnabled) behavior.filter(noDragFilter)
-
 	select(svg).call(behavior)
 	return behavior
 }
 
-const attachRotateDrag = ({
-	svg,
-	dragStateRef,
-	rotationRef,
-	lambdaOnly,
-	viewBoxSizeRef,
-	projectionScaleRef,
-	onPanY,
-	onRotate,
-	onDragStart,
-	onDragEnd,
-}: {
-	svg: SVGSVGElement
-	dragStateRef: React.RefObject<DragState | null>
-	rotationRef: React.RefObject<[number, number] | undefined>
-	lambdaOnly: boolean
-	viewBoxSizeRef: React.RefObject<[number, number]>
-	projectionScaleRef: React.RefObject<number>
-	onPanY?: (dyMouse: number) => void
-	onRotate?: (rotation: [number, number] | undefined) => void
-	onDragStart?: () => void
-	onDragEnd?: () => void
-}) => {
+const attachRotateDrag = (ctx: ZoomCtx, lambdaOnly: boolean, onPanY?: (dyMouse: number) => void) => {
+	const { svg, dragStateRef, rotationRef, viewBoxSizeRef, projectionScaleRef, onRotate, onDragStart, onDragEnd } = ctx
 	const DRAG_THRESHOLD = 3
 	let pendingPointerId: number | null = null
 	let isDragging = false
@@ -215,8 +187,7 @@ const attachRotateDrag = ({
 		const rect = svg.getBoundingClientRect()
 		const { k } = zoomTransform(svg)
 		const svgPerMouse = viewBoxSizeRef.current[0] / rect.width
-		const degreesPerSvgPx = 180 / Math.PI / projectionScaleRef.current
-		const sensitivity = (svgPerMouse * degreesPerSvgPx) / k
+		const sensitivity = (svgPerMouse * (180 / Math.PI / projectionScaleRef.current)) / k
 		const newλ = startRotation[0] + dx * sensitivity
 
 		if (lambdaOnly) {
@@ -224,8 +195,7 @@ const attachRotateDrag = ({
 			onRotate?.([newλ, 0])
 		} else {
 			const dy = e.clientY - startPoint[1]
-			const newφ = Math.max(-90, Math.min(90, startRotation[1] - dy * sensitivity))
-			onRotate?.([newλ, newφ])
+			onRotate?.([newλ, Math.max(-90, Math.min(90, startRotation[1] - dy * sensitivity))])
 		}
 	}
 
@@ -252,8 +222,8 @@ const attachRotateDrag = ({
 
 const emitFromCtx = (ctx: ZoomCtx) => () =>
 	ctx.emitZoom(
-		readZoomState({
-			svg: ctx.svg,
+		computeZoomFromTransform({
+			transform: zoomTransform(ctx.svg),
 			projection: ctx.projectionRef.current,
 			viewBoxCenter: ctx.viewBoxCenter,
 			dragBehavior: ctx.dragBehavior,
@@ -270,7 +240,7 @@ const setupRotateGlobe = (ctx: ZoomCtx) => {
 			.scaleExtent([MIN_SCALE, MAX_SCALE])
 			.on('zoom', (e) => {
 				const { k } = e.transform
-				ctx.setScale(k)
+				ctx.deferScale(k)
 				if (k === 1) ctx.zoomG.removeAttribute('transform')
 				else ctx.zoomG.setAttribute('transform', `translate(${cx},${cy}) scale(${k}) translate(${-cx},${-cy})`)
 				if (e.sourceEvent) onUserZoom()
@@ -280,8 +250,7 @@ const setupRotateGlobe = (ctx: ZoomCtx) => {
 		select(ctx.svg).call(behavior)
 	}
 
-	if (ctx.dragEnabled) cleanups.push(attachRotateDrag({ ...ctx, lambdaOnly: false }))
-
+	if (ctx.dragEnabled) cleanups.push(attachRotateDrag(ctx, false))
 	return cleanups
 }
 
@@ -296,25 +265,21 @@ const setupRotateLambda = (ctx: ZoomCtx) => {
 			viewBoxSize: ctx.viewBoxSizeRef.current,
 			zoomEnabled: true,
 			dragEnabled: false,
-			onScaleChange: ctx.setScale,
+			onScaleChange: ctx.deferScale,
 			onUserZoom,
 		})
 	}
 
 	if (ctx.dragEnabled) {
 		cleanups.push(
-			attachRotateDrag({
-				...ctx,
-				lambdaOnly: true,
-				onPanY: (dyMouse) => {
-					if (!ctx.behaviorRef.current) return
-					const t = zoomTransform(ctx.svg)
-					// At scale=1 the map fills the viewport — no room to pan vertically.
-					if (t.k === 1) return
-					const rect = ctx.svg.getBoundingClientRect()
-					const dySvg = dyMouse * (ctx.viewBoxSizeRef.current[0] / rect.width)
-					select(ctx.svg).call(ctx.behaviorRef.current.translateBy, 0, dySvg / t.k)
-				},
+			attachRotateDrag(ctx, true, (dyMouse) => {
+				if (!ctx.behaviorRef.current) return
+				const t = zoomTransform(ctx.svg)
+				// At scale=1 the map fills the viewport — no room to pan vertically.
+				if (t.k === 1) return
+				const rect = ctx.svg.getBoundingClientRect()
+				const dySvg = dyMouse * (ctx.viewBoxSizeRef.current[0] / rect.width)
+				select(ctx.svg).call(ctx.behaviorRef.current.translateBy, 0, dySvg / t.k)
 			}),
 		)
 	}
@@ -330,7 +295,7 @@ const setupPan = (ctx: ZoomCtx) => {
 		viewBoxSize: ctx.viewBoxSizeRef.current,
 		zoomEnabled: ctx.zoomEnabled,
 		dragEnabled: ctx.dragEnabled,
-		onScaleChange: ctx.setScale,
+		onScaleChange: ctx.deferScale,
 		onUserZoom,
 	})
 	behavior.on('start.tooltip', (e) => {
@@ -357,6 +322,7 @@ const SETUP_BY_BEHAVIOR: Record<DragBehavior, (ctx: ZoomCtx) => (() => void)[]> 
 	pan: setupPan,
 }
 
+// eslint-disable-next-line max-lines-per-function -- orchestrates d3-zoom lifecycle, rAF coalescing, controlled/uncontrolled sync, and three drag strategies
 export const useGeoZoom = ({
 	svgRef,
 	zoomGRef,
@@ -376,8 +342,12 @@ export const useGeoZoom = ({
 	subPropsZoom,
 }: UseGeoZoomOpts) => {
 	const behaviorRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null)
-	const dragStateRef = useRef<DragState | null>(null)
+	const dragStateRef = useRef<ZoomCtx['dragStateRef']['current']>(null)
 	const lastAppliedRef = useRef<GeoZoomState | undefined>(undefined)
+	const initialAppliedRef = useRef(false)
+	const pendingEmitRef = useRef<GeoZoomState | undefined>(undefined)
+	const pendingScaleRef = useRef<number | null>(null)
+	const rafIdRef = useRef<number | null>(null)
 	const [scale, setScale] = useState(1)
 
 	const [zoomState, setZoomState] = useUncontrolled<GeoZoomState | undefined>({
@@ -387,7 +357,6 @@ export const useGeoZoom = ({
 		onChange: onZoomChange,
 	})
 
-	// Live refs read at gesture time so the effect doesn't tear down on every rotation update.
 	const vbSize: [number, number] = [viewBoxCenter[0] * 2, viewBoxCenter[1] * 2]
 	const projectionScaleRef = useRef(projectionScale)
 	const projectionRef = useRef(projection)
@@ -398,10 +367,30 @@ export const useGeoZoom = ({
 	viewBoxSizeRef.current = vbSize
 	rotationRef.current = rotation
 
+	const scheduleRaf = () => {
+		if (rafIdRef.current != null) return
+		rafIdRef.current = requestAnimationFrame(() => {
+			rafIdRef.current = null
+			const t0 = performance.now()
+			if (pendingScaleRef.current != null) setScale(pendingScaleRef.current)
+			if (pendingEmitRef.current) setZoomState(pendingEmitRef.current)
+			pendingScaleRef.current = null
+			pendingEmitRef.current = undefined
+			const dt = performance.now() - t0
+			if (dt > 2) console.log(`[raf setState] ${dt.toFixed(1)}ms`)
+		})
+	}
+
+	const deferScale = (k: number) => {
+		pendingScaleRef.current = k
+		scheduleRaf()
+	}
+
 	const emitZoom = (z: GeoZoomState) => {
 		if (isZoomEqual(z, lastAppliedRef.current)) return
 		lastAppliedRef.current = z
-		setZoomState(z)
+		pendingEmitRef.current = z
+		scheduleRaf()
 	}
 
 	useEffect(() => {
@@ -428,7 +417,7 @@ export const useGeoZoom = ({
 			viewBoxSizeRef,
 			projectionScaleRef,
 			projectionRef,
-			setScale,
+			deferScale,
 			emitZoom,
 			onRotate,
 			onDragStart,
@@ -439,36 +428,41 @@ export const useGeoZoom = ({
 		return () => {
 			select(svg).on('.zoom', null)
 			for (const fn of cleanups) fn()
+			if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current)
 		}
+		// Serialize subPropsZoom so an inline `{...}` literal from the consumer doesn't tear down d3-zoom every render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- viewBoxCenter, projection, rotation, callbacks read via refs to avoid tearing down on every update
-	}, [svgRef, zoomGRef, zoomEnabled, dragEnabled, dragBehavior, subPropsZoom])
+	}, [svgRef, zoomGRef, zoomEnabled, dragEnabled, dragBehavior, subPropsZoom && JSON.stringify(subPropsZoom)])
 
 	useEffect(() => {
 		const svg = svgRef.current
 		const behavior = behaviorRef.current
-		if (!svg || !behavior || !zoomState) return
-		if (isZoomEqual(zoomState, lastAppliedRef.current)) return
-		lastAppliedRef.current = zoomState
-		applyZoomState({
-			svg,
-			behavior,
-			zoomState,
+		if (!svg || !behavior) return
+		// In uncontrolled mode (no `zoom`, after initial), d3-zoom is the source of truth — never apply.
+		const target = zoom ?? (initialAppliedRef.current ? undefined : defaultZoom)
+		if (!target) return
+		if (isZoomEqual(target, lastAppliedRef.current)) return
+		initialAppliedRef.current = true
+		lastAppliedRef.current = target
+		const { transform, rotation: rot } = computeTransformForZoom({
+			zoomState: target,
 			projection: projectionRef.current,
 			viewBoxCenter,
 			dragBehavior,
-			onRotate,
 		})
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- projection/viewBoxCenter/onRotate read via refs; re-apply only when controlled value or behavior changes
-	}, [zoomState, dragBehavior])
+		if (rot) onRotate?.(rot)
+		select(svg).call(behavior.transform, zoomIdentity.translate(transform.x, transform.y).scale(transform.k))
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- projection/viewBoxCenter/onRotate/defaultZoom read at fire time; re-apply only on controlled value or behavior change
+	}, [zoom, dragBehavior])
 
 	const zoomIn = () => {
-		if (!behaviorRef.current || !svgRef.current) return
-		select(svgRef.current).transition().duration(300).call(behaviorRef.current.scaleBy, 2)
+		if (behaviorRef.current && svgRef.current)
+			select(svgRef.current).transition().duration(300).call(behaviorRef.current.scaleBy, 2)
 	}
 
 	const zoomOut = () => {
-		if (!behaviorRef.current || !svgRef.current) return
-		select(svgRef.current).transition().duration(300).call(behaviorRef.current.scaleBy, 0.5)
+		if (behaviorRef.current && svgRef.current)
+			select(svgRef.current).transition().duration(300).call(behaviorRef.current.scaleBy, 0.5)
 	}
 
 	const resetZoom = () => {
@@ -479,9 +473,13 @@ export const useGeoZoom = ({
 		setZoomState(undefined)
 	}
 
-	const canZoomIn = scale < MAX_SCALE
-	const canZoomOut = scale > MIN_SCALE
-	const canReset = scale !== 1
-
-	return { zoomState, zoomIn, zoomOut, resetZoom, canZoomIn, canZoomOut, canReset }
+	return {
+		zoomState,
+		zoomIn,
+		zoomOut,
+		resetZoom,
+		canZoomIn: scale < MAX_SCALE,
+		canZoomOut: scale > MIN_SCALE,
+		canReset: scale !== 1,
+	}
 }

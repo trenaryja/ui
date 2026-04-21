@@ -1,7 +1,7 @@
 import { cn, maybePortal } from '@/utils'
 import type { RefObject } from 'react'
 import { LuMinus, LuPlus, LuRotateCcw } from 'react-icons/lu'
-import { Button } from '../Button/Button'
+import { Button } from '../../Button/Button'
 
 export const GeoMapZoomControls = ({
 	zoomIn,

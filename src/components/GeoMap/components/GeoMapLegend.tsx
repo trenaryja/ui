@@ -6,20 +6,13 @@ import type {
 	GeoMapLegendClassNames,
 	GeoMapLegendComponents,
 	GeoMapLegendFormatters,
-} from './GeoMap.types'
-import { DEFAULT_CHORO_COLORS } from './GeoMap.utils'
+} from '../GeoMap.types'
+import { DEFAULT_CHORO_COLORS } from '../GeoMap.utils'
 
 const DefaultSwatch = ({ item, className }: { item: GeoLegendItem; className?: string }) => (
 	<span
 		className={cn('size-3 shrink-0 rounded-xs border border-current/25', className)}
 		style={{ backgroundColor: item.color }}
-	/>
-)
-
-const GradientBar = ({ colors, className }: { colors: string[]; className?: string }) => (
-	<span
-		className={cn('h-3 min-w-20 shrink-0 rounded-field outline outline-current/25', className)}
-		style={{ background: `linear-gradient(to right, ${colors.join(', ')})` }}
 	/>
 )
 
@@ -63,7 +56,10 @@ export const GeoMapLegend = ({
 				<span className={cn('opacity-75', cnFn(classNames.label, items[0]))}>{items[0].label}</span>
 			</li>
 			<li className='flex items-center'>
-				<GradientBar colors={stops} className={classNames.gradient} />
+				<span
+					className={cn('h-3 min-w-20 shrink-0 rounded-field outline outline-current/25', classNames.gradient)}
+					style={{ background: `linear-gradient(to right, ${stops.join(', ')})` }}
+				/>
 			</li>
 			<li className={cn('flex items-center gap-1.5', cnFn(classNames.item, items[1]))}>
 				<span className={cn('opacity-75', cnFn(classNames.label, items[1]))}>{items[1].label}</span>

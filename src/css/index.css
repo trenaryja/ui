@@ -59,13 +59,3 @@
 @utility has-timeout-bar {
 	@apply relative overflow-hidden;
 }
-
-@utility fill-pattern-stripe {
-	fill: url(#pattern-stripe);
-}
-@utility fill-pattern-dot {
-	fill: url(#pattern-dot);
-}
-@utility fill-pattern-crosshatch {
-	fill: url(#pattern-crosshatch);
-}

@@ -3,9 +3,9 @@
 import { cn, EMPTY_OBJ } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
 import { Suspense } from 'react'
+import { GeoMapView } from './components/GeoMapView'
+import type { GeoMapViewProps } from './components/GeoMapView'
 import type { GeoMapBaseProps } from './GeoMap.types'
-import type { GeoMapViewProps } from './GeoMapView'
-import { GeoMapView } from './GeoMapView'
 
 type SingleSelection = {
 	selection: 'single'
@@ -28,6 +28,8 @@ export type GeoMapProps =
 	| (GeoMapBaseProps & MultiSelection)
 	| (GeoMapBaseProps & SingleSelection)
 
+const toArray = (v: string | null | undefined) => (v === undefined ? undefined : v ? [v] : [])
+
 const GeoMapSelectable = ({
 	selection,
 	value,
@@ -41,13 +43,10 @@ const GeoMapSelectable = ({
 }: GeoMapBaseProps & (MultiSelection | SingleSelection)) => {
 	const isMulti = selection === 'multi'
 	const [selectedIds, setSelectedIds] = useUncontrolled<string[]>({
-		value: value === undefined ? undefined : isMulti ? value : value ? [value] : [],
-		defaultValue: defaultValue === undefined ? undefined : isMulti ? defaultValue : defaultValue ? [defaultValue] : [],
+		value: isMulti ? value : toArray(value),
+		defaultValue: isMulti ? defaultValue : toArray(defaultValue),
 		finalValue: [],
-		onChange: (next) => {
-			if (isMulti) onChange?.(next)
-			else onChange?.(next[0] ?? null)
-		},
+		onChange: (next) => (isMulti ? onChange?.(next) : onChange?.(next[0] ?? null)),
 	})
 
 	const toggle = (id: string) => {
@@ -72,7 +71,6 @@ const GeoMapSelectable = ({
 	)
 }
 
-// Internal Suspense boundary handles the one-time lazy load of TopoJSON data
 export const GeoMap = ({ ...props }: GeoMapProps) => (
 	<Suspense fallback={null}>
 		{props.selection ? <GeoMapSelectable {...props} /> : <GeoMapView {...(props as GeoMapViewProps)} />}

@@ -7,9 +7,9 @@ import type { DemoMeta } from '@demo'
 import { faker } from '@faker-js/faker'
 import { useEffect, useMemo, useState } from 'react'
 import * as R from 'remeda'
-import type { GeoMapPreset } from './GeoMap.geo'
-import { filterFeatures, getProjectionsByTag, loadPresetFeatures } from './GeoMap.geo'
 import type { GeoProjectionPreset } from './GeoMap.types'
+import type { GeoMapPreset } from './GeoMap.utils'
+import { filterFeatures, getProjectionsByTag, loadPresetFeatures } from './GeoMap.utils'
 
 export const meta: DemoMeta = { title: 'GeoMap', category: 'components' }
 
@@ -236,8 +236,8 @@ export function Demo() {
 		showTooltip: true,
 		showLegend: true,
 		showGraticule: false,
-		showZoom: false,
-		showDraggable: false,
+		showZoom: true,
+		showDraggable: true,
 	})
 	const [selected, setSelected] = useState<string[]>([])
 	const [singleSelected, setSingleSelected] = useState<string | null>(null)

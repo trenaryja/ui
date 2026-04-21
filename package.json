@@ -52,6 +52,7 @@
 	"devDependencies": {
 		"@faker-js/faker": "^10.3.0",
 		"@fullstacksjs/eslint-config": "^14.0.2",
+		"@rolldown/plugin-babel": "^0.2.3",
 		"@tailwindcss/cli": "^4.2.1",
 		"@tailwindcss/postcss": "^4.2.1",
 		"@tailwindcss/typography": "^0.5.19",
@@ -65,6 +66,7 @@
 		"@types/topojson-client": "^3.1.5",
 		"@types/topojson-specification": "^1.0.5",
 		"@vitejs/plugin-react": "^6.0.1",
+		"babel-plugin-react-compiler": "^1.0.0",
 		"concurrently": "^9.2.1",
 		"daisyui": "^5.5.19",
 		"eslint": "^10.0.3",

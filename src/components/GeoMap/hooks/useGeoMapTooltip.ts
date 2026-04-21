@@ -2,13 +2,9 @@
 
 import { flip, offset, shift, useFloating } from '@floating-ui/react'
 import { useEffect, useSyncExternalStore } from 'react'
-import type { GeoFeature } from './GeoMap.types'
+import type { GeoFeature } from '../GeoMap.types'
 
-type TooltipSnapshot = {
-	featureIdx: number
-	feature: GeoFeature
-	value?: number
-} | null
+type TooltipSnapshot = { featureIdx: number; feature: GeoFeature; value?: number } | null
 
 export type TooltipStore = {
 	subscribe: (cb: () => void) => () => void
@@ -21,7 +17,7 @@ export type TooltipStore = {
 	setSuppressed: (suppressed: boolean) => void
 }
 
-// External store: hover-state changes don't re-render anything besides the tooltip itself.
+// Hover-state changes don't re-render anything besides the tooltip itself
 export const createTooltipStore = (): TooltipStore => {
 	let snapshot: TooltipSnapshot = null
 	let suppressed = false
@@ -85,7 +81,7 @@ export const useFloatingTooltip = (store: TooltipStore, isOpen: boolean) => {
 		})
 	}, [refs, store])
 
-	// Pointer moves drive floating-ui directly — bypasses React so we don't re-render on every pixel.
+	// Pointer moves drive floating-ui directly — bypasses React so we don't re-render on every pixel
 	useEffect(() => {
 		store.onMove(update)
 		return () => store.onMove(null)
