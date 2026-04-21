@@ -371,13 +371,10 @@ export const useGeoZoom = ({
 		if (rafIdRef.current != null) return
 		rafIdRef.current = requestAnimationFrame(() => {
 			rafIdRef.current = null
-			const t0 = performance.now()
 			if (pendingScaleRef.current != null) setScale(pendingScaleRef.current)
 			if (pendingEmitRef.current) setZoomState(pendingEmitRef.current)
 			pendingScaleRef.current = null
 			pendingEmitRef.current = undefined
-			const dt = performance.now() - t0
-			if (dt > 2) console.log(`[raf setState] ${dt.toFixed(1)}ms`)
 		})
 	}
 
