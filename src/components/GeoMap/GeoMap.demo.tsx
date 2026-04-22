@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react'
 import * as R from 'remeda'
 import type { GeoProjectionPreset } from './GeoMap.types'
 import type { GeoMapPreset } from './GeoMap.utils'
-import { filterFeatures, getProjectionsByTag, loadPresetFeatures } from './GeoMap.utils'
+import { getProjectionsByTag, loadPresetFeatures } from './GeoMap.utils'
 
 export const meta: DemoMeta = { title: 'GeoMap', category: 'components' }
 
@@ -27,19 +27,6 @@ const MAP_PRESETS: { value: GeoMapPreset; label: string }[] = [
 	{ value: 'us-counties', label: 'US Counties' },
 ]
 
-const REGION_PRESETS: { value: string; label: string }[] = [
-	{ value: '', label: 'All' },
-	{ value: 'europe', label: 'Europe' },
-	{ value: 'north-america', label: 'North America' },
-	{ value: 'south-america', label: 'South America' },
-	{ value: 'africa', label: 'Africa' },
-	{ value: 'asia', label: 'Asia' },
-	{ value: 'oceania', label: 'Oceania' },
-	{ value: 'US-TX', label: 'Texas (counties)' },
-	{ value: 'US-CA', label: 'California (counties)' },
-	{ value: 'US-NY', label: 'New York (counties)' },
-]
-
 const projectionsByTag = getProjectionsByTag()
 
 const fmtPct = (v: number) => formatPercent(v, { decimals: 0 })
@@ -52,20 +39,18 @@ const randChoroplethData = (ids: readonly string[]): ChoroplethDatum[] => {
 	return ids.map((id, i) => ({ id, value: Math.round(((raw[i] - min) / span) * 100) / 100 }))
 }
 
-const useFeatureIds = (geo: GeoMapPreset, region: string): readonly string[] => {
+const useFeatureIds = (geo: GeoMapPreset): readonly string[] => {
 	const [ids, setIds] = useState<readonly string[]>([])
 	useEffect(() => {
 		let cancelled = false
 		loadPresetFeatures(geo).then((features) => {
-			if (cancelled) return
-			const filtered = region ? filterFeatures(features, region) : features
-			setIds(filtered.map((f) => f.id))
+			if (!cancelled) setIds(features.map((f) => f.id))
 		})
 
 		return () => {
 			cancelled = true
 		}
-	}, [geo, region])
+	}, [geo])
 	return ids
 }
 
@@ -74,7 +59,6 @@ type SelectionMode = '' | 'multi' | 'single'
 type DemoState = {
 	mapPreset: GeoMapPreset
 	projectionPreset: '' | GeoProjectionPreset
-	regionFilter: string
 	selection: SelectionMode
 	colorPreset: string
 	scaleType: ChoroplethScaleType
@@ -106,7 +90,6 @@ const MapControls = ({
 					value={s.mapPreset}
 					onChange={(e) => {
 						set('mapPreset', e.target.value as GeoMapPreset)
-						set('regionFilter', '')
 						onReset()
 					}}
 				>
@@ -132,22 +115,6 @@ const MapControls = ({
 								</option>
 							))}
 						</optgroup>
-					))}
-				</Select>
-			</Field>
-			<Field label='Region'>
-				<Select
-					className='select-sm'
-					value={s.regionFilter}
-					onChange={(e) => {
-						set('regionFilter', e.target.value)
-						onReset()
-					}}
-				>
-					{REGION_PRESETS.map((r) => (
-						<option key={r.value} value={r.value}>
-							{r.label}
-						</option>
 					))}
 				</Select>
 			</Field>
@@ -227,7 +194,6 @@ export function Demo() {
 	const [s, setS] = useState<DemoState>({
 		mapPreset: 'world',
 		projectionPreset: '',
-		regionFilter: '',
 		selection: '',
 		colorPreset: 'default',
 		scaleType: 'quantize',
@@ -246,10 +212,7 @@ export function Demo() {
 	const set = <TKey extends keyof DemoState>(key: TKey, value: DemoState[TKey]) =>
 		setS((prev) => ({ ...prev, [key]: value }))
 
-	const isUsRegion = s.regionFilter.startsWith('US-')
-	const effectiveGeo = isUsRegion ? ('us-counties' as GeoMapPreset) : s.mapPreset
-
-	const featureIds = useFeatureIds(effectiveGeo, s.regionFilter)
+	const featureIds = useFeatureIds(s.mapPreset)
 	// eslint-disable-next-line react-hooks/exhaustive-deps -- randomSeed is intentional for re-randomization on button click
 	const choroplethData = useMemo(() => randChoroplethData(featureIds), [featureIds, randomSeed])
 
@@ -264,16 +227,17 @@ export function Demo() {
 		: undefined
 
 	const sharedProps = {
-		geo: effectiveGeo,
+		geo: s.mapPreset,
 		projection: s.projectionPreset || undefined,
-		region: s.regionFilter || undefined,
 		choropleth,
 		formatters: { tooltip: { value: (v: number) => fmtPct(v) } },
 		draggable: s.showDraggable,
 		zoomable: s.showZoom,
 		components: { tooltip: s.showTooltip, legend: s.showLegend, graticule: s.showGraticule, zoom: s.showZoom },
-		classNames: { zoom: 'absolute right-1 bottom-1' },
-	}
+		classNames: {
+			zoom: 'absolute right-1 bottom-1',
+		},
+	} satisfies GeoMapProps
 
 	const resetSelection = () => {
 		setSelected([])
@@ -288,19 +252,9 @@ export function Demo() {
 				: sharedProps
 
 	return (
-		<div className='grid size-full grid-rows-[auto_1fr] gap-4 overflow-hidden p-4'>
+		<div className='grid size-full max-h-[calc(100vh-4rem)] place-items-center grid-rows-[auto_1fr] gap-4 p-4 full-bleed'>
 			<MapControls s={s} set={set} onReset={resetSelection} onRandomize={() => setRandomSeed((x) => x + 1)} />
-			<div className='flex min-h-0 flex-col items-center justify-center overflow-hidden'>
-				<div className='relative h-full max-h-full max-w-full'>
-					<GeoMap {...geoMapProps} className='h-full w-auto max-h-full max-w-full' />
-				</div>
-				{s.selection === 'multi' && selected.length > 0 && (
-					<div className='text-sm opacity-75'>Selected: {selected.join(', ')}</div>
-				)}
-				{s.selection === 'single' && singleSelected && (
-					<div className='text-sm opacity-75'>Selected: {singleSelected}</div>
-				)}
-			</div>
+			<GeoMap {...geoMapProps} />
 		</div>
 	)
 }
