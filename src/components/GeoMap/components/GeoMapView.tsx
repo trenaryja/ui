@@ -11,13 +11,13 @@ import type {
 	GeoRegionState,
 } from '../GeoMap.types'
 import type { buildLegendItems, buildPathGenerator, ChoroData } from '../GeoMap.utils'
-import { GeoMapLegend } from './GeoMapLegend'
-import { GeoMapTooltip } from './GeoMapTooltip'
-import { GeoMapZoomControls } from './GeoMapZoomControls'
 import type { TooltipStore } from '../hooks/useGeoMapTooltip'
 import { useFloatingTooltip, useTooltipData } from '../hooks/useGeoMapTooltip'
 import type { GeoMapViewProps } from '../hooks/useGeoMapView'
 import { buildGraticuleMarkup, GeoMapContext, useGeoMapView } from '../hooks/useGeoMapView'
+import { GeoMapLegend } from './GeoMapLegend'
+import { GeoMapTooltip } from './GeoMapTooltip'
+import { GeoMapZoomControls } from './GeoMapZoomControls'
 
 export type { GeoMapViewProps } from '../hooks/useGeoMapView'
 
@@ -163,7 +163,7 @@ export const GeoMapView = (props: GeoMapViewProps) => {
 				xmlns='http://www.w3.org/2000/svg'
 				ref={svgRef}
 				viewBox={viewBox}
-				className={cn('w-full h-auto', className)}
+				className={cn('size-full', className)}
 				{...restSvgProps}
 			>
 				<g ref={zoomGRef}>

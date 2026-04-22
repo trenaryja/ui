@@ -3,8 +3,8 @@
 import { cn, EMPTY_OBJ } from '@/utils'
 import { useUncontrolled } from '@mantine/hooks'
 import { Suspense } from 'react'
-import { GeoMapView } from './components/GeoMapView'
 import type { GeoMapViewProps } from './components/GeoMapView'
+import { GeoMapView } from './components/GeoMapView'
 import type { GeoMapBaseProps } from './GeoMap.types'
 
 type SingleSelection = {
@@ -58,7 +58,7 @@ const GeoMapSelectable = ({
 		<>
 			<GeoMapView
 				{...rest}
-				className={cn(className, '[&_path]:cursor-pointer')}
+				className={cn('[&_path]:cursor-pointer', className)}
 				classNames={classNames}
 				selectedIds={selectedIds}
 				onRegionClick={(feature, index) => {

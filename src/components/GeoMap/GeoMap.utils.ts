@@ -8,11 +8,12 @@ import type { GeometryCollection, Topology } from 'topojson-specification'
 import type {
 	ChoroplethConfig,
 	GeoDataSource,
-	GeoFeature,
 	GeoLegendItem,
 	GeoProjectionPreset,
+	GeoRegion,
 	GeoRegionFilter,
 	GeoZoomState,
+	NamedFeature,
 } from './GeoMap.types'
 
 const SPHERE: GeoPermissibleObjects = { type: 'Sphere' }
@@ -84,27 +85,42 @@ export const getProjectionAspectRatio = (
 	return ratio
 }
 
-const mapFeature = (f: GeoJSON.Feature, i: number, fallbackPrefix: string): GeoFeature => {
-	const props = (f.properties ?? {}) as Record<string, unknown>
+/**
+ * Normalize a `GeoJSON.Feature` into a `NamedFeature`: stringifies `id` (with fallback)
+ * and hoists `name` from `properties.name` or `properties.NAME`. Generic over geometry
+ * and properties so it serves regions, points, and lines from one definition.
+ */
+export const normalizeFeature = <G extends GeoJSON.Geometry | null, P extends Record<string, unknown>>(
+	f: GeoJSON.Feature<G, P | null>,
+	i: number,
+	fallbackPrefix: string,
+): NamedFeature<G, P> => {
+	const props = (f.properties ?? ({} as P)) as P & { id?: unknown; name?: unknown; NAME?: unknown }
 	const rawId = f.id ?? props.id
 	return {
+		...f,
 		id: rawId != null ? String(rawId) : `${fallbackPrefix}${i}`,
 		name: String(props.NAME ?? props.name ?? ''),
-		geometry: f.geometry,
 		properties: props,
 	}
 }
 
-const topoToFeatures = (topology: Topology, objectName?: string): GeoFeature[] => {
+const topoToRegions = (topology: Topology, objectName?: string): GeoRegion[] => {
 	const name = objectName ?? Object.keys(topology.objects)[0]
 	const obj = topology.objects[name] as GeometryCollection
-	return topojson.feature(topology, obj).features.map((f, i) => mapFeature(f, i, `_${name}_`))
+	return topojson
+		.feature(topology, obj)
+		.features.map((f, i) =>
+			normalizeFeature(f as GeoJSON.Feature<GeoJSON.MultiPolygon | GeoJSON.Polygon>, i, `_${name}_`),
+		)
 }
 
-export const resolveGeoData = (geo: Exclude<GeoDataSource, string>): GeoFeature[] => {
+export const resolveGeoData = (geo: Exclude<GeoDataSource, string>): GeoRegion[] => {
 	if ('type' in geo && geo.type === 'FeatureCollection')
-		return (geo as GeoJSON.FeatureCollection).features.map((f, i) => mapFeature(f, i, ''))
-	if ('type' in geo && geo.type === 'Topology') return topoToFeatures(geo as Topology)
+		return (geo as GeoJSON.FeatureCollection).features.map((f, i) =>
+			normalizeFeature(f as GeoJSON.Feature<GeoJSON.MultiPolygon | GeoJSON.Polygon>, i, ''),
+		)
+	if ('type' in geo && geo.type === 'Topology') return topoToRegions(geo as Topology)
 	return []
 }
 
@@ -132,9 +148,9 @@ export const isGeoMapPreset = (v: unknown): v is GeoMapPreset => typeof v === 's
 
 export const defaultProjectionForPreset = (preset: GeoMapPreset) => presetDefaultProjection[preset]
 
-export const loadPresetFeatures = async (preset: GeoMapPreset): Promise<GeoFeature[]> => {
+export const loadPresetFeatures = async (preset: GeoMapPreset): Promise<GeoRegion[]> => {
 	const mod = await topoLoaders[preset]()
-	return topoToFeatures(mod.default as Topology, topoObjectNames[preset])
+	return topoToRegions(mod.default as Topology, topoObjectNames[preset])
 }
 
 const CONTINENT_NAMES: Record<string, string> = {
@@ -158,7 +174,7 @@ const US_STATE_FIPS: Record<string, string> = {
 	WV: '54', WI: '55', WY: '56', PR: '72',
 }
 
-export const filterFeatures = (features: readonly GeoFeature[], region: GeoRegionFilter): GeoFeature[] => {
+export const filterFeatures = (features: readonly GeoRegion[], region: GeoRegionFilter): GeoRegion[] => {
 	if (typeof region === 'function') return features.filter(region)
 	const usMatch = region.match(/^us-([a-z]{2})$/i)
 
@@ -169,7 +185,7 @@ export const filterFeatures = (features: readonly GeoFeature[], region: GeoRegio
 
 	const continentName = CONTINENT_NAMES[region.toLowerCase()]
 	if (continentName) return features.filter((f) => f.properties.CONTINENT === continentName)
-	return features as GeoFeature[]
+	return features as GeoRegion[]
 }
 
 export const buildPathGenerator = (projection: GeoProjection) => d3Geo.geoPath(projection).digits(2)
@@ -186,7 +202,7 @@ export const fitProjection = ({
 	rotation,
 	viewBoxW = 1000,
 }: {
-	features: readonly GeoFeature[]
+	features: readonly GeoRegion[]
 	projection?: ProjectionInput
 	rotation?: [number, number]
 	viewBoxW?: number
@@ -218,7 +234,7 @@ export const getFeatureZoom = ({
 	height,
 	padding = 0.9,
 }: {
-	feature: GeoFeature
+	feature: GeoRegion
 	pathGenerator: ReturnType<typeof buildPathGenerator>
 	projection: GeoProjection
 	width: number
@@ -233,7 +249,7 @@ export const getFeatureZoom = ({
 	return { scale: padding * Math.min(width / dx, height / dy), center: [center[0], center[1]] }
 }
 
-export const DEFAULT_CHORO_COLORS = ['transparent', 'var(--color-base-content)']
+export const DEFAULT_CHORO_COLORS = ['var(--color-base-100)', 'var(--color-base-content)']
 
 export type ChoroData = {
 	fill: (id: string) => string | undefined

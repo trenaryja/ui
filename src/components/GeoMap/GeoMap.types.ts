@@ -3,12 +3,23 @@ import type { GeoGeometryObjects, GeoProjection } from 'd3-geo'
 import type { ComponentProps, ComponentType, ReactNode, RefObject } from 'react'
 import type { Topology } from 'topojson-specification'
 
-export type GeoFeature = {
+/**
+ * A `GeoJSON.Feature` with `id` guaranteed as a string and a top-level `name` field
+ * hoisted from properties (`properties.name` or `properties.NAME`). Structurally still
+ * a GeoJSON Feature, so it composes with d3-geo functions like `geoPath`, `geoBounds`,
+ * and `geoCentroid`.
+ *
+ * Used as the base shape for all geo primitives (`GeoRegion`, future `GeoPoint`, `GeoLine`).
+ */
+export type NamedFeature<
+	G extends GeoJSON.Geometry | null = GeoJSON.Geometry,
+	P extends Record<string, unknown> = Record<string, unknown>,
+> = Omit<GeoJSON.Feature<G, P>, 'id'> & {
 	id: string
 	name: string
-	geometry: GeoJSON.Geometry
-	properties: Record<string, unknown>
 }
+
+export type GeoRegion = NamedFeature<GeoJSON.MultiPolygon | GeoJSON.Polygon>
 
 export const geoProjectionPresets = [
 	'azimuthal-equidistant',
@@ -31,11 +42,11 @@ export const geoProjectionPresets = [
 ] as const
 
 export type GeoProjectionPreset = (typeof geoProjectionPresets)[number]
-export type GeoRegionFilter = ((feature: GeoFeature) => boolean) | string
+export type GeoRegionFilter = ((feature: GeoRegion) => boolean) | string
 export type GeoDataSource = string | GeoJSON.FeatureCollection | Topology
 
 export type GeoRegionState = {
-	feature: GeoFeature
+	feature: GeoRegion
 	index: number
 	isSelected: boolean
 	isHovered: boolean
@@ -159,8 +170,8 @@ export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange'> & {
 	subProps?: GeoMapSubProps
 	legendTarget?: RefObject<HTMLElement | null>
 	zoomTarget?: RefObject<HTMLElement | null>
-	onRegionClick?: (feature: GeoFeature, index: number) => void
-	onRegionMouseEnter?: (feature: GeoFeature, index: number) => void
-	onRegionMouseLeave?: (feature: GeoFeature, index: number) => void
+	onRegionClick?: (feature: GeoRegion, index: number) => void
+	onRegionMouseEnter?: (feature: GeoRegion, index: number) => void
+	onRegionMouseLeave?: (feature: GeoRegion, index: number) => void
 	children?: ReactNode
 }

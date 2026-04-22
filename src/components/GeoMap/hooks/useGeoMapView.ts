@@ -4,7 +4,7 @@ import { cn, cnFn, EMPTY_ARR, EMPTY_OBJ } from '@/utils'
 import type { GeoGeometryObjects, GeoPath, GeoPermissibleObjects, GeoProjection } from 'd3-geo'
 import { geoGraticule } from 'd3-geo'
 import { createContext, use, useEffect, useMemo, useRef, useState } from 'react'
-import type { ChoroplethScaleType, GeoDataSource, GeoFeature, GeoMapBaseProps, GeoZoomState } from '../GeoMap.types'
+import type { ChoroplethScaleType, GeoDataSource, GeoMapBaseProps, GeoRegion, GeoZoomState } from '../GeoMap.types'
 import type { buildPathGenerator, ChoroData, GeoMapPreset } from '../GeoMap.utils'
 import {
 	buildLegendItems,
@@ -23,7 +23,7 @@ import { useGeoZoom } from './useGeoZoom'
 export type GeoMapContextValue = {
 	projection: GeoProjection
 	pathGenerator: GeoPath<unknown, GeoPermissibleObjects>
-	features: readonly GeoFeature[]
+	features: readonly GeoRegion[]
 	width: number
 	height: number
 	zoom: GeoZoomState | undefined
@@ -39,8 +39,8 @@ export const useGeoMap = () => {
 	return ctx
 }
 
-const urlCache = new Map<string, Promise<GeoFeature[]>>()
-const presetCache = new Map<GeoMapPreset, Promise<GeoFeature[]>>()
+const urlCache = new Map<string, Promise<GeoRegion[]>>()
+const presetCache = new Map<GeoMapPreset, Promise<GeoRegion[]>>()
 
 const getUrlPromise = (url: string) => {
 	const cached = urlCache.get(url)
@@ -151,16 +151,18 @@ export const buildGraticuleMarkup = (pathGen: PathGen, classNames: { graticule?:
 	].join('')
 }
 
-const getFeatureIndex = (e: React.MouseEvent): number | null => {
+const getRegionTarget = (e: React.MouseEvent) => {
 	const target = (e.target as SVGElement).closest('path[data-idx]')
 	if (!target) return null
-	return Number(target.getAttribute('data-idx'))
+	return { target, idx: Number(target.getAttribute('data-idx')) }
 }
 
 const buildRegionHandlers = ({
 	features,
 	tooltipStore,
 	choro,
+	selectedIds,
+	classNames,
 	onRegionClick,
 	onRegionMouseEnter,
 	onRegionMouseLeave,
@@ -168,29 +170,53 @@ const buildRegionHandlers = ({
 	features: Features
 	tooltipStore: TooltipStore
 	choro: ChoroData | undefined
+	selectedIds: readonly string[]
+	classNames: NonNullable<GeoMapBaseProps['classNames']>
 	onRegionClick: GeoMapBaseProps['onRegionClick']
 	onRegionMouseEnter: GeoMapBaseProps['onRegionMouseEnter']
 	onRegionMouseLeave: GeoMapBaseProps['onRegionMouseLeave']
-}) => ({
-	handleClick: (e: React.MouseEvent) => {
-		const idx = getFeatureIndex(e)
-		if (idx != null) onRegionClick?.(features[idx], idx)
-	},
-	handleMouseOver: (e: React.MouseEvent) => {
-		const idx = getFeatureIndex(e)
-		if (idx == null) return
+}) => {
+	// Repaint the hovered path's class with `isHovered: true` so functional
+	// `classNames.region` consumers see the live hover state. innerHTML markup
+	// is built once with isHovered=false; we patch imperatively to avoid a re-render.
+	const setHoverClass = (target: Element, idx: number, isHovered: boolean) => {
+		if (typeof classNames.region !== 'function') return
 		const feature = features[idx]
-		tooltipStore.show(idx, feature, choro?.valueMap.get(feature.id))
-		onRegionMouseEnter?.(feature, idx)
-	},
-	handleMouseMove: (e: React.MouseEvent) => tooltipStore.setPoint(e.clientX, e.clientY),
-	handleMouseOut: (e: React.MouseEvent) => {
-		const idx = getFeatureIndex(e)
-		if (idx == null) return
-		tooltipStore.hide()
-		onRegionMouseLeave?.(features[idx], idx)
-	},
-})
+		const isSelected = selectedIds.includes(feature.id)
+		const customClass = cnFn(classNames.region, {
+			feature,
+			index: idx,
+			isSelected,
+			isHovered,
+			value: choro?.valueMap.get(feature.id),
+		})
+		const baseClass = isSelected ? SELECTED_CLASS : UNSELECTED_CLASS
+		target.setAttribute('class', customClass ? `${baseClass} ${customClass}` : baseClass)
+	}
+
+	return {
+		handleClick: (e: React.MouseEvent) => {
+			const t = getRegionTarget(e)
+			if (t) onRegionClick?.(features[t.idx], t.idx)
+		},
+		handleMouseOver: (e: React.MouseEvent) => {
+			const t = getRegionTarget(e)
+			if (!t) return
+			const feature = features[t.idx]
+			setHoverClass(t.target, t.idx, true)
+			tooltipStore.show(t.idx, feature, choro?.valueMap.get(feature.id))
+			onRegionMouseEnter?.(feature, t.idx)
+		},
+		handleMouseMove: (e: React.MouseEvent) => tooltipStore.setPoint(e.clientX, e.clientY),
+		handleMouseOut: (e: React.MouseEvent) => {
+			const t = getRegionTarget(e)
+			if (!t) return
+			setHoverClass(t.target, t.idx, false)
+			tooltipStore.hide()
+			onRegionMouseLeave?.(features[t.idx], t.idx)
+		},
+	}
+}
 
 export const useGeoMapView = (props: GeoMapViewProps) => {
 	const {
@@ -281,6 +307,8 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		features,
 		tooltipStore,
 		choro,
+		selectedIds,
+		classNames,
 		onRegionClick,
 		onRegionMouseEnter,
 		onRegionMouseLeave,
