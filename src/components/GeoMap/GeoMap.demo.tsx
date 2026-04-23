@@ -1,38 +1,72 @@
 'use client'
 
 import type { ChoroplethDatum, ChoroplethScaleType, GeoMapProps } from '@/components'
-import { Button, Field, Fieldset, GeoMap, Select, Toggle } from '@/components'
+import { Button, Field, GeoMap, Select, toast, Toggle } from '@/components'
 import { formatPercent } from '@/utils'
 import type { DemoMeta } from '@demo'
 import { faker } from '@faker-js/faker'
+import type { ReactNode } from 'react'
 import { useEffect, useMemo, useState } from 'react'
 import * as R from 'remeda'
 import type { GeoPoint, GeoProjectionPreset, GeoZoomState } from './GeoMap.types'
 import type { GeoMapPreset } from './GeoMap.utils'
 import { animateZoom, getPointZoom, getProjectionsByTag, loadPresetFeatures } from './GeoMap.utils'
 
-const SAMPLE_CITIES: readonly { id: string; name: string; lon: number; lat: number }[] = [
-	{ id: 'london', name: 'London', lon: -0.1, lat: 51.5 },
-	{ id: 'tokyo', name: 'Tokyo', lon: 139.7, lat: 35.7 },
-	{ id: 'nyc', name: 'New York', lon: -74.0, lat: 40.7 },
-	{ id: 'la', name: 'Los Angeles', lon: -118.2, lat: 34.1 },
-	{ id: 'cape-town', name: 'Cape Town', lon: 18.4, lat: -33.9 },
-	{ id: 'sydney', name: 'Sydney', lon: 151.2, lat: -33.9 },
-	{ id: 'rio', name: 'Rio de Janeiro', lon: -43.2, lat: -22.9 },
-	{ id: 'mumbai', name: 'Mumbai', lon: 72.8, lat: 19.1 },
-	{ id: 'cairo', name: 'Cairo', lon: 31.2, lat: 30.0 },
-	{ id: 'moscow', name: 'Moscow', lon: 37.6, lat: 55.8 },
-	{ id: 'mexico-city', name: 'Mexico City', lon: -99.1, lat: 19.4 },
-	{ id: 'reykjavik', name: 'Reykjavík', lon: -21.9, lat: 64.1 },
+type PointDensity = 'high' | 'low' | 'medium'
+
+const POPULATED_PLACES_URLS: Record<PointDensity, string> = {
+	low: 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_populated_places_simple.geojson',
+	medium:
+		'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_populated_places.geojson',
+	high: 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places.geojson',
+}
+
+const POINT_DENSITY_OPTIONS: { value: PointDensity; label: string }[] = [
+	{ value: 'low', label: 'Low (~240)' },
+	{ value: 'medium', label: 'Medium (~1.2k)' },
+	{ value: 'high', label: 'High (~7.3k)' },
 ]
 
-const CITY_POINTS: readonly GeoPoint[] = SAMPLE_CITIES.map((c) => ({
-	type: 'Feature',
-	id: c.id,
-	name: c.name,
-	geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
-	properties: {},
-}))
+const placesCache = new Map<PointDensity, readonly GeoPoint[]>()
+
+const fetchPopulatedPlaces = async (density: PointDensity): Promise<readonly GeoPoint[]> => {
+	const cached = placesCache.get(density)
+	if (cached) return cached
+
+	const res = await fetch(POPULATED_PLACES_URLS[density])
+	if (!res.ok) throw new Error(`Failed to fetch populated places: ${res.status}`)
+	const collection = (await res.json()) as GeoJSON.FeatureCollection<GeoJSON.Point>
+
+	const points: GeoPoint[] = collection.features.map((f, i) => {
+		const props = (f.properties ?? {}) as Record<string, unknown>
+		const name = (props.NAME ?? props.name ?? props.NAMEASCII ?? 'Unknown') as string
+		return {
+			type: 'Feature',
+			id: `place-${i}`,
+			name,
+			geometry: f.geometry,
+			properties: {},
+		}
+	})
+
+	placesCache.set(density, points)
+	return points
+}
+
+const usePopulatedPlaces = (density: PointDensity): readonly GeoPoint[] => {
+	const [points, setPoints] = useState<readonly GeoPoint[]>(() => placesCache.get(density) ?? [])
+	useEffect(() => {
+		let cancelled = false
+		fetchPopulatedPlaces(density).then((pts) => {
+			if (!cancelled) setPoints(pts)
+		})
+
+		return () => {
+			cancelled = true
+		}
+	}, [density])
+	return points
+}
 
 export const meta: DemoMeta = { title: 'GeoMap', category: 'components' }
 
@@ -82,7 +116,8 @@ type SelectionMode = '' | 'multi' | 'single'
 type DemoState = {
 	mapPreset: GeoMapPreset
 	projectionPreset: '' | GeoProjectionPreset
-	selection: SelectionMode
+	regionSelection: SelectionMode
+	pointSelection: SelectionMode
 	colorPreset: string
 	scaleType: ChoroplethScaleType
 	steps: number
@@ -93,140 +128,222 @@ type DemoState = {
 	showZoom: boolean
 	showDraggable: boolean
 	showPoints: boolean
+	pointDensity: PointDensity
 }
+
+const SELECTION_OPTIONS: { value: SelectionMode; label: string }[] = [
+	{ value: '', label: 'None' },
+	{ value: 'single', label: 'Single' },
+	{ value: 'multi', label: 'Multi' },
+]
+
+type SetFn = <TKey extends keyof DemoState>(key: TKey, value: DemoState[TKey]) => void
+
+const Section = ({ title, defaultOpen, children }: { title: string; defaultOpen?: boolean; children: ReactNode }) => (
+	<div className='collapse collapse-horizontal join-item'>
+		<input type='radio' name='geomap-controls' defaultChecked={defaultOpen} />
+		<div className='collapse-title surface font-semibold'>{title}</div>
+		<div className='collapse-content'>
+			<div className='flex flex-wrap items-center justify-center gap-x-4 gap-y-2 p-4'>{children}</div>
+		</div>
+	</div>
+)
+
+const MapSection = ({ s, set, onResetRegions }: { s: DemoState; set: SetFn; onResetRegions: () => void }) => (
+	<Section title='Map' defaultOpen>
+		<Field label='Preset'>
+			<Select
+				className='select-sm'
+				value={s.mapPreset}
+				onChange={(e) => {
+					set('mapPreset', e.target.value as GeoMapPreset)
+					onResetRegions()
+				}}
+			>
+				{MAP_PRESETS.map((p) => (
+					<option key={p.value} value={p.value}>
+						{p.label}
+					</option>
+				))}
+			</Select>
+		</Field>
+		<Field label='Projection'>
+			<Select
+				className='select-sm'
+				value={s.projectionPreset}
+				onChange={(e) => set('projectionPreset', e.target.value as '' | GeoProjectionPreset)}
+			>
+				<option value=''>Auto</option>
+				{R.entries(projectionsByTag).map(([tag, presets]) => (
+					<optgroup key={tag} label={tag}>
+						{presets.map((p) => (
+							<option key={p} value={p}>
+								{p}
+							</option>
+						))}
+					</optgroup>
+				))}
+			</Select>
+		</Field>
+		<Field label='Selection'>
+			<Select
+				className='select-sm'
+				value={s.regionSelection}
+				onChange={(e) => {
+					set('regionSelection', e.target.value as SelectionMode)
+					onResetRegions()
+				}}
+			>
+				{SELECTION_OPTIONS.map((o) => (
+					<option key={o.value} value={o.value}>
+						{o.label}
+					</option>
+				))}
+			</Select>
+		</Field>
+		<Field label='Graticule' labelPlacement='right-center'>
+			<Toggle checked={s.showGraticule} onChange={(e) => set('showGraticule', e.target.checked)} />
+		</Field>
+		<Field label='Zoomable' labelPlacement='right-center'>
+			<Toggle checked={s.showZoom} onChange={(e) => set('showZoom', e.target.checked)} />
+		</Field>
+		<Field label='Draggable' labelPlacement='right-center'>
+			<Toggle checked={s.showDraggable} onChange={(e) => set('showDraggable', e.target.checked)} />
+		</Field>
+		<Field label='Tooltip' labelPlacement='right-center'>
+			<Toggle checked={s.showTooltip} onChange={(e) => set('showTooltip', e.target.checked)} />
+		</Field>
+	</Section>
+)
+
+const ChoroplethSection = ({ s, set, onRandomize }: { s: DemoState; set: SetFn; onRandomize: () => void }) => (
+	<Section title='Choropleth'>
+		<Field label='Show' labelPlacement='right-center'>
+			<Toggle checked={s.showChoropleth} onChange={(e) => set('showChoropleth', e.target.checked)} />
+		</Field>
+		<Field label='Colors'>
+			<Select className='select-sm' value={s.colorPreset} onChange={(e) => set('colorPreset', e.target.value)}>
+				{Object.keys(COLOR_PRESETS).map((k) => (
+					<option key={k} value={k}>
+						{k[0].toUpperCase() + k.slice(1)}
+					</option>
+				))}
+			</Select>
+		</Field>
+		<Field label='Scale'>
+			<Select
+				className='select-sm'
+				value={s.scaleType}
+				onChange={(e) => set('scaleType', e.target.value as ChoroplethScaleType)}
+			>
+				<option value='quantize'>Quantize</option>
+				<option value='quantile'>Quantile</option>
+				<option value='linear'>Linear</option>
+			</Select>
+		</Field>
+		{s.scaleType !== 'linear' && (
+			<Field label='Steps'>
+				<Select className='select-sm' value={s.steps} onChange={(e) => set('steps', Number(e.target.value))}>
+					{[2, 3, 4, 5, 6, 7, 8].map((n) => (
+						<option key={n} value={n}>
+							{n}
+						</option>
+					))}
+				</Select>
+			</Field>
+		)}
+		<Field label='Legend' labelPlacement='right-center'>
+			<Toggle checked={s.showLegend} onChange={(e) => set('showLegend', e.target.checked)} />
+		</Field>
+		<Button className='btn-sm' onClick={onRandomize}>
+			Randomize
+		</Button>
+	</Section>
+)
+
+const PointsSection = ({
+	s,
+	set,
+	onResetPoints,
+	onFlyToRandomCity,
+}: {
+	s: DemoState
+	set: SetFn
+	onResetPoints: () => void
+	onFlyToRandomCity: () => void
+}) => (
+	<Section title='Points'>
+		<Field label='Show' labelPlacement='right-center'>
+			<Toggle checked={s.showPoints} onChange={(e) => set('showPoints', e.target.checked)} />
+		</Field>
+		<Field label='Density'>
+			<Select
+				className='select-sm'
+				value={s.pointDensity}
+				onChange={(e) => {
+					set('pointDensity', e.target.value as PointDensity)
+					onResetPoints()
+				}}
+			>
+				{POINT_DENSITY_OPTIONS.map((o) => (
+					<option key={o.value} value={o.value}>
+						{o.label}
+					</option>
+				))}
+			</Select>
+		</Field>
+		<Field label='Selection'>
+			<Select
+				className='select-sm'
+				value={s.pointSelection}
+				onChange={(e) => {
+					set('pointSelection', e.target.value as SelectionMode)
+					onResetPoints()
+				}}
+			>
+				{SELECTION_OPTIONS.map((o) => (
+					<option key={o.value} value={o.value}>
+						{o.label}
+					</option>
+				))}
+			</Select>
+		</Field>
+		{s.showPoints && (
+			<Button className='btn-sm' onClick={onFlyToRandomCity}>
+				Fly to random city
+			</Button>
+		)}
+	</Section>
+)
 
 const MapControls = ({
 	s,
 	set,
-	onReset,
+	onResetRegions,
+	onResetPoints,
 	onRandomize,
-	onFlyToNyc,
+	onFlyToRandomCity,
 }: {
 	s: DemoState
-	set: <TKey extends keyof DemoState>(key: TKey, value: DemoState[TKey]) => void
-	onReset: () => void
+	set: SetFn
+	onResetRegions: () => void
+	onResetPoints: () => void
 	onRandomize: () => void
-	onFlyToNyc: () => void
+	onFlyToRandomCity: () => void
 }) => (
-	<Fieldset className='flex flex-col items-center gap-2'>
-		<div className='flex flex-wrap gap-x-4 gap-y-2'>
-			<Field label='Map'>
-				<Select
-					className='select-sm'
-					value={s.mapPreset}
-					onChange={(e) => {
-						set('mapPreset', e.target.value as GeoMapPreset)
-						onReset()
-					}}
-				>
-					{MAP_PRESETS.map((p) => (
-						<option key={p.value} value={p.value}>
-							{p.label}
-						</option>
-					))}
-				</Select>
-			</Field>
-			<Field label='Projection'>
-				<Select
-					className='select-sm'
-					value={s.projectionPreset}
-					onChange={(e) => set('projectionPreset', e.target.value as '' | GeoProjectionPreset)}
-				>
-					<option value=''>Auto</option>
-					{R.entries(projectionsByTag).map(([tag, presets]) => (
-						<optgroup key={tag} label={tag}>
-							{presets.map((p) => (
-								<option key={p} value={p}>
-									{p}
-								</option>
-							))}
-						</optgroup>
-					))}
-				</Select>
-			</Field>
-			<Field label='Selection'>
-				<Select
-					className='select-sm'
-					value={s.selection}
-					onChange={(e) => {
-						set('selection', e.target.value as SelectionMode)
-						onReset()
-					}}
-				>
-					<option value=''>None</option>
-					<option value='single'>Single</option>
-					<option value='multi'>Multi</option>
-				</Select>
-			</Field>
-			<Field label='Colors'>
-				<Select className='select-sm' value={s.colorPreset} onChange={(e) => set('colorPreset', e.target.value)}>
-					{Object.keys(COLOR_PRESETS).map((k) => (
-						<option key={k} value={k}>
-							{k[0].toUpperCase() + k.slice(1)}
-						</option>
-					))}
-				</Select>
-			</Field>
-			<Field label='Scale'>
-				<Select
-					className='select-sm'
-					value={s.scaleType}
-					onChange={(e) => set('scaleType', e.target.value as ChoroplethScaleType)}
-				>
-					<option value='quantize'>Quantize</option>
-					<option value='quantile'>Quantile</option>
-					<option value='linear'>Linear</option>
-				</Select>
-			</Field>
-			{s.scaleType !== 'linear' && (
-				<Field label='Steps'>
-					<Select className='select-sm' value={s.steps} onChange={(e) => set('steps', Number(e.target.value))}>
-						{[2, 3, 4, 5, 6, 7, 8].map((n) => (
-							<option key={n} value={n}>
-								{n}
-							</option>
-						))}
-					</Select>
-				</Field>
-			)}
-		</div>
-		<div className='flex flex-wrap items-center gap-x-4 gap-y-2'>
-			<Field label='Choropleth' labelPlacement='right-center'>
-				<Toggle checked={s.showChoropleth} onChange={(e) => set('showChoropleth', e.target.checked)} />
-			</Field>
-			<Field label='Tooltip' labelPlacement='right-center'>
-				<Toggle checked={s.showTooltip} onChange={(e) => set('showTooltip', e.target.checked)} />
-			</Field>
-			<Field label='Legend' labelPlacement='right-center'>
-				<Toggle checked={s.showLegend} onChange={(e) => set('showLegend', e.target.checked)} />
-			</Field>
-			<Field label='Graticule' labelPlacement='right-center'>
-				<Toggle checked={s.showGraticule} onChange={(e) => set('showGraticule', e.target.checked)} />
-			</Field>
-			<Field label='Zoom' labelPlacement='right-center'>
-				<Toggle checked={s.showZoom} onChange={(e) => set('showZoom', e.target.checked)} />
-			</Field>
-			<Field label='Draggable' labelPlacement='right-center'>
-				<Toggle checked={s.showDraggable} onChange={(e) => set('showDraggable', e.target.checked)} />
-			</Field>
-			<Field label='Points' labelPlacement='right-center'>
-				<Toggle checked={s.showPoints} onChange={(e) => set('showPoints', e.target.checked)} />
-			</Field>
-			<Button className='btn-sm' onClick={onRandomize}>
-				Randomize
-			</Button>
-			<Button className='btn-sm' onClick={onFlyToNyc}>
-				Fly to NYC
-			</Button>
-		</div>
-	</Fieldset>
+	<div className='join join-horizontal w-full'>
+		<MapSection s={s} set={set} onResetRegions={onResetRegions} />
+		<ChoroplethSection s={s} set={set} onRandomize={onRandomize} />
+		<PointsSection s={s} set={set} onResetPoints={onResetPoints} onFlyToRandomCity={onFlyToRandomCity} />
+	</div>
 )
 
 export function Demo() {
 	const [s, setS] = useState<DemoState>({
 		mapPreset: 'world',
 		projectionPreset: '',
-		selection: '',
+		regionSelection: '',
+		pointSelection: '',
 		colorPreset: 'default',
 		scaleType: 'quantize',
 		steps: 4,
@@ -237,6 +354,7 @@ export function Demo() {
 		showZoom: true,
 		showDraggable: true,
 		showPoints: true,
+		pointDensity: 'low',
 	})
 	const [selected, setSelected] = useState<string[]>([])
 	const [singleSelected, setSingleSelected] = useState<string | null>(null)
@@ -249,6 +367,7 @@ export function Demo() {
 		setS((prev) => ({ ...prev, [key]: value }))
 
 	const featureIds = useFeatureIds(s.mapPreset)
+	const cityPoints = usePopulatedPlaces(s.pointDensity)
 	// eslint-disable-next-line react-hooks/exhaustive-deps -- randomSeed is intentional for re-randomization on button click
 	const choroplethData = useMemo(() => randChoroplethData(featureIds), [featureIds, randomSeed])
 
@@ -266,7 +385,7 @@ export function Demo() {
 		geo: s.mapPreset,
 		projection: s.projectionPreset || undefined,
 		choropleth,
-		points: s.showPoints ? { data: CITY_POINTS } : undefined,
+		points: s.showPoints ? { data: cityPoints } : undefined,
 		formatters: { tooltip: { value: (v: number) => fmtPct(v) } },
 		draggable: s.showDraggable,
 		zoomable: s.showZoom,
@@ -276,24 +395,27 @@ export function Demo() {
 		},
 	} satisfies GeoMapProps
 
-	const resetSelection = () => {
+	const resetRegions = () => {
 		setSelected([])
 		setSingleSelected(null)
+	}
+
+	const resetPoints = () => {
 		setSelectedPoints([])
 		setSingleSelectedPoint(null)
 	}
 
 	const regionFormInput =
-		s.selection === 'multi'
+		s.regionSelection === 'multi'
 			? { mode: 'multi' as const, value: selected, onChange: setSelected }
-			: s.selection === 'single'
+			: s.regionSelection === 'single'
 				? { mode: 'single' as const, value: singleSelected, onChange: setSingleSelected }
 				: undefined
 
 	const pointFormInput =
-		s.selection === 'multi'
+		s.pointSelection === 'multi'
 			? { mode: 'multi' as const, value: selectedPoints, onChange: setSelectedPoints }
-			: s.selection === 'single'
+			: s.pointSelection === 'single'
 				? { mode: 'single' as const, value: singleSelectedPoint, onChange: setSingleSelectedPoint }
 				: undefined
 
@@ -309,10 +431,13 @@ export function Demo() {
 		},
 	}
 
-	const flyToNyc = () => {
-		const nyc = CITY_POINTS.find((p) => p.id === 'nyc')
-		const target = nyc && getPointZoom({ point: nyc, scale: 6 })
-		if (target) animateZoom({ from: zoom, to: target, onUpdate: setZoom })
+	const flyToRandomCity = () => {
+		if (cityPoints.length === 0) return
+		const pick = cityPoints[Math.floor(Math.random() * cityPoints.length)]
+		const target = getPointZoom({ point: pick, scale: 6 })
+		if (!target) return
+		animateZoom({ from: zoom, to: target, onUpdate: setZoom })
+		toast(`Flying to ${pick.name}`)
 	}
 
 	return (
@@ -320,9 +445,10 @@ export function Demo() {
 			<MapControls
 				s={s}
 				set={set}
-				onReset={resetSelection}
+				onResetRegions={resetRegions}
+				onResetPoints={resetPoints}
 				onRandomize={() => setRandomSeed((x) => x + 1)}
-				onFlyToNyc={flyToNyc}
+				onFlyToRandomCity={flyToRandomCity}
 			/>
 			<GeoMap {...geoMapProps} />
 		</div>
