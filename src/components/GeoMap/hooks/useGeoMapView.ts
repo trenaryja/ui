@@ -8,6 +8,8 @@ import { createContext, use, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import type {
 	ChoroplethConfig,
 	ChoroplethScaleType,
+	ClusterConfig,
+	GeoClusterState,
 	GeoDataSource,
 	GeoMapBaseProps,
 	GeoRegion,
@@ -15,6 +17,8 @@ import type {
 	GeoZoomState,
 	PointsConfig,
 } from '../GeoMap.types'
+import type { ClusterIndex, ClusterItem } from '../GeoMap.cluster.utils'
+import { buildClusterIndex, queryClusterItems, scaleToZoomLevel } from '../GeoMap.cluster.utils'
 import { buildPointsMarkup, updatePointTransforms } from '../GeoMap.points.utils'
 import type { buildPathGenerator, ChoroData, GeoMapPreset } from '../GeoMap.utils'
 import {
@@ -99,6 +103,36 @@ export type GeoMapViewProps = GeoMapBaseProps & {
 	selectedIds?: readonly string[]
 	selectedPointIds?: readonly string[]
 }
+
+/** Resolve `points.cluster` to a stable config object or `null` (disabled). */
+const useClusterConfig = (points: PointsConfig | undefined): ClusterConfig | null => {
+	const raw = points?.cluster
+	const radius = typeof raw === 'object' ? raw.radius : undefined
+	const maxZoom = typeof raw === 'object' ? raw.maxZoom : undefined
+	const minPoints = typeof raw === 'object' ? raw.minPoints : undefined
+	return useMemo(() => {
+		if (!raw) return null
+		if (raw === true) return {}
+		return { radius, maxZoom, minPoints }
+	}, [raw, radius, maxZoom, minPoints])
+}
+
+/** Query clusters at the current zoom level. Memoized on zoom level (integer), not scale. */
+const useClusterItems = ({
+	index,
+	zoomLevel,
+	points,
+	selectedPointIds,
+}: {
+	index: ClusterIndex | null
+	zoomLevel: number
+	points: readonly PointsConfig['data'][number][] | undefined
+	selectedPointIds: readonly string[]
+}): ClusterItem[] | undefined =>
+	useMemo(() => {
+		if (!index || !points) return undefined
+		return queryClusterItems({ index, zoomLevel, points, selectedPointIds })
+	}, [index, zoomLevel, points, selectedPointIds])
 
 /**
  * Narrow deps to choropleth's inner fields so a new `{ data, scaleType, ... }` literal per render
@@ -206,6 +240,12 @@ const getPointTarget = (e: React.MouseEvent) => {
 	return { target, idx: Number(target.getAttribute('data-point-idx')) }
 }
 
+const getClusterTarget = (e: React.MouseEvent) => {
+	const target = (e.target as SVGElement).closest('g[data-cluster-idx]')
+	if (!target) return null
+	return { target, idx: Number(target.getAttribute('data-cluster-idx')) }
+}
+
 /**
  * Returns a live `onZoomApplied` — fires synchronously inside d3-zoom's `on('zoom')`, so the inverse
  * counter-scale lands in the same frame as the outer `zoomG` transform (no flicker). Reads
@@ -246,55 +286,98 @@ const usePointsScale = ({
 	})
 }
 
-const buildPointHandlers = ({
-	points,
-	tooltipStore,
-	selectedPointIds,
-	onPointClick,
-	onPointMouseEnter,
-	onPointMouseLeave,
-}: {
+const clusterItemToState = (item: Extract<ClusterItem, { kind: 'cluster' }>): GeoClusterState => ({
+	id: item.id,
+	count: item.count,
+	coordinates: item.coords,
+	points: item.getPoints(),
+	isHovered: true,
+})
+
+type PointHandlerCtx = {
 	points: PointsConfig | undefined
+	clusterItems: readonly ClusterItem[] | undefined
 	tooltipStore: TooltipStore
 	selectedPointIds: readonly string[]
 	onPointClick: GeoMapBaseProps['onPointClick']
 	onPointMouseEnter: GeoMapBaseProps['onPointMouseEnter']
 	onPointMouseLeave: GeoMapBaseProps['onPointMouseLeave']
-}) => {
-	const data = points?.data ?? EMPTY_ARR
+	onClusterClick: GeoMapBaseProps['onClusterClick']
+	onClusterMouseEnter: GeoMapBaseProps['onClusterMouseEnter']
+	onClusterMouseLeave: GeoMapBaseProps['onClusterMouseLeave']
+}
 
-	const toTooltipState = (idx: number): GeoTooltipState => {
-		const point = data[idx]
-		return {
-			kind: 'point',
-			point,
-			index: idx,
-			isSelected: selectedPointIds.includes(point.id),
-			isHovered: true,
-			value: point.properties.value,
-		}
-	}
+const getClusterAt = (ctx: PointHandlerCtx, idx: number) => {
+	const item = ctx.clusterItems?.[idx]
+	return item && item.kind === 'cluster' ? item : null
+}
 
+const pointTooltipState = (ctx: PointHandlerCtx, idx: number): GeoTooltipState => {
+	const point = (ctx.points?.data ?? EMPTY_ARR)[idx]
 	return {
-		handleClick: (e: React.MouseEvent) => {
-			const t = getPointTarget(e)
-			if (t) onPointClick?.(data[t.idx], t.idx)
-		},
-		handleMouseOver: (e: React.MouseEvent) => {
-			const t = getPointTarget(e)
-			if (!t) return
-			tooltipStore.show(toTooltipState(t.idx))
-			onPointMouseEnter?.(data[t.idx], t.idx)
-		},
-		handleMouseMove: (e: React.MouseEvent) => tooltipStore.setPoint(e.clientX, e.clientY),
-		handleMouseOut: (e: React.MouseEvent) => {
-			const t = getPointTarget(e)
-			if (!t) return
-			tooltipStore.hide()
-			onPointMouseLeave?.(data[t.idx], t.idx)
-		},
+		kind: 'point',
+		point,
+		index: idx,
+		isSelected: ctx.selectedPointIds.includes(point.id),
+		isHovered: true,
+		value: point.properties.value,
 	}
 }
+
+const handlePointerClick = (ctx: PointHandlerCtx, e: React.MouseEvent) => {
+	const c = getClusterTarget(e)
+
+	if (c) {
+		const cluster = getClusterAt(ctx, c.idx)
+		if (cluster) ctx.onClusterClick?.(clusterItemToState(cluster))
+		return
+	}
+
+	const t = getPointTarget(e)
+	if (t) ctx.onPointClick?.((ctx.points?.data ?? EMPTY_ARR)[t.idx], t.idx)
+}
+
+const handlePointerOver = (ctx: PointHandlerCtx, e: React.MouseEvent) => {
+	const c = getClusterTarget(e)
+
+	if (c) {
+		const cluster = getClusterAt(ctx, c.idx)
+		if (!cluster) return
+		const state = clusterItemToState(cluster)
+		ctx.tooltipStore.show({ ...state, kind: 'cluster' })
+		ctx.onClusterMouseEnter?.(state)
+		return
+	}
+
+	const t = getPointTarget(e)
+	if (!t) return
+	ctx.tooltipStore.show(pointTooltipState(ctx, t.idx))
+	ctx.onPointMouseEnter?.((ctx.points?.data ?? EMPTY_ARR)[t.idx], t.idx)
+}
+
+const handlePointerOut = (ctx: PointHandlerCtx, e: React.MouseEvent) => {
+	const c = getClusterTarget(e)
+
+	if (c) {
+		const cluster = getClusterAt(ctx, c.idx)
+		if (!cluster) return
+		ctx.tooltipStore.hide()
+		ctx.onClusterMouseLeave?.(clusterItemToState(cluster))
+		return
+	}
+
+	const t = getPointTarget(e)
+	if (!t) return
+	ctx.tooltipStore.hide()
+	ctx.onPointMouseLeave?.((ctx.points?.data ?? EMPTY_ARR)[t.idx], t.idx)
+}
+
+const buildPointHandlers = (ctx: PointHandlerCtx) => ({
+	handleClick: (e: React.MouseEvent) => handlePointerClick(ctx, e),
+	handleMouseOver: (e: React.MouseEvent) => handlePointerOver(ctx, e),
+	handleMouseMove: (e: React.MouseEvent) => ctx.tooltipStore.setPoint(e.clientX, e.clientY),
+	handleMouseOut: (e: React.MouseEvent) => handlePointerOut(ctx, e),
+})
 
 const buildRegionHandlers = ({
 	features,
@@ -365,7 +448,7 @@ const buildRegionHandlers = ({
 	}
 }
 
-// eslint-disable-next-line max-lines-per-function -- orchestrates the full GeoMap view: projection, zoom, tooltip, selection, handlers, and overlays
+// eslint-disable-next-line max-lines-per-function, complexity -- orchestrates the full GeoMap view: projection, zoom, tooltip, selection, handlers, and overlays
 export const useGeoMapView = (props: GeoMapViewProps) => {
 	const {
 		geo,
@@ -392,6 +475,9 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		onPointClick,
 		onPointMouseEnter,
 		onPointMouseLeave,
+		onClusterClick,
+		onClusterMouseEnter,
+		onClusterMouseLeave,
 		...svgProps
 	} = props
 
@@ -414,10 +500,31 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only region sub-key matters here
 		[features, pathGen, selectedIds, choro, classNames.region],
 	)
+	const clusterConfig = useClusterConfig(points)
+	const clusterIndex = useMemo(
+		() => (clusterConfig && points?.data.length ? buildClusterIndex(points.data, features, clusterConfig) : null),
+		[clusterConfig, points?.data, features],
+	)
+	const zoomLevel = scaleToZoomLevel(zoomProp?.scale ?? 1)
+	const clusterItems = useClusterItems({
+		index: clusterIndex,
+		zoomLevel,
+		points: points?.data,
+		selectedPointIds,
+	})
 	const pointsMarkup = useMemo(
-		() => buildPointsMarkup({ config: points, projection, pathGen, regions: features, classNames, selectedPointIds }),
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only point sub-key matters here
-		[points, projection, pathGen, features, classNames.point, selectedPointIds],
+		() =>
+			buildPointsMarkup({
+				config: points,
+				projection,
+				pathGen,
+				regions: features,
+				classNames,
+				selectedPointIds,
+				clusterItems,
+			}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only point/cluster sub-keys matter here
+		[points, projection, pathGen, features, classNames.point, classNames.cluster, selectedPointIds, clusterItems],
 	)
 
 	const viewBox = `0 0 ${viewBoxW} ${viewBoxH}`
@@ -479,13 +586,23 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		onRegionMouseEnter,
 		onRegionMouseLeave,
 	})
+
+	const defaultClusterClick = (state: GeoClusterState) => {
+		const expansionZoom = clusterIndex?.getClusterExpansionZoom(state.id) ?? zoomLevel + 2
+		onZoomChange?.({ scale: 2 ** expansionZoom, center: state.coordinates })
+	}
+
 	const pointHandlers = buildPointHandlers({
 		points,
+		clusterItems,
 		tooltipStore,
 		selectedPointIds,
 		onPointClick,
 		onPointMouseEnter,
 		onPointMouseLeave,
+		onClusterClick: onClusterClick ?? defaultClusterClick,
+		onClusterMouseEnter,
+		onClusterMouseLeave,
 	})
 
 	const showLegend = !!(components.legend && choropleth && choro?.values.length && !selectedIds.length)

@@ -49,7 +49,7 @@ export type PointsConfig = {
 	anchor?: GeoAnchor
 	/** When `false` (default), points keep constant pixel size as the user zooms. When `true`, they scale with zoom. */
 	scaleWithZoom?: boolean
-	cluster?: ClusterConfig | boolean
+	cluster?: boolean | ClusterConfig
 }
 
 export type ClusteredPoint = GeoPoint & { isSelected: boolean }

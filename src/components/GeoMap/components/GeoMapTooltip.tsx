@@ -44,11 +44,7 @@ export const GeoMapTooltip = ({
 	const label = formatters.label ? formatters.label(state) : state.kind === 'cluster' ? 'Count' : 'Value'
 	const rawValue = getValue(state)
 	const value =
-		rawValue != null
-			? formatters.value
-				? formatters.value(rawValue, state)
-				: rawValue.toLocaleString()
-			: null
+		rawValue != null ? (formatters.value ? formatters.value(rawValue, state) : rawValue.toLocaleString()) : null
 
 	const containerClassName = cn(
 		'frosted-glass grid gap-1 rounded border border-current/25 p-2 text-sm shadow',

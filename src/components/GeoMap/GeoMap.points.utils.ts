@@ -1,7 +1,16 @@
 import { cn, cnFn, splitPlacement } from '@/utils'
 import * as d3Geo from 'd3-geo'
 import type { GeoPath, GeoPermissibleObjects, GeoProjection } from 'd3-geo'
-import type { GeoAnchor, GeoMapBaseProps, GeoPoint, GeoPointState, GeoRegion, PointsConfig } from './GeoMap.types'
+import type { ClusterItem } from './GeoMap.cluster.utils'
+import type {
+	GeoAnchor,
+	GeoClusterState,
+	GeoMapBaseProps,
+	GeoPoint,
+	GeoPointState,
+	GeoRegion,
+	PointsConfig,
+} from './GeoMap.types'
 
 /**
  * Lucide MapPin, 24x24 viewBox, tip at ~(12, 22). Path is evergreen — if lucide
@@ -13,6 +22,11 @@ export const DEFAULT_POINT_PATH =
 const DEFAULT_POINT_SIZE = 24
 
 const POINT_CLASS = cn('fill-primary/70 stroke-primary-content/50 hover:fill-primary')
+const CLUSTER_CIRCLE_CLASS = cn('fill-primary/70 stroke-primary-content/50 hover:fill-primary cursor-pointer')
+const CLUSTER_TEXT_CLASS = cn('fill-primary-content font-semibold pointer-events-none select-none')
+
+/** Default cluster size: logarithmic, capped. Configurable via `points.size`. */
+const defaultClusterSize = (count: number) => Math.min(28 + Math.log2(count) * 6, 64)
 
 /** Split transform — outer `scale(k)` + inner `scale(1/k)` keeps pixel size constant when called with k > 1. */
 const buildPointTransform = ({
@@ -102,6 +116,184 @@ const resolvePointCoords = (points: readonly GeoPoint[], regionById: Map<string,
 	return out
 }
 
+const buildPointPath = ({
+	id,
+	idx,
+	coords,
+	size,
+	anchor,
+	cls,
+	projection,
+	pathGen,
+}: {
+	id: string
+	idx: number
+	coords: [number, number]
+	size: number
+	anchor: readonly [number, number]
+	cls: string
+	projection: GeoProjection
+	pathGen: GeoPath<unknown, GeoPermissibleObjects>
+}) => {
+	const geom: GeoJSON.Point = { type: 'Point', coordinates: coords }
+	if (pathGen(geom) == null) return ''
+	const projected = projection(coords)
+	if (!projected) return ''
+	const [cx, cy] = projected
+	const s = size / DEFAULT_POINT_SIZE
+	const t = buildPointTransform({ cx, cy, s, anchor, k: 1 })
+	return `<path data-point-id="${id}" data-point-idx="${idx}" data-cx="${cx}" data-cy="${cy}" data-s="${s}" data-ax="${anchor[0]}" data-ay="${anchor[1]}" d="${DEFAULT_POINT_PATH}" transform="${t}" class="${cls}" vector-effect="non-scaling-stroke"/>`
+}
+
+/** `translate(cx,cy) scale(1/k)` — counter-scale for constant pixel cluster size under zoom. */
+const buildClusterTransform = ({ cx, cy, k }: { cx: number; cy: number; k: number }) =>
+	`translate(${cx},${cy}) scale(${1 / k})`
+
+const buildClusterMarkup = ({
+	item,
+	idx,
+	size,
+	cls,
+	projection,
+	pathGen,
+}: {
+	item: Extract<ClusterItem, { kind: 'cluster' }>
+	idx: number
+	size: number
+	cls: string
+	projection: GeoProjection
+	pathGen: GeoPath<unknown, GeoPermissibleObjects>
+}) => {
+	const geom: GeoJSON.Point = { type: 'Point', coordinates: item.coords }
+	if (pathGen(geom) == null) return ''
+	const projected = projection(item.coords)
+	if (!projected) return ''
+	const [cx, cy] = projected
+	const r = size / 2
+	const t = buildClusterTransform({ cx, cy, k: 1 })
+	// Stored for zoom-time patching via updatePointTransforms.
+	const dataAttrs = `data-cluster-id="${item.id}" data-cluster-idx="${idx}" data-cx="${cx}" data-cy="${cy}"`
+	return `<g ${dataAttrs} transform="${t}"><circle r="${r}" class="${cls}" vector-effect="non-scaling-stroke"/><text text-anchor="middle" dominant-baseline="central" class="${CLUSTER_TEXT_CLASS}" style="font-size:${Math.max(10, r * 0.7)}px">${item.count}</text></g>`
+}
+
+type SizeProp = PointsConfig['size']
+
+const resolvePointSize = (sizeProp: SizeProp, state: GeoPointState): number => {
+	if (typeof sizeProp === 'function') return sizeProp(state)
+	if (typeof sizeProp === 'number') return sizeProp
+	return DEFAULT_POINT_SIZE
+}
+
+const resolveClusterSize = (sizeProp: SizeProp, state: GeoClusterState): number => {
+	if (typeof sizeProp === 'function') return sizeProp(state)
+	if (typeof sizeProp === 'number') return sizeProp
+	return defaultClusterSize(state.count)
+}
+
+type MarkupCtx = {
+	anchor: readonly [number, number]
+	classNames: NonNullable<GeoMapBaseProps['classNames']>
+	sizeProp: SizeProp
+	selected: Set<string>
+	projection: GeoProjection
+	pathGen: GeoPath<unknown, GeoPermissibleObjects>
+}
+
+const buildPointMarkupFromState = ({
+	state,
+	id,
+	coords,
+	ctx,
+}: {
+	state: GeoPointState
+	id: string
+	coords: [number, number]
+	ctx: MarkupCtx
+}) => {
+	const size = resolvePointSize(ctx.sizeProp, state)
+	const customClass = ctx.classNames.point ? cnFn(ctx.classNames.point, state) : ''
+	const cls = customClass ? `${POINT_CLASS} ${customClass}` : POINT_CLASS
+	return buildPointPath({
+		id,
+		idx: state.index,
+		coords,
+		size,
+		anchor: ctx.anchor,
+		cls,
+		projection: ctx.projection,
+		pathGen: ctx.pathGen,
+	})
+}
+
+const buildClusterMarkupFromItem = (item: Extract<ClusterItem, { kind: 'cluster' }>, idx: number, ctx: MarkupCtx) => {
+	const state: GeoClusterState = {
+		id: item.id,
+		count: item.count,
+		coordinates: item.coords,
+		points: item.getPoints(),
+		isHovered: false,
+	}
+	const size = resolveClusterSize(ctx.sizeProp, state)
+	const customClass = ctx.classNames.cluster ? cnFn(ctx.classNames.cluster, state) : ''
+	const cls = customClass ? `${CLUSTER_CIRCLE_CLASS} ${customClass}` : CLUSTER_CIRCLE_CLASS
+	return buildClusterMarkup({ item, idx, size, cls, projection: ctx.projection, pathGen: ctx.pathGen })
+}
+
+const pointStateFromItem = (
+	item: Extract<ClusterItem, { kind: 'point' }>,
+	point: GeoPoint,
+	selected: Set<string>,
+): GeoPointState => ({
+	point,
+	index: item.index,
+	isSelected: selected.has(point.id),
+	isHovered: false,
+	value: point.properties.value,
+})
+
+const buildClusteredMarkup = (
+	clusterItems: readonly ClusterItem[],
+	points: readonly GeoPoint[],
+	ctx: MarkupCtx,
+): string => {
+	const pointById = new Map(points.map((p) => [p.id, p]))
+	const parts: string[] = []
+
+	for (let i = 0; i < clusterItems.length; i++) {
+		const item = clusterItems[i]
+
+		if (item.kind === 'cluster') {
+			parts.push(buildClusterMarkupFromItem(item, i, ctx))
+			continue
+		}
+
+		const point = pointById.get(item.pointId) ?? pointById.get(item.pointId.split('-')[0])
+		if (!point) continue
+		const state = pointStateFromItem(item, point, ctx.selected)
+		parts.push(buildPointMarkupFromState({ state, id: item.pointId, coords: item.coords, ctx }))
+	}
+
+	return parts.join('')
+}
+
+const buildUnclusteredMarkup = (points: readonly GeoPoint[], regionById: Map<string, GeoRegion>, ctx: MarkupCtx) => {
+	const resolved = resolvePointCoords(points, regionById)
+	const parts: string[] = []
+
+	for (const r of resolved) {
+		const state: GeoPointState = {
+			point: r.point,
+			index: r.index,
+			isSelected: ctx.selected.has(r.point.id),
+			isHovered: false,
+			value: r.point.properties.value,
+		}
+		parts.push(buildPointMarkupFromState({ state, id: r.id, coords: r.coords, ctx }))
+	}
+
+	return parts.join('')
+}
+
 export const buildPointsMarkup = ({
 	config,
 	projection,
@@ -109,6 +301,7 @@ export const buildPointsMarkup = ({
 	regions,
 	classNames,
 	selectedPointIds,
+	clusterItems,
 }: {
 	config: PointsConfig | undefined
 	projection: GeoProjection
@@ -116,50 +309,27 @@ export const buildPointsMarkup = ({
 	regions: readonly GeoRegion[]
 	classNames: NonNullable<GeoMapBaseProps['classNames']>
 	selectedPointIds: readonly string[]
+	clusterItems?: readonly ClusterItem[]
 }) => {
 	const points = config?.data
 	if (!points?.length || !config) return ''
-	const selected = new Set(selectedPointIds)
-	const regionById = new Map(regions.map((r) => [r.id, r]))
-	const resolved = resolvePointCoords(points, regionById)
-	const anchor = resolveAnchor(config.anchor ?? 'bottom-center')
-	const sizeProp = config.size
-	const sizeFn =
-		typeof sizeProp === 'function' ? sizeProp : () => (typeof sizeProp === 'number' ? sizeProp : DEFAULT_POINT_SIZE)
-
-	const parts: string[] = []
-
-	for (const r of resolved) {
-		const geom: GeoJSON.Point = { type: 'Point', coordinates: r.coords }
-		// pathGen applies the projection's clipping (orthographic's hemisphere, gnomonic's circle, etc).
-		// projection() called directly skips clipping, so hidden points would still render.
-		if (pathGen(geom) == null) continue
-		const projected = projection(r.coords)
-		if (!projected) continue
-		const state: GeoPointState = {
-			point: r.point,
-			index: r.index,
-			isSelected: selected.has(r.point.id),
-			isHovered: false,
-			value: r.point.properties.value,
-		}
-		const size = sizeFn(state)
-		const [cx, cy] = projected
-		const s = size / DEFAULT_POINT_SIZE
-		const t = buildPointTransform({ cx, cy, s, anchor, k: 1 })
-		const customClass = classNames.point ? cnFn(classNames.point, state) : ''
-		const cls = customClass ? `${POINT_CLASS} ${customClass}` : POINT_CLASS
-		parts.push(
-			`<path data-point-id="${r.id}" data-point-idx="${r.index}" data-cx="${cx}" data-cy="${cy}" data-s="${s}" data-ax="${anchor[0]}" data-ay="${anchor[1]}" d="${DEFAULT_POINT_PATH}" transform="${t}" class="${cls}" vector-effect="non-scaling-stroke"/>`,
-		)
+	const ctx: MarkupCtx = {
+		anchor: resolveAnchor(config.anchor ?? 'bottom-center'),
+		classNames,
+		sizeProp: config.size,
+		selected: new Set(selectedPointIds),
+		projection,
+		pathGen,
 	}
-
-	return parts.join('')
+	if (clusterItems) return buildClusteredMarkup(clusterItems, points, ctx)
+	const regionById = new Map(regions.map((r) => [r.id, r]))
+	return buildUnclusteredMarkup(points, regionById, ctx)
 }
 
-/** Rewrite every point's `transform` attribute for the given zoom scale. Cheap: reads cached data-* attrs. */
+/** Rewrite every point's and cluster's `transform` for the given zoom scale. Cheap: reads cached data-* attrs. */
 export const updatePointTransforms = (pointsGroup: SVGGElement | null, k: number) => {
 	if (!pointsGroup) return
+
 	const paths = pointsGroup.querySelectorAll<SVGPathElement>('path[data-point-idx]')
 
 	for (const path of paths) {
@@ -169,5 +339,13 @@ export const updatePointTransforms = (pointsGroup: SVGGElement | null, k: number
 		const ax = Number(path.getAttribute('data-ax'))
 		const ay = Number(path.getAttribute('data-ay'))
 		path.setAttribute('transform', buildPointTransform({ cx, cy, s, anchor: [ax, ay], k }))
+	}
+
+	const clusters = pointsGroup.querySelectorAll<SVGGElement>('g[data-cluster-idx]')
+
+	for (const g of clusters) {
+		const cx = Number(g.getAttribute('data-cx'))
+		const cy = Number(g.getAttribute('data-cy'))
+		g.setAttribute('transform', buildClusterTransform({ cx, cy, k }))
 	}
 }
