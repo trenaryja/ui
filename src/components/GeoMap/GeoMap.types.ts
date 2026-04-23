@@ -34,12 +34,36 @@ export type GeoPointState = {
 	value?: number
 }
 
+export type ClusterConfig = {
+	/** Cluster radius in pixels. Higher values cluster more aggressively. Default 60. */
+	radius?: number
+	/** Above this zoom level, points are never clustered. Default Infinity. */
+	maxZoom?: number
+	/** Minimum points required to form a cluster. Default 2. */
+	minPoints?: number
+}
+
 export type PointsConfig = {
 	data: readonly GeoPoint[]
-	size?: ((state: GeoPointState) => number) | number
+	size?: ((state: GeoClusterState | GeoPointState) => number) | number
 	anchor?: GeoAnchor
 	/** When `false` (default), points keep constant pixel size as the user zooms. When `true`, they scale with zoom. */
 	scaleWithZoom?: boolean
+	cluster?: ClusterConfig | boolean
+}
+
+export type ClusteredPoint = GeoPoint & { isSelected: boolean }
+
+export type GeoClusterState = {
+	/** Supercluster's cluster id. Used with `supercluster.getClusterExpansionZoom(id)`. */
+	id: number
+	/** Point count in this cluster. Named by Mapbox convention (matches `properties.point_count`). */
+	count: number
+	/** `[lon, lat]` of the cluster centroid. */
+	coordinates: [number, number]
+	/** The underlying points in this cluster. Populated lazily when needed by tooltip/handler. */
+	points: readonly ClusteredPoint[]
+	isHovered: boolean
 }
 
 export const geoProjectionPresets = [
@@ -109,7 +133,10 @@ export type GeoMapLegendComponents =
 			swatch?: ComponentType<{ item: GeoLegendItem; className?: string }>
 	  }
 
-export type GeoTooltipState = (GeoPointState & { kind: 'point' }) | (GeoRegionState & { kind: 'region' })
+export type GeoTooltipState =
+	| (GeoClusterState & { kind: 'cluster' })
+	| (GeoPointState & { kind: 'point' })
+	| (GeoRegionState & { kind: 'region' })
 
 export type GeoMapTooltipClassNames = {
 	container?: FunctionalClassName<GeoTooltipState>
@@ -160,6 +187,7 @@ export type GeoMapFormatters = {
 export type GeoMapClassNames = {
 	region?: FunctionalClassName<GeoRegionState>
 	point?: FunctionalClassName<GeoPointState>
+	cluster?: FunctionalClassName<GeoClusterState>
 	graticule?: string
 	sphere?: string
 	tooltip?: GeoMapTooltipClassNames
@@ -219,5 +247,12 @@ export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange' | 'points'>
 	onPointClick?: (point: GeoPoint, index: number) => void
 	onPointMouseEnter?: (point: GeoPoint, index: number) => void
 	onPointMouseLeave?: (point: GeoPoint, index: number) => void
+	/**
+	 * Called when a cluster is clicked. If omitted, the default behavior is to zoom to the
+	 * cluster's expansion zoom level (so the cluster breaks apart).
+	 */
+	onClusterClick?: (state: GeoClusterState) => void
+	onClusterMouseEnter?: (state: GeoClusterState) => void
+	onClusterMouseLeave?: (state: GeoClusterState) => void
 	children?: ReactNode
 }

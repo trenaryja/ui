@@ -12,7 +12,8 @@
 	},
 	"scripts": {
 		"dev": "concurrently \"bun run build --watch\" \"bun run demo\"",
-		"check": "bun run format && bun run lint --fix && bun run tsc",
+		"fix": "prettier -w . && eslint --fix .",
+		"check": "tsc && prettier -c . && eslint .",
 		"test": "concurrently -g --timings \"bun run lint\" \"bun run tsc\" \"bun run build && bun run test:build\"",
 		"test:build": "bun test tests/build",
 		"demo": "vite",
@@ -63,6 +64,7 @@
 		"@types/node": "^25.5.0",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
+		"@types/supercluster": "^7.1.3",
 		"@types/topojson-client": "^3.1.5",
 		"@types/topojson-specification": "^1.0.5",
 		"@vitejs/plugin-react": "^6.0.1",
@@ -103,6 +105,7 @@
 		"recharts": "^3.8.0",
 		"remeda": "^2.33.6",
 		"sonner": "^2.0.7",
+		"supercluster": "^8.0.1",
 		"tailwind-merge": "^3.5.0",
 		"topojson-client": "^3.1.0",
 		"type-fest": "^5.4.4"

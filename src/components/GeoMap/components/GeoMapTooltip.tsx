@@ -15,7 +15,16 @@ const DefaultSwatch = ({ color, className }: { state: GeoTooltipState; color?: s
 		/>
 	) : null
 
-const getName = (state: GeoTooltipState) => (state.kind === 'region' ? state.feature.name : state.point.name)
+const getName = (state: GeoTooltipState) => {
+	if (state.kind === 'region') return state.feature.name
+	if (state.kind === 'point') return state.point.name
+	return `${state.count.toLocaleString()} points`
+}
+
+const getValue = (state: GeoTooltipState): number | undefined => {
+	if (state.kind === 'cluster') return state.count
+	return state.value
+}
 
 export const GeoMapTooltip = ({
 	state,
@@ -32,12 +41,13 @@ export const GeoMapTooltip = ({
 }) => {
 	const Swatch = components.swatch ?? DefaultSwatch
 	const title = formatters.title ? formatters.title(state) : getName(state)
-	const label = formatters.label ? formatters.label(state) : 'Value'
+	const label = formatters.label ? formatters.label(state) : state.kind === 'cluster' ? 'Count' : 'Value'
+	const rawValue = getValue(state)
 	const value =
-		state.value != null
+		rawValue != null
 			? formatters.value
-				? formatters.value(state.value, state)
-				: state.value.toLocaleString()
+				? formatters.value(rawValue, state)
+				: rawValue.toLocaleString()
 			: null
 
 	const containerClassName = cn(
