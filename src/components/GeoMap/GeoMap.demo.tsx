@@ -129,6 +129,8 @@ type DemoState = {
 	showDraggable: boolean
 	showPoints: boolean
 	pointDensity: PointDensity
+	cluster: boolean
+	clusterRadius: number
 }
 
 const SELECTION_OPTIONS: { value: SelectionMode; label: string }[] = [
@@ -308,6 +310,24 @@ const PointsSection = ({
 				))}
 			</Select>
 		</Field>
+		<Field label='Cluster' labelPlacement='right-center'>
+			<Toggle checked={s.cluster} onChange={(e) => set('cluster', e.target.checked)} />
+		</Field>
+		{s.cluster && (
+			<Field label='Radius'>
+				<Select
+					className='select-sm'
+					value={s.clusterRadius}
+					onChange={(e) => set('clusterRadius', Number(e.target.value))}
+				>
+					{[20, 40, 60, 80, 100, 120].map((n) => (
+						<option key={n} value={n}>
+							{n}px
+						</option>
+					))}
+				</Select>
+			</Field>
+		)}
 		{s.showPoints && (
 			<Button className='btn-sm' onClick={onFlyToRandomCity}>
 				Fly to random city
@@ -355,6 +375,8 @@ export function Demo() {
 		showDraggable: true,
 		showPoints: true,
 		pointDensity: 'low',
+		cluster: false,
+		clusterRadius: 60,
 	})
 	const [selected, setSelected] = useState<string[]>([])
 	const [singleSelected, setSingleSelected] = useState<string | null>(null)
@@ -385,7 +407,9 @@ export function Demo() {
 		geo: s.mapPreset,
 		projection: s.projectionPreset || undefined,
 		choropleth,
-		points: s.showPoints ? { data: cityPoints } : undefined,
+		points: s.showPoints
+			? { data: cityPoints, cluster: s.cluster ? { radius: s.clusterRadius } : undefined }
+			: undefined,
 		formatters: { tooltip: { value: (v: number) => fmtPct(v) } },
 		draggable: s.showDraggable,
 		zoomable: s.showZoom,
