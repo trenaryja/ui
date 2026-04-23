@@ -2,14 +2,14 @@
 
 import { flip, offset, shift, useFloating } from '@floating-ui/react'
 import { useEffect, useSyncExternalStore } from 'react'
-import type { GeoRegion } from '../GeoMap.types'
+import type { GeoTooltipState } from '../GeoMap.types'
 
-type TooltipSnapshot = { featureIdx: number; feature: GeoRegion; value?: number } | null
+type TooltipSnapshot = GeoTooltipState | null
 
 export type TooltipStore = {
 	subscribe: (cb: () => void) => () => void
 	getSnapshot: () => TooltipSnapshot
-	show: (featureIdx: number, feature: GeoRegion, value?: number) => void
+	show: (state: GeoTooltipState) => void
 	hide: () => void
 	setPoint: (x: number, y: number) => void
 	getPoint: () => { x: number; y: number }
@@ -32,9 +32,9 @@ export const createTooltipStore = (): TooltipStore => {
 			return () => listeners.delete(cb)
 		},
 		getSnapshot: () => snapshot,
-		show: (featureIdx, feature, value) => {
+		show: (state) => {
 			if (suppressed) return
-			snapshot = { featureIdx, feature, value }
+			snapshot = state
 			notify()
 		},
 		hide: () => {

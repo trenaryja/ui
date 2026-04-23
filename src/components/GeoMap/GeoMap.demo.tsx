@@ -7,9 +7,32 @@ import type { DemoMeta } from '@demo'
 import { faker } from '@faker-js/faker'
 import { useEffect, useMemo, useState } from 'react'
 import * as R from 'remeda'
-import type { GeoProjectionPreset } from './GeoMap.types'
+import type { GeoPoint, GeoProjectionPreset, GeoZoomState } from './GeoMap.types'
 import type { GeoMapPreset } from './GeoMap.utils'
-import { getProjectionsByTag, loadPresetFeatures } from './GeoMap.utils'
+import { animateZoom, getPointZoom, getProjectionsByTag, loadPresetFeatures } from './GeoMap.utils'
+
+const SAMPLE_CITIES: readonly { id: string; name: string; lon: number; lat: number }[] = [
+	{ id: 'london', name: 'London', lon: -0.1, lat: 51.5 },
+	{ id: 'tokyo', name: 'Tokyo', lon: 139.7, lat: 35.7 },
+	{ id: 'nyc', name: 'New York', lon: -74.0, lat: 40.7 },
+	{ id: 'la', name: 'Los Angeles', lon: -118.2, lat: 34.1 },
+	{ id: 'cape-town', name: 'Cape Town', lon: 18.4, lat: -33.9 },
+	{ id: 'sydney', name: 'Sydney', lon: 151.2, lat: -33.9 },
+	{ id: 'rio', name: 'Rio de Janeiro', lon: -43.2, lat: -22.9 },
+	{ id: 'mumbai', name: 'Mumbai', lon: 72.8, lat: 19.1 },
+	{ id: 'cairo', name: 'Cairo', lon: 31.2, lat: 30.0 },
+	{ id: 'moscow', name: 'Moscow', lon: 37.6, lat: 55.8 },
+	{ id: 'mexico-city', name: 'Mexico City', lon: -99.1, lat: 19.4 },
+	{ id: 'reykjavik', name: 'Reykjavík', lon: -21.9, lat: 64.1 },
+]
+
+const CITY_POINTS: readonly GeoPoint[] = SAMPLE_CITIES.map((c) => ({
+	type: 'Feature',
+	id: c.id,
+	name: c.name,
+	geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
+	properties: {},
+}))
 
 export const meta: DemoMeta = { title: 'GeoMap', category: 'components' }
 
@@ -69,6 +92,7 @@ type DemoState = {
 	showGraticule: boolean
 	showZoom: boolean
 	showDraggable: boolean
+	showPoints: boolean
 }
 
 const MapControls = ({
@@ -76,11 +100,13 @@ const MapControls = ({
 	set,
 	onReset,
 	onRandomize,
+	onFlyToNyc,
 }: {
 	s: DemoState
 	set: <TKey extends keyof DemoState>(key: TKey, value: DemoState[TKey]) => void
 	onReset: () => void
 	onRandomize: () => void
+	onFlyToNyc: () => void
 }) => (
 	<Fieldset className='flex flex-col items-center gap-2'>
 		<div className='flex flex-wrap gap-x-4 gap-y-2'>
@@ -183,8 +209,14 @@ const MapControls = ({
 			<Field label='Draggable' labelPlacement='right-center'>
 				<Toggle checked={s.showDraggable} onChange={(e) => set('showDraggable', e.target.checked)} />
 			</Field>
+			<Field label='Points' labelPlacement='right-center'>
+				<Toggle checked={s.showPoints} onChange={(e) => set('showPoints', e.target.checked)} />
+			</Field>
 			<Button className='btn-sm' onClick={onRandomize}>
 				Randomize
+			</Button>
+			<Button className='btn-sm' onClick={onFlyToNyc}>
+				Fly to NYC
 			</Button>
 		</div>
 	</Fieldset>
@@ -204,9 +236,13 @@ export function Demo() {
 		showGraticule: false,
 		showZoom: true,
 		showDraggable: true,
+		showPoints: true,
 	})
 	const [selected, setSelected] = useState<string[]>([])
 	const [singleSelected, setSingleSelected] = useState<string | null>(null)
+	const [selectedPoints, setSelectedPoints] = useState<string[]>([])
+	const [singleSelectedPoint, setSingleSelectedPoint] = useState<string | null>(null)
+	const [zoom, setZoom] = useState<GeoZoomState | undefined>(undefined)
 	const [randomSeed, setRandomSeed] = useState(0)
 
 	const set = <TKey extends keyof DemoState>(key: TKey, value: DemoState[TKey]) =>
@@ -230,6 +266,7 @@ export function Demo() {
 		geo: s.mapPreset,
 		projection: s.projectionPreset || undefined,
 		choropleth,
+		points: s.showPoints ? { data: CITY_POINTS } : undefined,
 		formatters: { tooltip: { value: (v: number) => fmtPct(v) } },
 		draggable: s.showDraggable,
 		zoomable: s.showZoom,
@@ -242,18 +279,51 @@ export function Demo() {
 	const resetSelection = () => {
 		setSelected([])
 		setSingleSelected(null)
+		setSelectedPoints([])
+		setSingleSelectedPoint(null)
 	}
 
-	const geoMapProps: GeoMapProps =
+	const regionFormInput =
 		s.selection === 'multi'
-			? { ...sharedProps, selection: 'multi', value: selected, onChange: setSelected }
+			? { mode: 'multi' as const, value: selected, onChange: setSelected }
 			: s.selection === 'single'
-				? { ...sharedProps, selection: 'single', value: singleSelected, onChange: setSingleSelected }
-				: sharedProps
+				? { mode: 'single' as const, value: singleSelected, onChange: setSingleSelected }
+				: undefined
+
+	const pointFormInput =
+		s.selection === 'multi'
+			? { mode: 'multi' as const, value: selectedPoints, onChange: setSelectedPoints }
+			: s.selection === 'single'
+				? { mode: 'single' as const, value: singleSelectedPoint, onChange: setSingleSelectedPoint }
+				: undefined
+
+	const geoMapProps: GeoMapProps = {
+		...sharedProps,
+		regionFormInput,
+		pointFormInput,
+		zoom,
+		onZoomChange: setZoom,
+		classNames: {
+			...sharedProps.classNames,
+			point: (state) => (state.isSelected ? 'fill-accent! stroke-accent-content!' : undefined),
+		},
+	}
+
+	const flyToNyc = () => {
+		const nyc = CITY_POINTS.find((p) => p.id === 'nyc')
+		const target = nyc && getPointZoom({ point: nyc, scale: 6 })
+		if (target) animateZoom({ from: zoom, to: target, onUpdate: setZoom })
+	}
 
 	return (
 		<div className='grid size-full max-h-[calc(100vh-4rem)] place-items-center grid-rows-[auto_1fr] gap-4 p-4 full-bleed'>
-			<MapControls s={s} set={set} onReset={resetSelection} onRandomize={() => setRandomSeed((x) => x + 1)} />
+			<MapControls
+				s={s}
+				set={set}
+				onReset={resetSelection}
+				onRandomize={() => setRandomSeed((x) => x + 1)}
+				onFlyToNyc={flyToNyc}
+			/>
 			<GeoMap {...geoMapProps} />
 		</div>
 	)

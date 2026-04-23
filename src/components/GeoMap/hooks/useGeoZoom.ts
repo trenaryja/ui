@@ -6,7 +6,7 @@ import { select } from 'd3-selection'
 import 'd3-transition' // extends Selection with .transition()
 import type { ZoomBehavior } from 'd3-zoom'
 import { zoom as d3Zoom, zoomIdentity, zoomTransform } from 'd3-zoom'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { DragBehavior } from '../GeoMap.utils'
 import type { GeoZoomState } from '../GeoMap.types'
 
@@ -45,9 +45,11 @@ const computeZoomFromTransform = ({
 }
 
 /**
- * Pan: full bidirectional sync via projection.
- * Rotate: scale via transform; center maps to rotation as [-lon, -lat].
- * Rotate-lambda: scale via transform; center.x maps to lambda rotation; center.y is best-effort.
+ * Pan / Rotate-λ: translate so `center` lands at the viewport center under `scale(k)`. Rotation
+ *   is untouched — keeps wheel round-trip (emit → setZoom → apply) stable, since emit for these
+ *   reads the same translate.
+ * Rotate (globe): set rotation to `-center`; fit-to-sphere places that lon/lat at the viewport
+ *   center and zoomG's centered transform scales from there.
  */
 const computeTransformForZoom = ({
 	zoomState,
@@ -57,15 +59,14 @@ const computeTransformForZoom = ({
 }: ProjectionGeometry & { zoomState: GeoZoomState }): { transform: ZoomTransform; rotation?: [number, number] } => {
 	const { scale, center } = zoomState
 
-	if (dragBehavior === 'pan') {
-		const projected = projection([center[0], center[1]]) ?? viewBoxCenter
-		return {
-			transform: { x: viewBoxCenter[0] - projected[0] * scale, y: viewBoxCenter[1] - projected[1] * scale, k: scale },
-		}
+	if (dragBehavior === 'rotate') {
+		return { transform: { x: 0, y: 0, k: scale }, rotation: [-center[0], -center[1]] }
 	}
 
-	const rotation: [number, number] = dragBehavior === 'rotate' ? [-center[0], -center[1]] : [-center[0], 0]
-	return { transform: { x: 0, y: 0, k: scale }, rotation }
+	const projected = projection([center[0], center[1]]) ?? viewBoxCenter
+	return {
+		transform: { x: viewBoxCenter[0] - projected[0] * scale, y: viewBoxCenter[1] - projected[1] * scale, k: scale },
+	}
 }
 
 type UseGeoZoomOpts = {
@@ -82,6 +83,7 @@ type UseGeoZoomOpts = {
 	defaultZoom?: GeoZoomState
 	onRotate?: (rotation: [number, number] | undefined) => void
 	onZoomChange?: (zoom: GeoZoomState | undefined) => void
+	onZoomApplied?: (k: number) => void
 	onDragStart?: () => void
 	onDragEnd?: () => void
 	subPropsZoom?: Record<string, unknown>
@@ -102,6 +104,7 @@ type ZoomCtx = {
 	projectionRef: React.RefObject<GeoProjection>
 	deferScale: (k: number) => void
 	emitZoom: (z: GeoZoomState) => void
+	onZoomApplied?: (k: number) => void
 	onRotate?: (rotation: [number, number] | undefined) => void
 	onDragStart?: () => void
 	onDragEnd?: () => void
@@ -117,6 +120,7 @@ const setupPanZoom = ({
 	zoomEnabled,
 	dragEnabled,
 	onScaleChange,
+	onZoomApplied,
 	onUserZoom,
 }: {
 	svg: SVGSVGElement
@@ -125,6 +129,7 @@ const setupPanZoom = ({
 	zoomEnabled: boolean
 	dragEnabled: boolean
 	onScaleChange?: (k: number) => void
+	onZoomApplied?: (k: number) => void
 	onUserZoom?: () => void
 }) => {
 	const [vw, vh] = viewBoxSize
@@ -142,6 +147,7 @@ const setupPanZoom = ({
 			const { x, y, k } = e.transform
 			if (k === 1 && x === 0 && y === 0) zoomG.removeAttribute('transform')
 			else zoomG.setAttribute('transform', `translate(${x},${y}) scale(${k})`)
+			onZoomApplied?.(k)
 			onScaleChange?.(k)
 			if (e.sourceEvent) onUserZoom?.()
 		})
@@ -240,9 +246,10 @@ const setupRotateGlobe = (ctx: ZoomCtx) => {
 			.scaleExtent([MIN_SCALE, MAX_SCALE])
 			.on('zoom', (e) => {
 				const { k } = e.transform
-				ctx.deferScale(k)
 				if (k === 1) ctx.zoomG.removeAttribute('transform')
 				else ctx.zoomG.setAttribute('transform', `translate(${cx},${cy}) scale(${k}) translate(${-cx},${-cy})`)
+				ctx.onZoomApplied?.(k)
+				ctx.deferScale(k)
 				if (e.sourceEvent) onUserZoom()
 			})
 			.filter(noDragFilter)
@@ -266,6 +273,7 @@ const setupRotateLambda = (ctx: ZoomCtx) => {
 			zoomEnabled: true,
 			dragEnabled: false,
 			onScaleChange: ctx.deferScale,
+			onZoomApplied: ctx.onZoomApplied,
 			onUserZoom,
 		})
 	}
@@ -337,6 +345,7 @@ export const useGeoZoom = ({
 	defaultZoom,
 	onRotate,
 	onZoomChange,
+	onZoomApplied,
 	onDragStart,
 	onDragEnd,
 	subPropsZoom,
@@ -416,6 +425,7 @@ export const useGeoZoom = ({
 			projectionRef,
 			deferScale,
 			emitZoom,
+			onZoomApplied,
 			onRotate,
 			onDragStart,
 			onDragEnd,
@@ -431,7 +441,9 @@ export const useGeoZoom = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- viewBoxCenter, projection, rotation, callbacks read via refs to avoid tearing down on every update
 	}, [svgRef, zoomGRef, zoomEnabled, dragEnabled, dragBehavior, subPropsZoom && JSON.stringify(subPropsZoom)])
 
-	useEffect(() => {
+	// useLayoutEffect so behavior.transform + point counter-scale land before paint. With useEffect
+	// the outer zoomG transform would paint one frame ahead of points, causing visible size jumps.
+	useLayoutEffect(() => {
 		const svg = svgRef.current
 		const behavior = behaviorRef.current
 		if (!svg || !behavior) return
@@ -475,6 +487,7 @@ export const useGeoZoom = ({
 		zoomIn,
 		zoomOut,
 		resetZoom,
+		scale,
 		canZoomIn: scale < MAX_SCALE,
 		canZoomOut: scale > MIN_SCALE,
 		canReset: scale !== 1,

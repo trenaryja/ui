@@ -1,59 +1,32 @@
 'use client'
 
 import { cn, EMPTY_OBJ } from '@/utils'
-import { useUncontrolled } from '@mantine/hooks'
 import { Suspense } from 'react'
-import type { GeoMapViewProps } from './components/GeoMapView'
 import { GeoMapView } from './components/GeoMapView'
-import type { GeoMapBaseProps } from './GeoMap.types'
+import type { FormInputConfig, GeoMapBaseProps } from './GeoMap.types'
+import { useToggleSelection } from './hooks/useToggleSelection'
 
-type SingleSelection = {
-	selection: 'single'
-	value?: string | null
-	defaultValue?: string | null
-	onChange?: (value: string | null) => void
-	name?: string
+export type GeoMapProps = GeoMapBaseProps
+
+const HiddenInputs = ({ name, values }: { name?: string; values: readonly string[] }) =>
+	name ? values.map((v) => <input key={v} type='hidden' name={name} value={v} />) : null
+
+type SelectableProps = GeoMapBaseProps & {
+	regionFormInput?: FormInputConfig
+	pointFormInput?: FormInputConfig
 }
-
-type MultiSelection = {
-	selection: 'multi'
-	value?: string[]
-	defaultValue?: string[]
-	onChange?: (value: string[]) => void
-	name?: string
-}
-
-export type GeoMapProps =
-	| (GeoMapBaseProps & { selection?: never })
-	| (GeoMapBaseProps & MultiSelection)
-	| (GeoMapBaseProps & SingleSelection)
-
-const toArray = (v: string | null | undefined) => (v === undefined ? undefined : v ? [v] : [])
 
 const GeoMapSelectable = ({
-	selection,
-	value,
-	defaultValue,
-	onChange,
-	name,
+	regionFormInput,
+	pointFormInput,
 	className,
 	classNames = EMPTY_OBJ,
 	onRegionClick,
+	onPointClick,
 	...rest
-}: GeoMapBaseProps & (MultiSelection | SingleSelection)) => {
-	const isMulti = selection === 'multi'
-	const [selectedIds, setSelectedIds] = useUncontrolled<string[]>({
-		value: isMulti ? value : toArray(value),
-		defaultValue: isMulti ? defaultValue : toArray(defaultValue),
-		finalValue: [],
-		onChange: (next) => (isMulti ? onChange?.(next) : onChange?.(next[0] ?? null)),
-	})
-
-	const toggle = (id: string) => {
-		if (isMulti) setSelectedIds(selectedIds.includes(id) ? selectedIds.filter((s) => s !== id) : [...selectedIds, id])
-		else setSelectedIds(selectedIds[0] === id ? [] : [id])
-	}
-
+}: SelectableProps) => {
+	const [selectedIds, toggleRegion] = useToggleSelection(regionFormInput)
+	const [selectedPointIds, togglePoint] = useToggleSelection(pointFormInput)
 	return (
 		<>
 			<GeoMapView
@@ -61,18 +34,28 @@ const GeoMapSelectable = ({
 				className={cn('[&_path]:cursor-pointer', className)}
 				classNames={classNames}
 				selectedIds={selectedIds}
+				selectedPointIds={selectedPointIds}
 				onRegionClick={(feature, index) => {
-					toggle(feature.id)
+					if (regionFormInput) toggleRegion(feature.id)
 					onRegionClick?.(feature, index)
 				}}
+				onPointClick={(point, index) => {
+					if (pointFormInput) togglePoint(point.id)
+					onPointClick?.(point, index)
+				}}
 			/>
-			{name && selectedIds.map((id) => <input key={id} type='hidden' name={name} value={id} />)}
+			<HiddenInputs name={regionFormInput?.name} values={selectedIds} />
+			<HiddenInputs name={pointFormInput?.name} values={selectedPointIds} />
 		</>
 	)
 }
 
-export const GeoMap = ({ ...props }: GeoMapProps) => (
+export const GeoMap = ({ regionFormInput, pointFormInput, ...props }: GeoMapProps) => (
 	<Suspense fallback={null}>
-		{props.selection ? <GeoMapSelectable {...props} /> : <GeoMapView {...(props as GeoMapViewProps)} />}
+		{regionFormInput || pointFormInput ? (
+			<GeoMapSelectable {...props} regionFormInput={regionFormInput} pointFormInput={pointFormInput} />
+		) : (
+			<GeoMapView {...props} />
+		)}
 	</Suspense>
 )

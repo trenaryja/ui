@@ -1,4 +1,4 @@
-import type { ColorMixSpace, FunctionalClassName } from '@/utils'
+import type { ColorMixSpace, FunctionalClassName, Placement } from '@/utils'
 import type { GeoGeometryObjects, GeoProjection } from 'd3-geo'
 import type { ComponentProps, ComponentType, ReactNode, RefObject } from 'react'
 import type { Topology } from 'topojson-specification'
@@ -20,6 +20,27 @@ export type NamedFeature<
 }
 
 export type GeoRegion = NamedFeature<GeoJSON.MultiPolygon | GeoJSON.Polygon>
+
+export type GeoPoint = NamedFeature<GeoJSON.MultiPoint | GeoJSON.Point | null, { regionId?: string; value?: number }>
+
+/** `[x, y]` tuple is a 0..1 fraction of the point's 24x24 viewBox. */
+export type GeoAnchor = 'center' | Placement | readonly [x: number, y: number]
+
+export type GeoPointState = {
+	point: GeoPoint
+	index: number
+	isSelected: boolean
+	isHovered: boolean
+	value?: number
+}
+
+export type PointsConfig = {
+	data: readonly GeoPoint[]
+	size?: ((state: GeoPointState) => number) | number
+	anchor?: GeoAnchor
+	/** When `false` (default), points keep constant pixel size as the user zooms. When `true`, they scale with zoom. */
+	scaleWithZoom?: boolean
+}
 
 export const geoProjectionPresets = [
 	'azimuthal-equidistant',
@@ -88,25 +109,27 @@ export type GeoMapLegendComponents =
 			swatch?: ComponentType<{ item: GeoLegendItem; className?: string }>
 	  }
 
+export type GeoTooltipState = (GeoPointState & { kind: 'point' }) | (GeoRegionState & { kind: 'region' })
+
 export type GeoMapTooltipClassNames = {
-	container?: FunctionalClassName<GeoRegionState>
-	title?: FunctionalClassName<GeoRegionState>
-	swatch?: FunctionalClassName<GeoRegionState>
-	label?: FunctionalClassName<GeoRegionState>
-	value?: FunctionalClassName<GeoRegionState>
+	container?: FunctionalClassName<GeoTooltipState>
+	title?: FunctionalClassName<GeoTooltipState>
+	swatch?: FunctionalClassName<GeoTooltipState>
+	label?: FunctionalClassName<GeoTooltipState>
+	value?: FunctionalClassName<GeoTooltipState>
 }
 
 export type GeoMapTooltipFormatters = {
-	title?: (state: GeoRegionState) => ReactNode
-	value?: (value: number, state: GeoRegionState) => ReactNode
-	label?: (state: GeoRegionState) => ReactNode
+	title?: (state: GeoTooltipState) => ReactNode
+	value?: (value: number, state: GeoTooltipState) => ReactNode
+	label?: (state: GeoTooltipState) => ReactNode
 }
 
 export type GeoMapTooltipComponents =
-	| ComponentType<{ state: GeoRegionState; color?: string }>
+	| ComponentType<{ state: GeoTooltipState; color?: string }>
 	| {
-			container?: ComponentType<{ state: GeoRegionState; className?: string; children: ReactNode }>
-			swatch?: ComponentType<{ state: GeoRegionState; color?: string; className?: string }>
+			container?: ComponentType<{ state: GeoTooltipState; className?: string; children: ReactNode }>
+			swatch?: ComponentType<{ state: GeoTooltipState; color?: string; className?: string }>
 	  }
 
 export type GeoMapGraticuleComponents = ComponentType<{
@@ -136,6 +159,7 @@ export type GeoMapFormatters = {
 
 export type GeoMapClassNames = {
 	region?: FunctionalClassName<GeoRegionState>
+	point?: FunctionalClassName<GeoPointState>
 	graticule?: string
 	sphere?: string
 	tooltip?: GeoMapTooltipClassNames
@@ -153,7 +177,23 @@ export type GeoZoomState = {
 	center: [number, number]
 }
 
-export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange'> & {
+export type FormInputConfig =
+	| {
+			mode: 'multi'
+			value?: readonly string[]
+			defaultValue?: readonly string[]
+			onChange?: (ids: string[]) => void
+			name?: string
+	  }
+	| {
+			mode: 'single'
+			value?: string | null
+			defaultValue?: string | null
+			onChange?: (id: string | null) => void
+			name?: string
+	  }
+
+export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange' | 'points'> & {
 	geo?: GeoDataSource
 	projection?: ((width: number, height: number) => GeoProjection) | GeoProjectionPreset
 	region?: GeoRegionFilter
@@ -162,6 +202,9 @@ export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange'> & {
 	zoom?: GeoZoomState
 	defaultZoom?: GeoZoomState
 	onZoomChange?: (zoom: GeoZoomState | undefined) => void
+	regionFormInput?: FormInputConfig
+	pointFormInput?: FormInputConfig
+	points?: PointsConfig
 	className?: string
 	classNames?: GeoMapClassNames
 	choropleth?: ChoroplethConfig
@@ -173,5 +216,8 @@ export type GeoMapBaseProps = Omit<ComponentProps<'svg'>, 'onChange'> & {
 	onRegionClick?: (feature: GeoRegion, index: number) => void
 	onRegionMouseEnter?: (feature: GeoRegion, index: number) => void
 	onRegionMouseLeave?: (feature: GeoRegion, index: number) => void
+	onPointClick?: (point: GeoPoint, index: number) => void
+	onPointMouseEnter?: (point: GeoPoint, index: number) => void
+	onPointMouseLeave?: (point: GeoPoint, index: number) => void
 	children?: ReactNode
 }

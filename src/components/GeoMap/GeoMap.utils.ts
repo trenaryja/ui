@@ -9,12 +9,14 @@ import type {
 	ChoroplethConfig,
 	GeoDataSource,
 	GeoLegendItem,
+	GeoPoint,
 	GeoProjectionPreset,
 	GeoRegion,
 	GeoRegionFilter,
 	GeoZoomState,
 	NamedFeature,
 } from './GeoMap.types'
+import { resolvePointCoord } from './GeoMap.points.utils'
 
 const SPHERE: GeoPermissibleObjects = { type: 'Sphere' }
 
@@ -224,6 +226,74 @@ export const fitProjection = ({
 	}
 
 	return { projection: proj, pathGen: buildPathGenerator(proj), dragBehavior, viewBoxW, viewBoxH }
+}
+
+/**
+ * Computes a {@link GeoZoomState} that centers a point in the viewport at the given `scale`.
+ * Resolves via `point.geometry` (Point or MultiPoint centroid) or `point.properties.regionId` →
+ * region centroid. Returns `null` if nothing resolves.
+ *
+ * Mirrors `getFeatureZoom` for points — a point has no extent to fit, so the caller picks `scale`.
+ */
+export const getPointZoom = ({
+	point,
+	regions,
+	scale = 4,
+}: {
+	point: GeoPoint
+	regions?: readonly GeoRegion[]
+	scale?: number
+}): GeoZoomState | null => {
+	const center = resolvePointCoord(point, regions)
+	if (!center) return null
+	return { scale, center }
+}
+
+const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2)
+
+/**
+ * Animates a controlled-zoom transition by driving `onUpdate` with interpolated `GeoZoomState`
+ * values over `duration`. Returns a cancel function. Runs entirely in userspace — d3-zoom stays
+ * out of it. Pair with controlled `zoom`/`onZoomChange` for a "fly to" effect:
+ *
+ * ```ts
+ * animateZoom({ from: zoom, to: getPointZoom({ point: nyc }), onUpdate: setZoom })
+ * ```
+ */
+export const animateZoom = ({
+	from,
+	to,
+	duration = 750,
+	onUpdate,
+}: {
+	from: GeoZoomState | undefined
+	to: GeoZoomState
+	duration?: number
+	onUpdate: (zoom: GeoZoomState) => void
+}) => {
+	const start: GeoZoomState = from ?? { scale: 1, center: [0, 0] }
+	const startTime = performance.now()
+	let cancelled = false
+
+	const tick = () => {
+		if (cancelled) return
+		const t = Math.min((performance.now() - startTime) / duration, 1)
+		const k = easeInOutQuad(t)
+		onUpdate({
+			scale: start.scale + (to.scale - start.scale) * k,
+			center: [
+				start.center[0] + (to.center[0] - start.center[0]) * k,
+				start.center[1] + (to.center[1] - start.center[1]) * k,
+			],
+		})
+		if (t < 1) requestAnimationFrame(tick)
+	}
+
+	requestAnimationFrame(tick)
+
+	return () => {
+		cancelled = true
+	}
 }
 
 export const getFeatureZoom = ({

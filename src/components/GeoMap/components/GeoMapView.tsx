@@ -4,12 +4,7 @@ import { cn, slotComponents } from '@/utils'
 import { FloatingPortal } from '@floating-ui/react'
 import type { GeoGeometryObjects } from 'd3-geo'
 import type { ComponentProps } from 'react'
-import type {
-	GeoMapBaseProps,
-	GeoMapTooltipComponents,
-	GeoMapZoomControlsComponents,
-	GeoRegionState,
-} from '../GeoMap.types'
+import type { GeoMapBaseProps, GeoMapTooltipComponents, GeoMapZoomControlsComponents } from '../GeoMap.types'
 import type { buildLegendItems, buildPathGenerator, ChoroData } from '../GeoMap.utils'
 import type { TooltipStore } from '../hooks/useGeoMapTooltip'
 import { useFloatingTooltip, useTooltipData } from '../hooks/useGeoMapTooltip'
@@ -38,30 +33,21 @@ const GeoMapGraticule = ({
 
 const GeoMapFloatingTooltip = ({
 	store,
-	selectedIds,
 	getChoroFill,
 	classNames,
 	formatters,
 	components,
 }: {
 	store: TooltipStore
-	selectedIds: readonly string[]
 	getChoroFill?: (id: string) => string | undefined
 	classNames?: GeoMapBaseProps['classNames']
 	formatters?: GeoMapBaseProps['formatters']
 	components?: GeoMapTooltipComponents
 }) => {
-	const data = useTooltipData(store)
-	const { floatingRef, floatingStyles } = useFloatingTooltip(store, data != null)
-	if (!data) return null
-	const state: GeoRegionState = {
-		feature: data.feature,
-		index: data.featureIdx,
-		isSelected: selectedIds.includes(data.feature.id),
-		isHovered: true,
-		value: data.value,
-	}
-	const color = getChoroFill?.(data.feature.id)
+	const state = useTooltipData(store)
+	const { floatingRef, floatingStyles } = useFloatingTooltip(store, state != null)
+	if (!state) return null
+	const color = state.kind === 'region' ? getChoroFill?.(state.feature.id) : undefined
 	const CustomTooltip = typeof components === 'function' ? components : null
 
 	return (
@@ -86,7 +72,6 @@ const GeoMapFloatingTooltip = ({
 const GeoMapOverlays = ({
 	tooltipStore,
 	choro,
-	selectedIds,
 	classNames,
 	formatters,
 	components,
@@ -99,7 +84,6 @@ const GeoMapOverlays = ({
 }: {
 	tooltipStore: TooltipStore
 	choro: ChoroData | undefined
-	selectedIds: readonly string[]
 	classNames: NonNullable<GeoMapBaseProps['classNames']>
 	formatters: NonNullable<GeoMapBaseProps['formatters']>
 	components: NonNullable<GeoMapBaseProps['components']>
@@ -116,7 +100,6 @@ const GeoMapOverlays = ({
 			{components.tooltip !== false && (
 				<GeoMapFloatingTooltip
 					store={tooltipStore}
-					selectedIds={selectedIds}
 					getChoroFill={choro?.fill}
 					classNames={classNames}
 					formatters={formatters}
@@ -146,11 +129,14 @@ export const GeoMapView = (props: GeoMapViewProps) => {
 	const {
 		svgRef,
 		zoomGRef,
+		pointsGRef,
 		ctxValue,
 		viewBox,
 		markup,
+		pointsMarkup,
 		pathGen,
 		handlers,
+		pointHandlers,
 		svgProps,
 		classNames,
 		components,
@@ -175,6 +161,16 @@ export const GeoMapView = (props: GeoMapViewProps) => {
 						onMouseOut={handlers.handleMouseOut}
 						dangerouslySetInnerHTML={{ __html: markup }}
 					/>
+					{pointsMarkup && (
+						<g
+							ref={pointsGRef}
+							onClick={pointHandlers.handleClick}
+							onMouseOver={pointHandlers.handleMouseOver}
+							onMouseMove={pointHandlers.handleMouseMove}
+							onMouseOut={pointHandlers.handleMouseOut}
+							dangerouslySetInnerHTML={{ __html: pointsMarkup }}
+						/>
+					)}
 					{children}
 				</g>
 			</svg>

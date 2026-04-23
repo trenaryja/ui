@@ -4,16 +4,18 @@ import type {
 	GeoMapTooltipClassNames,
 	GeoMapTooltipComponents,
 	GeoMapTooltipFormatters,
-	GeoRegionState,
+	GeoTooltipState,
 } from '../GeoMap.types'
 
-const DefaultSwatch = ({ color, className }: { state: GeoRegionState; color?: string; className?: string }) =>
+const DefaultSwatch = ({ color, className }: { state: GeoTooltipState; color?: string; className?: string }) =>
 	color ? (
 		<span
 			className={cn('size-4 shrink-0 rounded-xs border border-current/25', className)}
 			style={{ backgroundColor: color }}
 		/>
 	) : null
+
+const getName = (state: GeoTooltipState) => (state.kind === 'region' ? state.feature.name : state.point.name)
 
 export const GeoMapTooltip = ({
 	state,
@@ -22,14 +24,14 @@ export const GeoMapTooltip = ({
 	formatters = EMPTY_OBJ,
 	components = EMPTY_OBJ,
 }: {
-	state: GeoRegionState
+	state: GeoTooltipState
 	color?: string
 	classNames?: GeoMapTooltipClassNames
 	formatters?: GeoMapTooltipFormatters
 	components?: Exclude<GeoMapTooltipComponents, ComponentType<any>>
 }) => {
 	const Swatch = components.swatch ?? DefaultSwatch
-	const title = formatters.title ? formatters.title(state) : state.feature.name
+	const title = formatters.title ? formatters.title(state) : getName(state)
 	const label = formatters.label ? formatters.label(state) : 'Value'
 	const value =
 		state.value != null

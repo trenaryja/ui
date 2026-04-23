@@ -3,8 +3,19 @@
 import { cn, cnFn, EMPTY_ARR, EMPTY_OBJ } from '@/utils'
 import type { GeoGeometryObjects, GeoPath, GeoPermissibleObjects, GeoProjection } from 'd3-geo'
 import { geoGraticule } from 'd3-geo'
-import { createContext, use, useEffect, useMemo, useRef, useState } from 'react'
-import type { ChoroplethScaleType, GeoDataSource, GeoMapBaseProps, GeoRegion, GeoZoomState } from '../GeoMap.types'
+import { zoomTransform } from 'd3-zoom'
+import { createContext, use, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import type {
+	ChoroplethConfig,
+	ChoroplethScaleType,
+	GeoDataSource,
+	GeoMapBaseProps,
+	GeoRegion,
+	GeoTooltipState,
+	GeoZoomState,
+	PointsConfig,
+} from '../GeoMap.types'
+import { buildPointsMarkup, updatePointTransforms } from '../GeoMap.points.utils'
 import type { buildPathGenerator, ChoroData, GeoMapPreset } from '../GeoMap.utils'
 import {
 	buildLegendItems,
@@ -23,6 +34,8 @@ import { useGeoZoom } from './useGeoZoom'
 export type GeoMapContextValue = {
 	projection: GeoProjection
 	pathGenerator: GeoPath<unknown, GeoPermissibleObjects>
+	/** Typed wrapper over `projection(coords)`. Returns `null` if the point can't be projected (e.g., clipped). */
+	project: (coords: [number, number]) => [number, number] | null
 	features: readonly GeoRegion[]
 	width: number
 	height: number
@@ -82,17 +95,47 @@ const UNSELECTED_CLASS = cn(
 )
 const SELECTED_CLASS = cn('stroke-base-content/20', 'hover:stroke-base-content hover:z-10', 'fill-base-content')
 
-export type GeoMapViewProps = GeoMapBaseProps & { selectedIds?: readonly string[] }
+export type GeoMapViewProps = GeoMapBaseProps & {
+	selectedIds?: readonly string[]
+	selectedPointIds?: readonly string[]
+}
+
+/**
+ * Narrow deps to choropleth's inner fields so a new `{ data, scaleType, ... }` literal per render
+ * doesn't invalidate `choro` (which would cascade into `markup` rebuilds — 3200 paths for us-counties).
+ */
+const useChoroData = (choropleth: ChoroplethConfig | undefined) => {
+	const data = choropleth?.data
+	const scaleType = choropleth?.scaleType
+	const steps = choropleth?.steps
+	const colors = choropleth?.colors
+	const colorSpace = choropleth?.colorSpace
+	return useMemo(
+		() => (data ? getChoroData({ data, scaleType, steps, colors, colorSpace }) : undefined),
+		[data, scaleType, steps, colors, colorSpace],
+	)
+}
 
 const useGeoProjection = (
 	props: Pick<GeoMapBaseProps, 'geo' | 'projection' | 'region'> & { rotation?: [number, number] },
 ) => {
 	const { features: allFeatures } = useGeoData(props.geo)
-	const features = props.region ? filterFeatures(allFeatures, props.region) : allFeatures
-	const projection =
-		props.projection ??
-		(typeof props.geo === 'string' && isGeoMapPreset(props.geo) ? defaultProjectionForPreset(props.geo) : undefined)
-	return { features, ...fitProjection({ features, projection, rotation: props.rotation, viewBoxW: VIEWBOX_W }) }
+	// Memoize so fitProjection doesn't mint a new projection every render. Stable projection ref
+	// keeps pointsMarkup's useMemo stable during pure zoom — React skips the innerHTML update,
+	// which is what lets onZoomApplied's imperative counter-scale patch persist across ticks.
+	const rotX = props.rotation?.[0]
+	const rotY = props.rotation?.[1]
+	return useMemo(() => {
+		const features = props.region ? filterFeatures(allFeatures, props.region) : allFeatures
+		const projectionInput =
+			props.projection ??
+			(typeof props.geo === 'string' && isGeoMapPreset(props.geo) ? defaultProjectionForPreset(props.geo) : undefined)
+		const rotation: [number, number] | undefined = rotX !== undefined && rotY !== undefined ? [rotX, rotY] : undefined
+		return {
+			features,
+			...fitProjection({ features, projection: projectionInput, rotation, viewBoxW: VIEWBOX_W }),
+		}
+	}, [allFeatures, props.region, props.projection, props.geo, rotX, rotY])
 }
 
 type Features = ReturnType<typeof useGeoProjection>['features']
@@ -157,6 +200,102 @@ const getRegionTarget = (e: React.MouseEvent) => {
 	return { target, idx: Number(target.getAttribute('data-idx')) }
 }
 
+const getPointTarget = (e: React.MouseEvent) => {
+	const target = (e.target as SVGElement).closest('path[data-point-idx]')
+	if (!target) return null
+	return { target, idx: Number(target.getAttribute('data-point-idx')) }
+}
+
+/**
+ * Returns a live `onZoomApplied` — fires synchronously inside d3-zoom's `on('zoom')`, so the inverse
+ * counter-scale lands in the same frame as the outer `zoomG` transform (no flicker). Reads
+ * `scaleWithZoom` via a ref so toggling it doesn't tear down the d3-zoom setup.
+ */
+const usePointsZoomApplied = (pointsGRef: React.RefObject<SVGGElement | null>, points: PointsConfig | undefined) => {
+	const scaleWithZoom = points?.scaleWithZoom ?? false
+	const scaleWithZoomRef = useRef(scaleWithZoom)
+	useEffect(() => {
+		scaleWithZoomRef.current = scaleWithZoom
+	}, [scaleWithZoom])
+
+	const onZoomApplied = (k: number) => {
+		if (!scaleWithZoomRef.current) updatePointTransforms(pointsGRef.current, k)
+	}
+
+	return { scaleWithZoom, onZoomApplied }
+}
+
+/**
+ * Re-applies inverse-scale on every render so newly rendered points match the current zoom.
+ * Runs before paint via `useLayoutEffect`. Intentionally dep-less — `updatePointTransforms` is
+ * idempotent and cheap for typical point counts, and we want a guarantee that pins never paint
+ * at the wrong size, even if some render path we didn't anticipate replaces `innerHTML`.
+ */
+const usePointsScale = ({
+	pointsGRef,
+	svgRef,
+	scaleWithZoom,
+}: {
+	pointsGRef: React.RefObject<SVGGElement | null>
+	svgRef: React.RefObject<SVGSVGElement | null>
+	scaleWithZoom: boolean
+}) => {
+	useLayoutEffect(() => {
+		if (scaleWithZoom || !svgRef.current) return
+		updatePointTransforms(pointsGRef.current, zoomTransform(svgRef.current).k)
+	})
+}
+
+const buildPointHandlers = ({
+	points,
+	tooltipStore,
+	selectedPointIds,
+	onPointClick,
+	onPointMouseEnter,
+	onPointMouseLeave,
+}: {
+	points: PointsConfig | undefined
+	tooltipStore: TooltipStore
+	selectedPointIds: readonly string[]
+	onPointClick: GeoMapBaseProps['onPointClick']
+	onPointMouseEnter: GeoMapBaseProps['onPointMouseEnter']
+	onPointMouseLeave: GeoMapBaseProps['onPointMouseLeave']
+}) => {
+	const data = points?.data ?? EMPTY_ARR
+
+	const toTooltipState = (idx: number): GeoTooltipState => {
+		const point = data[idx]
+		return {
+			kind: 'point',
+			point,
+			index: idx,
+			isSelected: selectedPointIds.includes(point.id),
+			isHovered: true,
+			value: point.properties.value,
+		}
+	}
+
+	return {
+		handleClick: (e: React.MouseEvent) => {
+			const t = getPointTarget(e)
+			if (t) onPointClick?.(data[t.idx], t.idx)
+		},
+		handleMouseOver: (e: React.MouseEvent) => {
+			const t = getPointTarget(e)
+			if (!t) return
+			tooltipStore.show(toTooltipState(t.idx))
+			onPointMouseEnter?.(data[t.idx], t.idx)
+		},
+		handleMouseMove: (e: React.MouseEvent) => tooltipStore.setPoint(e.clientX, e.clientY),
+		handleMouseOut: (e: React.MouseEvent) => {
+			const t = getPointTarget(e)
+			if (!t) return
+			tooltipStore.hide()
+			onPointMouseLeave?.(data[t.idx], t.idx)
+		},
+	}
+}
+
 const buildRegionHandlers = ({
 	features,
 	tooltipStore,
@@ -203,8 +342,16 @@ const buildRegionHandlers = ({
 			const t = getRegionTarget(e)
 			if (!t) return
 			const feature = features[t.idx]
+			const isSelected = selectedIds.includes(feature.id)
 			setHoverClass(t.target, t.idx, true)
-			tooltipStore.show(t.idx, feature, choro?.valueMap.get(feature.id))
+			tooltipStore.show({
+				kind: 'region',
+				feature,
+				index: t.idx,
+				isSelected,
+				isHovered: true,
+				value: choro?.valueMap.get(feature.id),
+			})
 			onRegionMouseEnter?.(feature, t.idx)
 		},
 		handleMouseMove: (e: React.MouseEvent) => tooltipStore.setPoint(e.clientX, e.clientY),
@@ -218,6 +365,7 @@ const buildRegionHandlers = ({
 	}
 }
 
+// eslint-disable-next-line max-lines-per-function -- orchestrates the full GeoMap view: projection, zoom, tooltip, selection, handlers, and overlays
 export const useGeoMapView = (props: GeoMapViewProps) => {
 	const {
 		geo,
@@ -231,14 +379,19 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		classNames: classNamesProp,
 		choropleth,
 		selectedIds = EMPTY_ARR,
+		selectedPointIds = EMPTY_ARR,
 		components: componentsProp,
 		formatters: formattersProp,
 		subProps,
 		legendTarget,
 		zoomTarget,
+		points,
 		onRegionClick,
 		onRegionMouseEnter,
 		onRegionMouseLeave,
+		onPointClick,
+		onPointMouseEnter,
+		onPointMouseLeave,
 		...svgProps
 	} = props
 
@@ -253,10 +406,18 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		rotation,
 	})
 
-	const choro = useMemo(() => (choropleth ? getChoroData(choropleth) : undefined), [choropleth])
+	const choro = useChoroData(choropleth)
 	const markup = useMemo(
 		() => buildPathMarkup({ features, pathGen, selectedIds, choro, classNames }),
-		[features, pathGen, selectedIds, choro, classNames],
+		// Narrow dep so a new `classNames` object literal per render doesn't force a rebuild of
+		// thousands of region paths (us-counties is ~3200).
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only region sub-key matters here
+		[features, pathGen, selectedIds, choro, classNames.region],
+	)
+	const pointsMarkup = useMemo(
+		() => buildPointsMarkup({ config: points, projection, pathGen, regions: features, classNames, selectedPointIds }),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only point sub-key matters here
+		[points, projection, pathGen, features, classNames.point, selectedPointIds],
 	)
 
 	const viewBox = `0 0 ${viewBoxW} ${viewBoxH}`
@@ -264,7 +425,9 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 	const [tooltipStore] = useState(createTooltipStore)
 	const svgRef = useRef<SVGSVGElement>(null)
 	const zoomGRef = useRef<SVGGElement>(null)
+	const pointsGRef = useRef<SVGGElement>(null)
 
+	const { scaleWithZoom, onZoomApplied } = usePointsZoomApplied(pointsGRef, points)
 	const { zoomState, ...zoomControls } = useGeoZoom({
 		svgRef,
 		zoomGRef,
@@ -279,6 +442,7 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		defaultZoom,
 		onRotate: setRotation,
 		onZoomChange,
+		onZoomApplied,
 		onDragStart: () => tooltipStore.setSuppressed(true),
 		onDragEnd: () => tooltipStore.setSuppressed(false),
 		subPropsZoom: subProps?.zoom,
@@ -288,11 +452,13 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		zoomControls.resetZoom()
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally only resets when projection changes
 	}, [projectionProp])
+	usePointsScale({ pointsGRef, svgRef, scaleWithZoom })
 
 	const ctxValue = useMemo<GeoMapContextValue>(
 		() => ({
 			projection,
 			pathGenerator: pathGen,
+			project: (coords) => projection(coords),
 			features,
 			width: viewBoxW,
 			height: viewBoxH,
@@ -313,6 +479,14 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		onRegionMouseEnter,
 		onRegionMouseLeave,
 	})
+	const pointHandlers = buildPointHandlers({
+		points,
+		tooltipStore,
+		selectedPointIds,
+		onPointClick,
+		onPointMouseEnter,
+		onPointMouseLeave,
+	})
 
 	const showLegend = !!(components.legend && choropleth && choro?.values.length && !selectedIds.length)
 	const legendItems = showLegend && choro ? buildLegendItems(choro, choropleth) : []
@@ -320,18 +494,20 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 	return {
 		svgRef,
 		zoomGRef,
+		pointsGRef,
 		ctxValue,
 		viewBox,
 		markup,
+		pointsMarkup,
 		pathGen,
 		handlers,
+		pointHandlers,
 		svgProps,
 		classNames,
 		components,
 		overlayProps: {
 			tooltipStore,
 			choro,
-			selectedIds,
 			classNames,
 			formatters,
 			components,
