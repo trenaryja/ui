@@ -1,0 +1,56 @@
+@utility collapse-horizontal {
+	width: auto;
+	flex: 0 0 auto;
+	grid-template-rows: auto;
+	grid-template-columns: auto minmax(0, 0fr);
+
+	& > .collapse-title {
+		grid-column: 1;
+		grid-row: 1;
+		width: auto;
+		justify-self: start;
+		writing-mode: vertical-rl;
+		rotate: 180deg;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding-block: 0.75rem;
+		padding-inline: 0.25rem;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	& > .collapse-content {
+		grid-column: 2;
+		grid-row: 1;
+		min-width: 0;
+		padding: 0;
+		overflow: hidden;
+		opacity: 0;
+		transition: opacity 0.2s ease;
+	}
+
+	&:has(> input:checked),
+	&:has(> details[open]) {
+		flex: 1 1 auto;
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	&:has(> input:checked) > .collapse-content,
+	&:has(> details[open]) > .collapse-content {
+		opacity: 1;
+	}
+
+	/* Constrain the clickable input overlay to the title strip only. */
+	& > input[type='checkbox'],
+	& > input[type='radio'] {
+		grid-column: 1;
+		grid-row: 1;
+		position: relative;
+		inset: auto;
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		min-width: 0;
+	}
+}
