@@ -3,8 +3,7 @@
 import { cn, cnFn, EMPTY_ARR, EMPTY_OBJ } from '@/utils'
 import type { GeoGeometryObjects, GeoPath, GeoPermissibleObjects, GeoProjection } from 'd3-geo'
 import { geoGraticule } from 'd3-geo'
-import { zoomTransform } from 'd3-zoom'
-import { createContext, use, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { createContext, use, useEffect, useMemo, useRef, useState } from 'react'
 import type {
 	ChoroplethConfig,
 	ChoroplethScaleType,
@@ -19,7 +18,7 @@ import type {
 } from '../GeoMap.types'
 import type { ClusterIndex, ClusterItem } from '../GeoMap.cluster.utils'
 import { buildClusterIndex, queryClusterItems, scaleToZoomLevel } from '../GeoMap.cluster.utils'
-import { buildPointsMarkup, updatePointTransforms } from '../GeoMap.points.utils'
+import { buildPointsMarkup } from '../GeoMap.points.utils'
 import type { buildPathGenerator, ChoroData, GeoMapPreset } from '../GeoMap.utils'
 import {
 	animateZoom,
@@ -36,6 +35,7 @@ import {
 import type { TooltipStore } from './useGeoMapTooltip'
 import { createTooltipStore } from './useGeoMapTooltip'
 import { GEOMAP_MAX_SCALE, useGeoZoom } from './useGeoZoom'
+import { usePinCounterScale } from './usePinCounterScale'
 
 export type GeoMapContextValue = {
 	projection: GeoProjection
@@ -249,46 +249,6 @@ const getClusterTarget = (e: React.MouseEvent) => {
 	const target = (e.target as SVGElement).closest('g[data-cluster-idx]')
 	if (!target) return null
 	return { target, idx: Number(target.getAttribute('data-cluster-idx')) }
-}
-
-/**
- * Returns a live `onZoomApplied` — fires synchronously inside d3-zoom's `on('zoom')`, so the inverse
- * counter-scale lands in the same frame as the outer `zoomG` transform (no flicker). Reads
- * `scaleWithZoom` via a ref so toggling it doesn't tear down the d3-zoom setup.
- */
-const usePointsZoomApplied = (pointsGRef: React.RefObject<SVGGElement | null>, points: PointsConfig | undefined) => {
-	const scaleWithZoom = points?.scaleWithZoom ?? false
-	const scaleWithZoomRef = useRef(scaleWithZoom)
-	useEffect(() => {
-		scaleWithZoomRef.current = scaleWithZoom
-	}, [scaleWithZoom])
-
-	const onZoomApplied = (k: number) => {
-		if (!scaleWithZoomRef.current) updatePointTransforms(pointsGRef.current, k)
-	}
-
-	return { scaleWithZoom, onZoomApplied }
-}
-
-/**
- * Re-applies inverse-scale on every render so newly rendered points match the current zoom.
- * Runs before paint via `useLayoutEffect`. Intentionally dep-less — `updatePointTransforms` is
- * idempotent and cheap for typical point counts, and we want a guarantee that pins never paint
- * at the wrong size, even if some render path we didn't anticipate replaces `innerHTML`.
- */
-const usePointsScale = ({
-	pointsGRef,
-	svgRef,
-	scaleWithZoom,
-}: {
-	pointsGRef: React.RefObject<SVGGElement | null>
-	svgRef: React.RefObject<SVGSVGElement | null>
-	scaleWithZoom: boolean
-}) => {
-	useLayoutEffect(() => {
-		if (scaleWithZoom || !svgRef.current) return
-		updatePointTransforms(pointsGRef.current, zoomTransform(svgRef.current).k)
-	})
 }
 
 const clusterItemToState = (item: Extract<ClusterItem, { kind: 'cluster' }>): GeoClusterState => ({
@@ -539,9 +499,8 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 	const [tooltipStore] = useState(createTooltipStore)
 	const svgRef = useRef<SVGSVGElement>(null)
 	const zoomGRef = useRef<SVGGElement>(null)
-	const pointsGRef = useRef<SVGGElement>(null)
+	const pins = usePinCounterScale({ svgRef, scaleWithZoom: points?.scaleWithZoom })
 
-	const { scaleWithZoom, onZoomApplied } = usePointsZoomApplied(pointsGRef, points)
 	const { zoomState, setZoom, ...zoomControls } = useGeoZoom({
 		svgRef,
 		zoomGRef,
@@ -556,7 +515,7 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		defaultZoom,
 		onRotate: setRotation,
 		onZoomChange,
-		onZoomApplied,
+		onZoomApplied: pins.onZoomApplied,
 		onDragStart: () => tooltipStore.setSuppressed(true),
 		onDragEnd: () => tooltipStore.setSuppressed(false),
 		subPropsZoom: subProps?.zoom,
@@ -566,7 +525,6 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		zoomControls.resetZoom()
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally only resets when projection changes
 	}, [projectionProp])
-	usePointsScale({ pointsGRef, svgRef, scaleWithZoom })
 
 	const ctxValue = useMemo<GeoMapContextValue>(
 		() => ({
@@ -619,7 +577,7 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 	return {
 		svgRef,
 		zoomGRef,
-		pointsGRef,
+		pointsGRef: pins.ref,
 		ctxValue,
 		viewBox,
 		markup,
