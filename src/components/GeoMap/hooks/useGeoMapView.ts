@@ -451,9 +451,6 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		points,
 		regions: features,
 		zoom: zoomProp,
-		projection,
-		viewBoxW,
-		viewBoxH,
 		selectedPointIds,
 	})
 	const pointsMarkup = useMemo(
