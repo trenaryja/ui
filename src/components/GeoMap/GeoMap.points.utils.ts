@@ -44,6 +44,23 @@ const buildPointTransform = ({
 }) =>
 	`translate(${cx},${cy}) scale(${s / k}) translate(${-anchor[0] * DEFAULT_POINT_SIZE},${-anchor[1] * DEFAULT_POINT_SIZE})`
 
+export const POINT_ATTR = {
+	id: 'data-point-id',
+	idx: 'data-point-idx',
+	cx: 'data-cx',
+	cy: 'data-cy',
+	scale: 'data-s',
+	anchorX: 'data-ax',
+	anchorY: 'data-ay',
+} as const
+
+export const CLUSTER_ATTR = {
+	id: 'data-cluster-id',
+	idx: 'data-cluster-idx',
+	cx: 'data-cx',
+	cy: 'data-cy',
+} as const
+
 const FLEX_TO_FRACTION = { start: 0, center: 0.5, end: 1 } as const
 
 const resolveAnchor = (anchor: GeoAnchor): readonly [number, number] => {
@@ -140,9 +157,9 @@ const buildPointPath = ({
 	const projected = projection(coords)
 	if (!projected) return ''
 	const [cx, cy] = projected
-	const s = size / DEFAULT_POINT_SIZE
-	const t = buildPointTransform({ cx, cy, s, anchor, k: 1 })
-	return `<path data-point-id="${id}" data-point-idx="${idx}" data-cx="${cx}" data-cy="${cy}" data-s="${s}" data-ax="${anchor[0]}" data-ay="${anchor[1]}" d="${DEFAULT_POINT_PATH}" transform="${t}" class="${cls}" vector-effect="non-scaling-stroke"/>`
+	const scale = size / DEFAULT_POINT_SIZE
+	const t = buildPointTransform({ cx, cy, s: scale, anchor, k: 1 })
+	return `<path ${POINT_ATTR.id}="${id}" ${POINT_ATTR.idx}="${idx}" ${POINT_ATTR.cx}="${cx}" ${POINT_ATTR.cy}="${cy}" ${POINT_ATTR.scale}="${scale}" ${POINT_ATTR.anchorX}="${anchor[0]}" ${POINT_ATTR.anchorY}="${anchor[1]}" d="${DEFAULT_POINT_PATH}" transform="${t}" class="${cls}" vector-effect="non-scaling-stroke"/>`
 }
 
 /** `translate(cx,cy) scale(1/k)` — counter-scale for constant pixel cluster size under zoom. */
@@ -172,7 +189,7 @@ const buildClusterMarkup = ({
 	const r = size / 2
 	const t = buildClusterTransform({ cx, cy, k: 1 })
 	// Stored for zoom-time patching via updatePointTransforms.
-	const dataAttrs = `data-cluster-id="${item.id}" data-cluster-idx="${idx}" data-cx="${cx}" data-cy="${cy}"`
+	const dataAttrs = `${CLUSTER_ATTR.id}="${item.id}" ${CLUSTER_ATTR.idx}="${idx}" ${CLUSTER_ATTR.cx}="${cx}" ${CLUSTER_ATTR.cy}="${cy}"`
 	return `<g ${dataAttrs} transform="${t}"><circle r="${r}" class="${cls}" vector-effect="non-scaling-stroke"/><text text-anchor="middle" dominant-baseline="central" class="${CLUSTER_TEXT_CLASS}" style="font-size:${Math.max(10, r * 0.7)}px">${item.count}</text></g>`
 }
 
@@ -335,22 +352,22 @@ export const buildPointsMarkup = ({
 export const updatePointTransforms = (pointsGroup: SVGGElement | null, k: number) => {
 	if (!pointsGroup) return
 
-	const paths = pointsGroup.querySelectorAll<SVGPathElement>('path[data-point-idx]')
+	const paths = pointsGroup.querySelectorAll<SVGPathElement>(`path[${POINT_ATTR.idx}]`)
 
 	for (const path of paths) {
-		const cx = Number(path.getAttribute('data-cx'))
-		const cy = Number(path.getAttribute('data-cy'))
-		const s = Number(path.getAttribute('data-s'))
-		const ax = Number(path.getAttribute('data-ax'))
-		const ay = Number(path.getAttribute('data-ay'))
-		path.setAttribute('transform', buildPointTransform({ cx, cy, s, anchor: [ax, ay], k }))
+		const cx = Number(path.getAttribute(POINT_ATTR.cx))
+		const cy = Number(path.getAttribute(POINT_ATTR.cy))
+		const scale = Number(path.getAttribute(POINT_ATTR.scale))
+		const anchorX = Number(path.getAttribute(POINT_ATTR.anchorX))
+		const anchorY = Number(path.getAttribute(POINT_ATTR.anchorY))
+		path.setAttribute('transform', buildPointTransform({ cx, cy, s: scale, anchor: [anchorX, anchorY], k }))
 	}
 
-	const clusters = pointsGroup.querySelectorAll<SVGGElement>('g[data-cluster-idx]')
+	const clusters = pointsGroup.querySelectorAll<SVGGElement>(`g[${CLUSTER_ATTR.idx}]`)
 
 	for (const g of clusters) {
-		const cx = Number(g.getAttribute('data-cx'))
-		const cy = Number(g.getAttribute('data-cy'))
+		const cx = Number(g.getAttribute(CLUSTER_ATTR.cx))
+		const cy = Number(g.getAttribute(CLUSTER_ATTR.cy))
 		g.setAttribute('transform', buildClusterTransform({ cx, cy, k }))
 	}
 }

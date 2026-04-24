@@ -16,7 +16,7 @@ import type {
 	PointsConfig,
 } from '../GeoMap.types'
 import type { ClusterItem } from '../GeoMap.cluster.utils'
-import { buildPointsMarkup } from '../GeoMap.points.utils'
+import { buildPointsMarkup, CLUSTER_ATTR, POINT_ATTR } from '../GeoMap.points.utils'
 import type { buildPathGenerator, ChoroData, GeoMapPreset } from '../GeoMap.utils'
 import {
 	animateZoom,
@@ -90,6 +90,8 @@ const useGeoData = (geo: GeoDataSource | undefined) => {
 const VIEWBOX_W = 1000
 const SPHERE: GeoGeometryObjects = { type: 'Sphere' }
 const graticuleGenerator = geoGraticule()
+
+const REGION_ATTR = { idx: 'data-idx' } as const
 
 const UNSELECTED_CLASS = cn(
 	'stroke-base-content/20',
@@ -181,7 +183,7 @@ const buildPathMarkup = ({
 		const baseClass = isSelected ? SELECTED_CLASS : UNSELECTED_CLASS
 		const cls = customClass ? `${baseClass} ${customClass}` : baseClass
 		const style = choroFill ? ` style="fill:${choroFill}"` : ''
-		parts.push(`<path data-idx="${i}" d="${d}" class="${cls}"${style} vector-effect="non-scaling-stroke"/>`)
+		parts.push(`<path ${REGION_ATTR.idx}="${i}" d="${d}" class="${cls}"${style} vector-effect="non-scaling-stroke"/>`)
 	}
 
 	return parts.join('')
@@ -199,21 +201,21 @@ export const buildGraticuleMarkup = (pathGen: PathGen, classNames: { graticule?:
 }
 
 const getRegionTarget = (e: React.MouseEvent) => {
-	const target = (e.target as SVGElement).closest('path[data-idx]')
+	const target = (e.target as SVGElement).closest(`path[${REGION_ATTR.idx}]`)
 	if (!target) return null
-	return { target, idx: Number(target.getAttribute('data-idx')) }
+	return { target, idx: Number(target.getAttribute(REGION_ATTR.idx)) }
 }
 
 const getPointTarget = (e: React.MouseEvent) => {
-	const target = (e.target as SVGElement).closest('path[data-point-idx]')
+	const target = (e.target as SVGElement).closest(`path[${POINT_ATTR.idx}]`)
 	if (!target) return null
-	return { target, idx: Number(target.getAttribute('data-point-idx')) }
+	return { target, idx: Number(target.getAttribute(POINT_ATTR.idx)) }
 }
 
 const getClusterTarget = (e: React.MouseEvent) => {
-	const target = (e.target as SVGElement).closest('g[data-cluster-idx]')
+	const target = (e.target as SVGElement).closest(`g[${CLUSTER_ATTR.idx}]`)
 	if (!target) return null
-	return { target, idx: Number(target.getAttribute('data-cluster-idx')) }
+	return { target, idx: Number(target.getAttribute(CLUSTER_ATTR.idx)) }
 }
 
 const clusterItemToState = (item: Extract<ClusterItem, { kind: 'cluster' }>): GeoClusterState => ({
@@ -537,7 +539,14 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		onPointMouseLeave,
 		onClusterClick:
 			onClusterClick ??
-			((state) => animateZoom({ from: zoomState, to: clusters.zoomTargetFor(state), onUpdate: setZoom })),
+			((state) =>
+				animateZoom({
+					from: zoomState,
+					to: clusters.zoomTargetFor(state),
+					onUpdate: setZoom,
+					projection,
+					viewBoxCenter,
+				})),
 		onClusterMouseEnter,
 		onClusterMouseLeave,
 	})
