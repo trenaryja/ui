@@ -1,9 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
+import type { GeoProjection } from 'd3-geo'
 import type { GeoClusterState, GeoRegion, GeoZoomState, PointsConfig } from '../GeoMap.types'
 import type { ClusterItem } from '../GeoMap.cluster.utils'
 import { buildClusterIndex, queryClusterItems, scaleToZoomLevel } from '../GeoMap.cluster.utils'
+import { computeViewportBbox } from '../GeoMap.utils'
 import { GEOMAP_MAX_SCALE } from './useGeoZoom'
 
 export type GeoClusters = {
@@ -17,9 +19,20 @@ type Args = {
 	regions: readonly GeoRegion[]
 	zoom: GeoZoomState | undefined
 	selectedPointIds: readonly string[]
+	projection: GeoProjection
+	viewBoxW: number
+	viewBoxH: number
 }
 
-export const useGeoClusters = ({ points, regions, zoom, selectedPointIds }: Args): GeoClusters => {
+export const useGeoClusters = ({
+	points,
+	regions,
+	zoom,
+	selectedPointIds,
+	projection,
+	viewBoxW,
+	viewBoxH,
+}: Args): GeoClusters => {
 	const raw = points?.cluster
 	const radius = typeof raw === 'object' ? raw.radius : undefined
 	const maxZoom = typeof raw === 'object' ? raw.maxZoom : undefined
@@ -41,13 +54,11 @@ export const useGeoClusters = ({ points, regions, zoom, selectedPointIds }: Args
 
 	const zoomLevel = scaleToZoomLevel(zoom?.scale ?? 1)
 
-	const items = useMemo(
-		() =>
-			clusterIndex && data
-				? queryClusterItems({ index: clusterIndex, zoomLevel, points: data, selectedPointIds })
-				: undefined,
-		[clusterIndex, zoomLevel, data, selectedPointIds],
-	)
+	const items = useMemo(() => {
+		if (!clusterIndex || !data) return undefined
+		const bbox = computeViewportBbox({ projection, zoom, viewBoxW, viewBoxH })
+		return queryClusterItems({ index: clusterIndex, zoomLevel, points: data, selectedPointIds, bbox })
+	}, [clusterIndex, zoomLevel, data, selectedPointIds, projection, zoom, viewBoxW, viewBoxH])
 
 	const zoomTargetFor = (state: GeoClusterState): GeoZoomState => {
 		const expansionZoom = clusterIndex?.getClusterExpansionZoom(state.id) ?? zoomLevel + 2

@@ -439,35 +439,6 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		rotation,
 	})
 
-	const choro = useChoroData(choropleth)
-	const markup = useMemo(
-		() => buildPathMarkup({ features, pathGen, selectedIds, choro, classNames }),
-		// Narrow dep so a new `classNames` object literal per render doesn't force a rebuild of
-		// thousands of region paths (us-counties is ~3200).
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only region sub-key matters here
-		[features, pathGen, selectedIds, choro, classNames.region],
-	)
-	const clusters = useGeoClusters({
-		points,
-		regions: features,
-		zoom: zoomProp,
-		selectedPointIds,
-	})
-	const pointsMarkup = useMemo(
-		() =>
-			buildPointsMarkup({
-				config: points,
-				projection,
-				pathGen,
-				regions: features,
-				classNames,
-				selectedPointIds,
-				clusterItems: clusters.items,
-			}),
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only point/cluster sub-keys matter here
-		[points, projection, pathGen, features, classNames.point, classNames.cluster, selectedPointIds, clusters.items],
-	)
-
 	const viewBox = `0 0 ${viewBoxW} ${viewBoxH}`
 	const viewBoxCenter: [number, number] = [viewBoxW / 2, viewBoxH / 2]
 	const [tooltipStore] = useState(createTooltipStore)
@@ -499,6 +470,38 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		zoomControls.resetZoom()
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally only resets when projection changes
 	}, [projectionProp])
+
+	const choro = useChoroData(choropleth)
+	const markup = useMemo(
+		() => buildPathMarkup({ features, pathGen, selectedIds, choro, classNames }),
+		// Narrow dep so a new `classNames` object literal per render doesn't force a rebuild of
+		// thousands of region paths (us-counties is ~3200).
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only region sub-key matters here
+		[features, pathGen, selectedIds, choro, classNames.region],
+	)
+	const clusters = useGeoClusters({
+		points,
+		regions: features,
+		zoom: zoomState,
+		selectedPointIds,
+		projection,
+		viewBoxW,
+		viewBoxH,
+	})
+	const pointsMarkup = useMemo(
+		() =>
+			buildPointsMarkup({
+				config: points,
+				projection,
+				pathGen,
+				regions: features,
+				classNames,
+				selectedPointIds,
+				clusterItems: clusters.items,
+			}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- classNames read at compute time; only point/cluster sub-keys matter here
+		[points, projection, pathGen, features, classNames.point, classNames.cluster, selectedPointIds, clusters.items],
+	)
 
 	const ctxValue = useMemo<GeoMapContextValue>(
 		() => ({
