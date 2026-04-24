@@ -376,7 +376,7 @@ export function Demo() {
 		showPoints: true,
 		pointDensity: 'low',
 		cluster: false,
-		clusterRadius: 60,
+		clusterRadius: 40,
 	})
 	const [selected, setSelected] = useState<string[]>([])
 	const [singleSelected, setSingleSelected] = useState<string | null>(null)

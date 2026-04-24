@@ -11,8 +11,10 @@ import type { DragBehavior } from '../GeoMap.utils'
 import type { GeoZoomState } from '../GeoMap.types'
 
 const MIN_SCALE = 1
-const MAX_SCALE = 8
+const MAX_SCALE = 256
 const ZOOM_EQ_TOLERANCE = 1e-6
+
+export const GEOMAP_MAX_SCALE = MAX_SCALE
 
 const isZoomEqual = (a: GeoZoomState | undefined, b: GeoZoomState | undefined) => {
 	if (!a || !b) return a === b
@@ -435,7 +437,11 @@ export const useGeoZoom = ({
 		return () => {
 			select(svg).on('.zoom', null)
 			for (const fn of cleanups) fn()
-			if (rafIdRef.current != null) cancelAnimationFrame(rafIdRef.current)
+
+			if (rafIdRef.current != null) {
+				cancelAnimationFrame(rafIdRef.current)
+				rafIdRef.current = null
+			}
 		}
 		// Serialize subPropsZoom so an inline `{...}` literal from the consumer doesn't tear down d3-zoom every render.
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- viewBoxCenter, projection, rotation, callbacks read via refs to avoid tearing down on every update
@@ -484,6 +490,7 @@ export const useGeoZoom = ({
 
 	return {
 		zoomState,
+		setZoom: setZoomState,
 		zoomIn,
 		zoomOut,
 		resetZoom,

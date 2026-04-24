@@ -2,9 +2,9 @@ import Supercluster from 'supercluster'
 import type { ClusterConfig, ClusteredPoint, GeoPoint, GeoRegion } from './GeoMap.types'
 import { resolvePointCoord } from './GeoMap.points.utils'
 
-const DEFAULT_CLUSTER_RADIUS = 60
+const DEFAULT_CLUSTER_RADIUS = 40
 const DEFAULT_CLUSTER_MIN_POINTS = 2
-const DEFAULT_CLUSTER_MAX_ZOOM = 16
+const DEFAULT_CLUSTER_MAX_ZOOM = 8
 
 type PointProps = { pointId: string; index: number }
 

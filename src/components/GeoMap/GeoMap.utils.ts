@@ -260,6 +260,73 @@ const easeInOutQuad = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 
  * animateZoom({ from: zoom, to: getPointZoom({ point: nyc }), onUpdate: setZoom })
  * ```
  */
+/**
+ * Geographic bbox `[minLon, minLat, maxLon, maxLat]` visible at the current zoom. Samples the
+ * viewport perimeter and inverts each sample. Returns full-world if the projection has no
+ * `invert`, `zoom` is missing/at scale 1, or too few samples invert cleanly (orthographic globes
+ * outside the sphere). Callers use this to cull off-screen features before rendering.
+ */
+export const computeViewportBbox = ({
+	projection,
+	zoom,
+	viewBoxW,
+	viewBoxH,
+}: {
+	projection: GeoProjection
+	zoom: GeoZoomState | undefined
+	viewBoxW: number
+	viewBoxH: number
+}): [number, number, number, number] => {
+	const fullWorld: [number, number, number, number] = [-180, -90, 180, 90]
+	if (!projection.invert || !zoom || zoom.scale <= 1) return fullWorld
+
+	const projected = projection(zoom.center)
+	if (!projected) return fullWorld
+
+	const halfW = viewBoxW / (2 * zoom.scale)
+	const halfH = viewBoxH / (2 * zoom.scale)
+	const [px, py] = projected
+
+	let minLon = Infinity
+	let minLat = Infinity
+	let maxLon = -Infinity
+	let maxLat = -Infinity
+	let count = 0
+
+	const N = 12
+
+	for (let i = 0; i <= N; i++) {
+		const fx = -halfW + ((2 * halfW) / N) * i
+		const fy = -halfH + ((2 * halfH) / N) * i
+		const perimeter: [number, number][] = [
+			[px + fx, py - halfH],
+			[px + fx, py + halfH],
+			[px - halfW, py + fy],
+			[px + halfW, py + fy],
+		]
+
+		for (const pt of perimeter) {
+			const inv = projection.invert(pt)
+			if (!inv) continue
+			if (inv[0] < minLon) minLon = inv[0]
+			if (inv[0] > maxLon) maxLon = inv[0]
+			if (inv[1] < minLat) minLat = inv[1]
+			if (inv[1] > maxLat) maxLat = inv[1]
+			count++
+		}
+	}
+
+	if (count < 4) return fullWorld
+	const padLon = Math.max((maxLon - minLon) * 0.1, 0.5)
+	const padLat = Math.max((maxLat - minLat) * 0.1, 0.5)
+	return [
+		Math.max(-180, minLon - padLon),
+		Math.max(-90, minLat - padLat),
+		Math.min(180, maxLon + padLon),
+		Math.min(90, maxLat + padLat),
+	]
+}
+
 export const animateZoom = ({
 	from,
 	to,

@@ -22,7 +22,9 @@ import { buildClusterIndex, queryClusterItems, scaleToZoomLevel } from '../GeoMa
 import { buildPointsMarkup, updatePointTransforms } from '../GeoMap.points.utils'
 import type { buildPathGenerator, ChoroData, GeoMapPreset } from '../GeoMap.utils'
 import {
+	animateZoom,
 	buildLegendItems,
+	computeViewportBbox,
 	defaultProjectionForPreset,
 	filterFeatures,
 	fitProjection,
@@ -33,7 +35,7 @@ import {
 } from '../GeoMap.utils'
 import type { TooltipStore } from './useGeoMapTooltip'
 import { createTooltipStore } from './useGeoMapTooltip'
-import { useGeoZoom } from './useGeoZoom'
+import { GEOMAP_MAX_SCALE, useGeoZoom } from './useGeoZoom'
 
 export type GeoMapContextValue = {
 	projection: GeoProjection
@@ -117,22 +119,25 @@ const useClusterConfig = (points: PointsConfig | undefined): ClusterConfig | nul
 	}, [raw, radius, maxZoom, minPoints])
 }
 
-/** Query clusters at the current zoom level. Memoized on zoom level (integer), not scale. */
+/** Query clusters at the current zoom level. Memoized on zoom level (integer) and viewport bbox. */
 const useClusterItems = ({
 	index,
 	zoomLevel,
 	points,
 	selectedPointIds,
+	bbox,
 }: {
 	index: ClusterIndex | null
 	zoomLevel: number
 	points: readonly PointsConfig['data'][number][] | undefined
 	selectedPointIds: readonly string[]
+	bbox: [number, number, number, number]
 }): ClusterItem[] | undefined =>
 	useMemo(() => {
 		if (!index || !points) return undefined
-		return queryClusterItems({ index, zoomLevel, points, selectedPointIds })
-	}, [index, zoomLevel, points, selectedPointIds])
+		return queryClusterItems({ index, zoomLevel, points, selectedPointIds, bbox })
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- bbox tuple compared by value via .join for stable memo across re-renders
+	}, [index, zoomLevel, points, selectedPointIds, bbox.join(',')])
 
 /**
  * Narrow deps to choropleth's inner fields so a new `{ data, scaleType, ... }` literal per render
@@ -506,11 +511,13 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 		[clusterConfig, points?.data, features],
 	)
 	const zoomLevel = scaleToZoomLevel(zoomProp?.scale ?? 1)
+	const viewportBbox = computeViewportBbox({ projection, zoom: zoomProp, viewBoxW, viewBoxH })
 	const clusterItems = useClusterItems({
 		index: clusterIndex,
 		zoomLevel,
 		points: points?.data,
 		selectedPointIds,
+		bbox: viewportBbox,
 	})
 	const pointsMarkup = useMemo(
 		() =>
@@ -535,7 +542,7 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 	const pointsGRef = useRef<SVGGElement>(null)
 
 	const { scaleWithZoom, onZoomApplied } = usePointsZoomApplied(pointsGRef, points)
-	const { zoomState, ...zoomControls } = useGeoZoom({
+	const { zoomState, setZoom, ...zoomControls } = useGeoZoom({
 		svgRef,
 		zoomGRef,
 		viewBoxCenter,
@@ -589,7 +596,8 @@ export const useGeoMapView = (props: GeoMapViewProps) => {
 
 	const defaultClusterClick = (state: GeoClusterState) => {
 		const expansionZoom = clusterIndex?.getClusterExpansionZoom(state.id) ?? zoomLevel + 2
-		onZoomChange?.({ scale: 2 ** expansionZoom, center: state.coordinates })
+		const targetScale = Math.min(2 ** expansionZoom, GEOMAP_MAX_SCALE)
+		animateZoom({ from: zoomState, to: { scale: targetScale, center: state.coordinates }, onUpdate: setZoom })
 	}
 
 	const pointHandlers = buildPointHandlers({
