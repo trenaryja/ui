@@ -226,12 +226,17 @@ const buildPointMarkupFromState = ({
 }
 
 const buildClusterMarkupFromItem = (item: Extract<ClusterItem, { kind: 'cluster' }>, idx: number, ctx: MarkupCtx) => {
+	// `points` is a lazy getter — resolving a cluster's leaves is O(cluster size), and most renders
+	// never need it. Tooltip/handler paths access it; functional `classNames.cluster` consumers
+	// pay only if they read `state.points`.
 	const state: GeoClusterState = {
 		id: item.id,
 		count: item.count,
 		coordinates: item.coords,
-		points: item.getPoints(),
 		isHovered: false,
+		get points() {
+			return item.getPoints()
+		},
 	}
 	const size = resolveClusterSize(ctx.sizeProp, state)
 	const customClass = ctx.classNames.cluster ? cnFn(ctx.classNames.cluster, state) : ''
