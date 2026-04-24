@@ -21,9 +21,9 @@ const getName = (state: GeoTooltipState) => {
 	return `${state.count.toLocaleString()} points`
 }
 
-const getValue = (state: GeoTooltipState): number | undefined => {
-	if (state.kind === 'cluster') return state.count
-	return state.value
+const renderValue = (state: GeoTooltipState, formatters: GeoMapTooltipFormatters) => {
+	if (state.kind === 'cluster' || state.value == null) return null
+	return formatters.value ? formatters.value(state.value, state) : state.value.toLocaleString()
 }
 
 export const GeoMapTooltip = ({
@@ -41,10 +41,8 @@ export const GeoMapTooltip = ({
 }) => {
 	const Swatch = components.swatch ?? DefaultSwatch
 	const title = formatters.title ? formatters.title(state) : getName(state)
-	const label = formatters.label ? formatters.label(state) : state.kind === 'cluster' ? 'Count' : 'Value'
-	const rawValue = getValue(state)
-	const value =
-		rawValue != null ? (formatters.value ? formatters.value(rawValue, state) : rawValue.toLocaleString()) : null
+	const label = formatters.label ? formatters.label(state) : 'Value'
+	const value = renderValue(state, formatters)
 
 	const containerClassName = cn(
 		'frosted-glass grid gap-1 rounded border border-current/25 p-2 text-sm shadow',
