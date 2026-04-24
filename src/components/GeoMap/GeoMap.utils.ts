@@ -332,13 +332,27 @@ export const animateZoom = ({
 	to,
 	duration = 750,
 	onUpdate,
+	projection,
+	viewBoxCenter,
 }: {
 	from: GeoZoomState | undefined
 	to: GeoZoomState
 	duration?: number
 	onUpdate: (zoom: GeoZoomState) => void
+	/** When provided, interpolation happens in screen space to eliminate two artifacts:
+	 *  1. Composite-projection wild swings (AlbersUSA Alaska/Hawaii insets)
+	 *  2. The quadratic "hook" caused by simultaneously animating scale and geo-center */
+	projection?: GeoProjection
+	viewBoxCenter?: [number, number]
 }) => {
 	const start: GeoZoomState = from ?? { scale: 1, center: [0, 0] }
+
+	// Screen-space anchor for the start center. Falls back to viewBoxCenter when the start
+	// center doesn't project (e.g. AlbersUSA at [0,0] initial state = identity transform).
+	const startScreen = projection?.(start.center) ?? viewBoxCenter
+	const endScreen = projection?.(to.center) as [number, number] | undefined
+	const useScreenInterp = !!(startScreen && endScreen && projection?.invert)
+
 	const startTime = performance.now()
 	let cancelled = false
 
@@ -346,13 +360,25 @@ export const animateZoom = ({
 		if (cancelled) return
 		const t = Math.min((performance.now() - startTime) / duration, 1)
 		const k = easeInOutQuad(t)
-		onUpdate({
-			scale: start.scale + (to.scale - start.scale) * k,
-			center: [
+		const scale = start.scale + (to.scale - start.scale) * k
+
+		let center: [number, number]
+
+		if (useScreenInterp) {
+			const sx = startScreen[0] + (endScreen[0] - startScreen[0]) * k
+			const sy = startScreen[1] + (endScreen[1] - startScreen[1]) * k
+			center = projection.invert!([sx, sy]) ?? [
 				start.center[0] + (to.center[0] - start.center[0]) * k,
 				start.center[1] + (to.center[1] - start.center[1]) * k,
-			],
-		})
+			]
+		} else {
+			center = [
+				start.center[0] + (to.center[0] - start.center[0]) * k,
+				start.center[1] + (to.center[1] - start.center[1]) * k,
+			]
+		}
+
+		onUpdate({ scale, center })
 		if (t < 1) requestAnimationFrame(tick)
 	}
 

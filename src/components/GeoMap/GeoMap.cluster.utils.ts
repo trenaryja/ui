@@ -10,13 +10,36 @@ type PointProps = { pointId: string; index: number }
 
 export type ClusterIndex = Supercluster<PointProps>
 
-/** Build a Supercluster index from the given points. Expensive — memoize on `data`. */
-export const buildClusterIndex = (
-	points: readonly GeoPoint[],
-	regions: readonly GeoRegion[],
-	config: ClusterConfig,
-): ClusterIndex => {
+/**
+ * Build a Supercluster index from the given points. Expensive — memoize on `data`.
+ *
+ * When `toVirtual` is provided, geographic coordinates are projected to screen space and
+ * normalized to WGS84 range before indexing. This makes the clustering radius mean "screen
+ * pixels" for any projection — critical for composite projections like AlbersUSA where
+ * geographic distance doesn't match visual distance inside the Alaska/Hawaii insets.
+ */
+export const buildClusterIndex = ({
+	points,
+	regions,
+	config,
+	toVirtual,
+}: {
+	points: readonly GeoPoint[]
+	regions: readonly GeoRegion[]
+	config: ClusterConfig
+	toVirtual?: (geo: [number, number]) => [number, number] | null
+}): ClusterIndex => {
 	const features: GeoJSON.Feature<GeoJSON.Point, PointProps>[] = []
+
+	const addPoint = (geoCoord: [number, number], pointId: string, index: number) => {
+		const indexCoord = toVirtual ? toVirtual(geoCoord) : geoCoord
+		if (!indexCoord) return
+		features.push({
+			type: 'Feature',
+			geometry: { type: 'Point', coordinates: indexCoord },
+			properties: { pointId, index },
+		})
+	}
 
 	for (let i = 0; i < points.length; i++) {
 		const p = points[i]
@@ -24,19 +47,9 @@ export const buildClusterIndex = (
 		if (!coord) continue
 
 		if (p.geometry?.type === 'MultiPoint') {
-			p.geometry.coordinates.forEach((c, j) =>
-				features.push({
-					type: 'Feature',
-					geometry: { type: 'Point', coordinates: c as [number, number] },
-					properties: { pointId: `${p.id}-${j}`, index: i },
-				}),
-			)
+			p.geometry.coordinates.forEach((c, j) => addPoint(c as [number, number], `${p.id}-${j}`, i))
 		} else {
-			features.push({
-				type: 'Feature',
-				geometry: { type: 'Point', coordinates: coord },
-				properties: { pointId: p.id, index: i },
-			})
+			addPoint(coord, p.id, i)
 		}
 	}
 
@@ -70,8 +83,8 @@ export type ClusterItem =
 	  }
 
 /**
- * d3-zoom's scale `k` → supercluster zoom level. Discrete integer so markup memo key stabilizes
- * between micro-scale changes while panning.
+ * d3-zoom scale → supercluster zoom level (virtual screen-space clustering).
+ * Discrete integer so markup memo key stabilizes between micro-scale changes while panning.
  */
 export const scaleToZoomLevel = (scale: number): number => Math.max(0, Math.floor(Math.log2(scale)))
 
@@ -82,12 +95,14 @@ export const queryClusterItems = ({
 	points,
 	selectedPointIds,
 	bbox = [-180, -90, 180, 90],
+	fromVirtual,
 }: {
 	index: ClusterIndex
 	zoomLevel: number
 	points: readonly GeoPoint[]
 	selectedPointIds: readonly string[]
 	bbox?: [number, number, number, number]
+	fromVirtual?: (virtual: [number, number]) => [number, number] | null
 }): ClusterItem[] => {
 	const selected = new Set(selectedPointIds)
 	const pointById = new Map(points.map((p) => [p.id, p]))
@@ -97,8 +112,11 @@ export const queryClusterItems = ({
 		| GeoJSON.Feature<GeoJSON.Point, PointProps>
 	)[]
 
+	const resolveCoords = (coords: [number, number]): [number, number] =>
+		(fromVirtual ? fromVirtual(coords) : null) ?? coords
+
 	return raw.map((f): ClusterItem => {
-		const coords = f.geometry.coordinates as [number, number]
+		const coords = resolveCoords(f.geometry.coordinates as [number, number])
 		const props = f.properties
 
 		if ('cluster' in props && props.cluster) {
