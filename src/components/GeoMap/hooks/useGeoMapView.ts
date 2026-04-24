@@ -309,6 +309,54 @@ const buildPointHandlers = (ctx: PointHandlerCtx) => ({
 	handleMouseOut: (e: React.MouseEvent) => handlePointerOut(ctx, e),
 })
 
+type RegionHoverCtx = {
+	features: Features
+	tooltipStore: TooltipStore
+	choro: ChoroData | undefined
+	selectedIds: readonly string[]
+	classNames: NonNullable<GeoMapBaseProps['classNames']>
+}
+
+// Repaint the hovered path's class with the new isHovered state and sync the tooltip store
+// atomically so they can't drift. innerHTML is built once with isHovered=false; we patch
+// imperatively here to avoid a re-render on every hover.
+const buildRegionHover = (ctx: RegionHoverCtx) => {
+	const patchClass = (target: Element, idx: number, isHovered: boolean) => {
+		if (typeof ctx.classNames.region !== 'function') return
+		const feature = ctx.features[idx]
+		const isSelected = ctx.selectedIds.includes(feature.id)
+		const customClass = cnFn(ctx.classNames.region, {
+			feature,
+			index: idx,
+			isSelected,
+			isHovered,
+			value: ctx.choro?.valueMap.get(feature.id),
+		})
+		const baseClass = isSelected ? SELECTED_CLASS : UNSELECTED_CLASS
+		target.setAttribute('class', customClass ? `${baseClass} ${customClass}` : baseClass)
+	}
+
+	return {
+		enter: (target: Element, idx: number) => {
+			const feature = ctx.features[idx]
+			const isSelected = ctx.selectedIds.includes(feature.id)
+			patchClass(target, idx, true)
+			ctx.tooltipStore.show({
+				kind: 'region',
+				feature,
+				index: idx,
+				isSelected,
+				isHovered: true,
+				value: ctx.choro?.valueMap.get(feature.id),
+			})
+		},
+		leave: (target: Element, idx: number) => {
+			patchClass(target, idx, false)
+			ctx.tooltipStore.hide()
+		},
+	}
+}
+
 const buildRegionHandlers = ({
 	features,
 	tooltipStore,
@@ -318,34 +366,12 @@ const buildRegionHandlers = ({
 	onRegionClick,
 	onRegionMouseEnter,
 	onRegionMouseLeave,
-}: {
-	features: Features
-	tooltipStore: TooltipStore
-	choro: ChoroData | undefined
-	selectedIds: readonly string[]
-	classNames: NonNullable<GeoMapBaseProps['classNames']>
+}: RegionHoverCtx & {
 	onRegionClick: GeoMapBaseProps['onRegionClick']
 	onRegionMouseEnter: GeoMapBaseProps['onRegionMouseEnter']
 	onRegionMouseLeave: GeoMapBaseProps['onRegionMouseLeave']
 }) => {
-	// Repaint the hovered path's class with `isHovered: true` so functional
-	// `classNames.region` consumers see the live hover state. innerHTML markup
-	// is built once with isHovered=false; we patch imperatively to avoid a re-render.
-	const setHoverClass = (target: Element, idx: number, isHovered: boolean) => {
-		if (typeof classNames.region !== 'function') return
-		const feature = features[idx]
-		const isSelected = selectedIds.includes(feature.id)
-		const customClass = cnFn(classNames.region, {
-			feature,
-			index: idx,
-			isSelected,
-			isHovered,
-			value: choro?.valueMap.get(feature.id),
-		})
-		const baseClass = isSelected ? SELECTED_CLASS : UNSELECTED_CLASS
-		target.setAttribute('class', customClass ? `${baseClass} ${customClass}` : baseClass)
-	}
-
+	const hover = buildRegionHover({ features, tooltipStore, choro, selectedIds, classNames })
 	return {
 		handleClick: (e: React.MouseEvent) => {
 			const t = getRegionTarget(e)
@@ -354,25 +380,14 @@ const buildRegionHandlers = ({
 		handleMouseOver: (e: React.MouseEvent) => {
 			const t = getRegionTarget(e)
 			if (!t) return
-			const feature = features[t.idx]
-			const isSelected = selectedIds.includes(feature.id)
-			setHoverClass(t.target, t.idx, true)
-			tooltipStore.show({
-				kind: 'region',
-				feature,
-				index: t.idx,
-				isSelected,
-				isHovered: true,
-				value: choro?.valueMap.get(feature.id),
-			})
-			onRegionMouseEnter?.(feature, t.idx)
+			hover.enter(t.target, t.idx)
+			onRegionMouseEnter?.(features[t.idx], t.idx)
 		},
 		handleMouseMove: (e: React.MouseEvent) => tooltipStore.setPoint(e.clientX, e.clientY),
 		handleMouseOut: (e: React.MouseEvent) => {
 			const t = getRegionTarget(e)
 			if (!t) return
-			setHoverClass(t.target, t.idx, false)
-			tooltipStore.hide()
+			hover.leave(t.target, t.idx)
 			onRegionMouseLeave?.(features[t.idx], t.idx)
 		},
 	}
