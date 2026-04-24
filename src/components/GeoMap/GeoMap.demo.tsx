@@ -27,46 +27,59 @@ const POINT_DENSITY_OPTIONS: { value: PointDensity; label: string }[] = [
 	{ value: 'high', label: 'High (~7.3k)' },
 ]
 
-const placesCache = new Map<PointDensity, readonly GeoPoint[]>()
+const rawFeaturesCache = new Map<PointDensity, GeoJSON.Feature<GeoJSON.Point>[]>()
+const placesCache = new Map<string, readonly GeoPoint[]>()
 
-const fetchPopulatedPlaces = async (density: PointDensity): Promise<readonly GeoPoint[]> => {
-	const cached = placesCache.get(density)
+const toGeoPoint = (f: GeoJSON.Feature<GeoJSON.Point>, i: number): GeoPoint => {
+	const props = (f.properties ?? {}) as Record<string, unknown>
+	const name = (props.NAME ?? props.name ?? props.NAMEASCII ?? 'Unknown') as string
+	return { type: 'Feature', id: `place-${i}`, name, geometry: f.geometry, properties: {} }
+}
+
+const fetchPopulatedPlaces = async (density: PointDensity, countryCode?: string): Promise<readonly GeoPoint[]> => {
+	const cacheKey = `${density}:${countryCode ?? ''}`
+	const cached = placesCache.get(cacheKey)
 	if (cached) return cached
 
-	const res = await fetch(POPULATED_PLACES_URLS[density])
-	if (!res.ok) throw new Error(`Failed to fetch populated places: ${res.status}`)
-	const collection = (await res.json()) as GeoJSON.FeatureCollection<GeoJSON.Point>
+	let features = rawFeaturesCache.get(density)
 
-	const points: GeoPoint[] = collection.features.map((f, i) => {
-		const props = (f.properties ?? {}) as Record<string, unknown>
-		const name = (props.NAME ?? props.name ?? props.NAMEASCII ?? 'Unknown') as string
-		return {
-			type: 'Feature',
-			id: `place-${i}`,
-			name,
-			geometry: f.geometry,
-			properties: {},
-		}
-	})
+	if (!features) {
+		const res = await fetch(POPULATED_PLACES_URLS[density])
+		if (!res.ok) throw new Error(`Failed to fetch populated places: ${res.status}`)
+		const collection = (await res.json()) as GeoJSON.FeatureCollection<GeoJSON.Point>
+		features = collection.features
+		rawFeaturesCache.set(density, features)
+	}
 
-	placesCache.set(density, points)
+	const filtered = countryCode
+		? features.filter((f) => {
+				const props = (f.properties ?? {}) as Record<string, unknown>
+				return (props.ADM0_A3 ?? props.adm0_a3) === countryCode
+			})
+		: features
+
+	const points = filtered.map(toGeoPoint)
+	placesCache.set(cacheKey, points)
 	return points
 }
 
-const usePopulatedPlaces = (density: PointDensity): readonly GeoPoint[] => {
-	const [points, setPoints] = useState<readonly GeoPoint[]>(() => placesCache.get(density) ?? [])
+const usePopulatedPlaces = (density: PointDensity, countryCode?: string): readonly GeoPoint[] => {
+	const cacheKey = `${density}:${countryCode ?? ''}`
+	const [points, setPoints] = useState<readonly GeoPoint[]>(() => placesCache.get(cacheKey) ?? [])
 	useEffect(() => {
 		let cancelled = false
-		fetchPopulatedPlaces(density).then((pts) => {
+		fetchPopulatedPlaces(density, countryCode).then((pts) => {
 			if (!cancelled) setPoints(pts)
 		})
 
 		return () => {
 			cancelled = true
 		}
-	}, [density])
+	}, [density, countryCode])
 	return points
 }
+
+const US_PRESETS = new Set<GeoMapPreset>(['us-counties', 'us-states'])
 
 export const meta: DemoMeta = { title: 'GeoMap', category: 'components' }
 
@@ -389,7 +402,7 @@ export function Demo() {
 		setS((prev) => ({ ...prev, [key]: value }))
 
 	const featureIds = useFeatureIds(s.mapPreset)
-	const cityPoints = usePopulatedPlaces(s.pointDensity)
+	const cityPoints = usePopulatedPlaces(s.pointDensity, US_PRESETS.has(s.mapPreset) ? 'USA' : undefined)
 	// eslint-disable-next-line react-hooks/exhaustive-deps -- randomSeed is intentional for re-randomization on button click
 	const choroplethData = useMemo(() => randChoroplethData(featureIds), [featureIds, randomSeed])
 
