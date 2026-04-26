@@ -1,5 +1,6 @@
 'use client'
 
+import type { HexOrientation } from '@/utils'
 import { cn, hexAngle, hexDisk, hexDiskBounds, hexDistance, hexToPixel, hexToSvgPoints } from '@/utils'
 import { colordx } from '@colordx/core'
 import { useState } from 'react'
@@ -15,14 +16,14 @@ const FORMAT_CONVERTERS: Record<ColorFormat, (c: ReturnType<typeof colordx>) => 
 
 const toFormat = (oklch: string, format: ColorFormat) => FORMAT_CONVERTERS[format](colordx(oklch))
 
-type CellColorOpts = { rings: number; lightness: number; maxChroma: number }
+type CellColorOpts = { rings: number; lightness: number; maxChroma: number; orientation: HexOrientation }
 
 const cellColor = ({ q, r }: { q: number; r: number }, opts: CellColorOpts) => {
-	const { rings, lightness, maxChroma } = opts
+	const { rings, lightness, maxChroma, orientation } = opts
 	const ring = hexDistance({ q, r })
 	if (ring === 0) return `oklch(${lightness.toFixed(3)} 0 0)`
 	const chroma = (ring / rings) * maxChroma
-	const hue = hexAngle({ q, r }, 'flat')
+	const hue = hexAngle({ q, r }, orientation)
 	return `oklch(${lightness.toFixed(3)} ${chroma.toFixed(4)} ${hue.toFixed(2)})`
 }
 
@@ -30,6 +31,7 @@ type HexCellProps = {
 	q: number
 	r: number
 	size: number
+	orientation: HexOrientation
 	selected: boolean
 	color: string
 	onSelect: (c: string) => void
@@ -37,12 +39,22 @@ type HexCellProps = {
 	selectedClassName?: string
 }
 
-const HexCell = ({ q, r, size, selected, color, onSelect, className, selectedClassName }: HexCellProps) => {
-	const center = hexToPixel({ q, r }, size, 'flat')
+const HexCell = ({
+	q,
+	r,
+	size,
+	orientation,
+	selected,
+	color,
+	onSelect,
+	className,
+	selectedClassName,
+}: HexCellProps) => {
+	const center = hexToPixel({ q, r }, size, orientation)
 	return (
 		<g onClick={() => onSelect(color)} className='group cursor-pointer' aria-label={color} role='button'>
 			<polygon
-				points={hexToSvgPoints({ q, r }, size, 'flat')}
+				points={hexToSvgPoints({ q, r }, size, orientation)}
 				fill={color}
 				stroke='black'
 				strokeWidth={0.5}
@@ -73,7 +85,7 @@ const HexCell = ({ q, r, size, selected, color, onSelect, className, selectedCla
 type LightnessSliderProps = { value: number; onChange: (v: number) => void; className?: string }
 
 const LightnessSlider = ({ value, onChange, className }: LightnessSliderProps) => (
-	<label className={cn('flex w-full max-w-xs items-center gap-2', className)}>
+	<label className={cn('flex w-full items-center gap-2', className)}>
 		<span className='w-4 shrink-0 text-center font-mono text-xs opacity-50'>L</span>
 		<div className='relative flex-1'>
 			<div
@@ -98,7 +110,7 @@ const LightnessSlider = ({ value, onChange, className }: LightnessSliderProps) =
 type ColorPreviewProps = { color: string; copyValue: string; classNames?: Partial<Record<ColorPickerSlot, string>> }
 
 const ColorPreview = ({ color, copyValue, classNames }: ColorPreviewProps) => (
-	<div className={cn('flex w-full max-w-xs items-center gap-2', classNames?.preview)}>
+	<div className={cn('flex w-full items-center gap-2', classNames?.preview)}>
 		<div
 			className='size-8 shrink-0 rounded-lg border border-base-content/10 shadow-inner'
 			style={{ background: color }}
@@ -128,8 +140,14 @@ export const ColorPicker = ({
 
 	const selected = value ?? internalColor
 	const bounds = hexDiskBounds(rings, size, { orientation, padding: 2 })
-	const viewBox = `${bounds.minX} ${bounds.minY} ${bounds.width} ${bounds.height}`
-	const colorOpts: CellColorOpts = { rings, lightness, maxChroma }
+
+	// Use a square viewBox so flat-top and pointy-top render the same visual size.
+	const dim = Math.max(bounds.width, bounds.height)
+	const padX = (dim - bounds.width) / 2
+	const padY = (dim - bounds.height) / 2
+	const viewBox = `${bounds.minX - padX} ${bounds.minY - padY} ${dim} ${dim}`
+
+	const colorOpts: CellColorOpts = { rings, lightness, maxChroma, orientation }
 	const displayColor = selected ?? `oklch(${lightness.toFixed(3)} 0 0)`
 
 	const handleSelect = (oklch: string) => {
@@ -142,7 +160,6 @@ export const ColorPicker = ({
 			<svg
 				viewBox={viewBox}
 				className={cn('w-full cursor-pointer select-none', classNames?.svg)}
-				style={{ maxWidth: bounds.width }}
 				aria-label='Color wheel'
 				role='img'
 			>
@@ -154,6 +171,7 @@ export const ColorPicker = ({
 							q={q}
 							r={r}
 							size={size}
+							orientation={orientation}
 							color={color}
 							selected={selected === color}
 							onSelect={handleSelect}

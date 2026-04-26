@@ -8,7 +8,6 @@ export const meta: DemoMeta = { title: 'ColorPicker', category: 'components', ta
 const formats: ColorFormat[] = ['oklch', 'hex', 'rgb', 'hsl']
 
 export function Demo() {
-	const [color, setColor] = useState<string>()
 	const [rings, setRings] = useState(6)
 	const [size, setSize] = useState(16)
 	const [format, setFormat] = useState<ColorFormat>('oklch')
@@ -85,8 +84,8 @@ export function Demo() {
 
 			<hr className='w-full opacity-10' />
 
-			{/* Pickers */}
-			<div className='flex flex-wrap justify-center gap-12'>
+			{/* Side-by-side pickers in equal-width columns */}
+			<div className='grid grid-cols-2 gap-8'>
 				<div className='flex flex-col items-center gap-2'>
 					<span className='text-xs font-medium opacity-40'>flat-top</span>
 					<ColorPicker
@@ -95,9 +94,7 @@ export function Demo() {
 						maxChroma={maxChroma}
 						format={format}
 						orientation='flat'
-						value={color}
-						onChange={setColor}
-						className='w-full max-w-xs'
+						className='w-full'
 					/>
 				</div>
 
@@ -109,22 +106,10 @@ export function Demo() {
 						maxChroma={maxChroma}
 						format={format}
 						orientation='pointy'
-						value={color}
-						onChange={setColor}
-						className='w-full max-w-xs'
+						className='w-full'
 					/>
 				</div>
 			</div>
-
-			{color && (
-				<div className='flex items-center gap-3 rounded-xl border border-base-content/10 p-4'>
-					<div className='size-10 rounded-lg shadow-md' style={{ background: color }} />
-					<div className='flex flex-col gap-0.5'>
-						<span className='text-xs opacity-40'>selected ({format})</span>
-						<span className='font-mono text-sm'>{color}</span>
-					</div>
-				</div>
-			)}
 		</div>
 	)
 }
