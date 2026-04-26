@@ -88,6 +88,7 @@
 		"vite": "^8.0.0"
 	},
 	"dependencies": {
+		"@colordx/core": "^5.4.2",
 		"@floating-ui/react": "^0.27.19",
 		"@mantine/hooks": "^8.3.16",
 		"@types/d3-selection": "^3.0.11",
