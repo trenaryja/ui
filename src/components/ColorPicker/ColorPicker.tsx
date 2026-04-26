@@ -161,6 +161,7 @@ export const ColorPicker = ({
 		<div className={cn('flex flex-col items-center gap-3', className, classNames?.root)} {...props}>
 			<svg
 				viewBox={viewBox}
+				shapeRendering='crispEdges'
 				className={cn('w-full cursor-pointer select-none', classNames?.svg)}
 				aria-label='Color wheel'
 				role='img'
