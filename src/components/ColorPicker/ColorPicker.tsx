@@ -51,20 +51,22 @@ const HexCell = ({
 	selectedClassName,
 }: HexCellProps) => {
 	const center = hexToPixel({ q, r }, size, orientation)
+	const points = hexToSvgPoints({ q, r }, size, orientation)
 	return (
 		<g onClick={() => onSelect(color)} className='group cursor-pointer' aria-label={color} role='button'>
 			<polygon
-				points={hexToSvgPoints({ q, r }, size, orientation)}
+				points={points}
 				fill={color}
 				stroke='black'
 				strokeWidth={0.5}
 				strokeOpacity={0.12}
-				className={cn(
-					'transition-[filter] duration-75 group-hover:brightness-110 group-active:brightness-125',
-					selected && 'brightness-[1.15]',
-					className,
-					selected && selectedClassName,
-				)}
+				className={cn(selected && 'brightness-[1.15]', className, selected && selectedClassName)}
+			/>
+			{/* White overlay for hover/active — avoids filter compositing artifacts */}
+			<polygon
+				points={points}
+				fill='white'
+				className='pointer-events-none opacity-0 transition-opacity duration-75 group-hover:opacity-[0.12] group-active:opacity-[0.22]'
 			/>
 			{selected && (
 				<circle
