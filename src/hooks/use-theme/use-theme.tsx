@@ -112,7 +112,6 @@ const Theme = ({
 	const resolvedTheme = theme === SYSTEM_THEME ? systemTheme : theme
 	const attrs = !value ? themes : Object.values(value)
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	const applyTheme = (themeToApply: string) => {
 		let resolved = themeToApply
 		if (!resolved) return
@@ -149,7 +148,6 @@ const Theme = ({
 		enable?.()
 	}
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	const setTheme = (newTheme: ((prevTheme: string) => string) | string) => setThemeState(newTheme)
 
 	useEffect(() => {

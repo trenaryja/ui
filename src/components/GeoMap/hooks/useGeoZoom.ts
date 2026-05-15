@@ -444,7 +444,6 @@ export const useGeoZoom = ({
 			}
 		}
 		// Serialize subPropsZoom so an inline `{...}` literal from the consumer doesn't tear down d3-zoom every render.
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- viewBoxCenter, projection, rotation, callbacks read via refs to avoid tearing down on every update
 	}, [svgRef, zoomGRef, zoomEnabled, dragEnabled, dragBehavior, subPropsZoom && JSON.stringify(subPropsZoom)])
 
 	// useLayoutEffect so behavior.transform + point counter-scale land before paint. With useEffect
@@ -467,7 +466,6 @@ export const useGeoZoom = ({
 		})
 		if (rot) onRotate?.(rot)
 		select(svg).call(behavior.transform, zoomIdentity.translate(transform.x, transform.y).scale(transform.k))
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- projection/viewBoxCenter/onRotate/defaultZoom read at fire time; re-apply only on controlled value or behavior change
 	}, [zoom, dragBehavior])
 
 	const zoomIn = () => {

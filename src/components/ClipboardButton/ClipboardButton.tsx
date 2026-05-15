@@ -66,7 +66,6 @@ export const ClipboardButton = ({
 		wasActiveRef.current = isActive
 		if (!copied) return
 		onCopy?.(lastCopiedValueRef.current)
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	}, [copied, copyCount, error, onTimeout])
 
 	useEffect(() => {

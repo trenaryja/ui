@@ -105,7 +105,6 @@ export const AnimatedNumber = ({
 
 		rafRef.current = requestAnimationFrame(animate)
 		return () => void (rafRef.current && cancelAnimationFrame(rafRef.current))
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	}, [value, continuous, animated, timing.duration])
 
 	useEffect(() => setPrevValue(value), [value])

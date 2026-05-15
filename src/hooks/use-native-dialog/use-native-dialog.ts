@@ -21,7 +21,6 @@ export const useNativeDialog = ({ dialogId, hasEscapeKey, open, setOpen }: UseNa
 		return el instanceof HTMLDialogElement ? el : null
 	}
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	const openNative = () => {
 		const el = getDialog()
 		if (!el || el.open) return
@@ -29,7 +28,6 @@ export const useNativeDialog = ({ dialogId, hasEscapeKey, open, setOpen }: UseNa
 		focusAutofocus(el)
 	}
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- React Compiler handles memoization
 	const closeNative = () => {
 		const el = getDialog()
 		if (!el || !el.open) return

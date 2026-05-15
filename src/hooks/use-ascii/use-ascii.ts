@@ -127,6 +127,7 @@ export const useAscii = (options: AsciiProcessOptions) => {
 	})
 
 	const [ascii, setAscii] = useState('')
+	// eslint-disable-next-line @eslint-react/no-unused-state -- fontDimensions triggers re-render so the downstream useEffect re-runs with updated dimensions
 	const [fontDimensions, setFontDimensions] = useState(() => getFontDimensions(null))
 
 	const processSource = (source: AsciiImageSource) => {

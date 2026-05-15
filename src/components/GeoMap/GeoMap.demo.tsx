@@ -47,6 +47,7 @@ const fetchPopulatedPlaces = async (density: PointDensity, countryCode?: string)
 		const res = await fetch(POPULATED_PLACES_URLS[density])
 		if (!res.ok) throw new Error(`Failed to fetch populated places: ${res.status}`)
 		const collection = (await res.json()) as GeoJSON.FeatureCollection<GeoJSON.Point>
+		// eslint-disable-next-line prefer-destructuring -- reassigning an existing variable; assignment destructuring `({ features } = collection)` is harder to read
 		features = collection.features
 		rawFeaturesCache.set(density, features)
 	}
@@ -403,7 +404,6 @@ export function Demo() {
 
 	const featureIds = useFeatureIds(s.mapPreset)
 	const cityPoints = usePopulatedPlaces(s.pointDensity, US_PRESETS.has(s.mapPreset) ? 'USA' : undefined)
-	// eslint-disable-next-line react-hooks/exhaustive-deps -- randomSeed is intentional for re-randomization on button click
 	const choroplethData = useMemo(() => randChoroplethData(featureIds), [featureIds, randomSeed])
 
 	const choropleth = s.showChoropleth
