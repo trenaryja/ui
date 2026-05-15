@@ -4,7 +4,7 @@ import { css, flexPlacements, splitPlacement } from '@/utils'
 import type { FieldSlot } from './Field.types'
 
 export const slotBaseClasses: Record<FieldSlot, string> = {
-	label: '',
+	label: 'text-base-content/75 font-bold',
 	hint: 'text-base-content/50',
 	error: 'text-error',
 }
