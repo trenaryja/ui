@@ -120,7 +120,7 @@ const highlight = (svg: Element, hover: Hover | null) => {
 }
 
 const handleHover = (e: React.MouseEvent, hover: Hover | null, animate?: boolean) => {
-	const svg = (e.currentTarget as Element).closest('svg')
+	const svg = e.currentTarget.closest('svg')
 	if (!svg) return
 
 	if (animate) {

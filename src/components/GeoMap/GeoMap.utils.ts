@@ -119,10 +119,10 @@ const topoToRegions = (topology: Topology, objectName?: string): GeoRegion[] => 
 
 export const resolveGeoData = (geo: Exclude<GeoDataSource, string>): GeoRegion[] => {
 	if ('type' in geo && geo.type === 'FeatureCollection')
-		return (geo as GeoJSON.FeatureCollection).features.map((f, i) =>
+		return geo.features.map((f, i) =>
 			normalizeFeature(f as GeoJSON.Feature<GeoJSON.MultiPolygon | GeoJSON.Polygon>, i, ''),
 		)
-	if ('type' in geo && geo.type === 'Topology') return topoToRegions(geo as Topology)
+	if ('type' in geo && geo.type === 'Topology') return topoToRegions(geo)
 	return []
 }
 
