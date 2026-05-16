@@ -17,7 +17,7 @@ export type ModalApi = {
 	open: () => void
 }
 
-export const modalClassNames = ['backdrop', 'backdropButton', 'box', 'closeButton', 'closeIcon', 'dialog'] as const
+export const modalClassNames = ['backdrop', 'backdropButton', 'closeButton', 'closeIcon', 'dialog'] as const
 
 export type ModalClassNames = (typeof modalClassNames)[number]
 
@@ -96,7 +96,7 @@ export const Modal = ({
 					classNames?.dialog,
 				)}
 			>
-				<div className={cn('modal-box', className, classNames?.box)}>
+				<div className={cn('modal-box', className)}>
 					{dismissList.includes('closeButton') && (
 						<button
 							aria-label='Close'

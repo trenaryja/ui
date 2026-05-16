@@ -108,8 +108,7 @@ export function SearchableGrid<TItem, TFamily extends string, TCopyKey extends s
 							{activeFamilies.length > 0 && <span className='absolute size-2 rounded-full bg-primary top-0 right-0' />}
 						</button>
 					}
-					className='h-[50vh] overflow-hidden'
-					classNames={{ box: 'grid grid-rows-[auto_1fr] gap-4' }}
+					className='h-[50vh] overflow-hidden grid grid-rows-[auto_1fr] gap-4'
 				>
 					<Input
 						autoFocus

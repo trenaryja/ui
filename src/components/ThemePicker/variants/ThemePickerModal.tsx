@@ -19,14 +19,15 @@ export const ThemePickerModal = ({
 	const { theme, systemTheme, setTheme, themes } = useTheme()
 	const [search, setSearch] = useState('')
 	const filteredThemes = filterThemes(themes, search)
+	const { classNames: modalClassNames, className: modalClassName, ...restModalProps } = modalProps ?? {}
 
 	return (
 		<Modal
 			trigger={trigger ?? <DefaultTrigger className={classNames?.defaultTrigger} />}
-			className={className}
-			classNames={{ box: 'grid gap-2', ...modalProps?.classNames }}
+			className={cn('grid gap-2', className, modalClassName)}
+			classNames={modalClassNames}
 			dismissOptions={['escapeKey', 'outsideClick']}
-			{...modalProps}
+			{...restModalProps}
 		>
 			{showSearch && (
 				<Input
