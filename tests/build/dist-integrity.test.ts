@@ -1,3 +1,4 @@
+/// <reference types="bun-types" />
 import { describe, test } from 'bun:test'
 import { existsSync, readFileSync } from 'node:fs'
 import { builtinModules } from 'node:module'
