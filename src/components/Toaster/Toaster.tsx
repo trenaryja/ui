@@ -34,7 +34,7 @@ const defaultToastOptions = {
 		closeButton: 'btn btn-ghost absolute opacity-0 group-hover:opacity-100 -top-0 -right-0 btn-xs btn-circle',
 		loader: 'relative!',
 	},
-	className: 'alert group w-full',
+	className: 'alert group w-full grid-cols-[minmax(0,1fr)]',
 } as const satisfies SonnerProps['toastOptions']
 
 export const Toaster = ({ toastOptions, container = document.body, ...props }: ToasterProps) => {
