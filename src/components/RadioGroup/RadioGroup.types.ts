@@ -10,9 +10,9 @@ type BaseProps = Omit<ComponentProps<'input'>, 'children' | 'defaultValue' | 'ty
 	allowDeselect?: boolean
 }
 
-export type RadioGroupDefaultProps = BaseProps & ClassNames<'container' | 'item'>
+export type RadioGroupDefaultProps = BaseProps & ClassNames<'item'>
 
-export type RadioGroupBtnProps = BaseProps & ClassNames<'container' | 'item'>
+export type RadioGroupBtnProps = BaseProps & ClassNames<'item'>
 
 type VariantProps = {
 	default: RadioGroupDefaultProps

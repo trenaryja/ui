@@ -26,7 +26,7 @@ export const RadioGroupBtn = ({
 	})
 
 	return (
-		<div className={cn(classNames?.container ?? 'flex gap-2', className)}>
+		<div className={cn('flex gap-2', className)}>
 			{options.map((option) => (
 				<Radio
 					key={option.value}

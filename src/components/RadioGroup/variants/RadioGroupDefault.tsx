@@ -27,7 +27,7 @@ export const RadioGroupDefault = ({
 	})
 
 	return (
-		<fieldset disabled={disabled} className={cn(classNames?.container ?? 'flex gap-2', className)}>
+		<fieldset disabled={disabled} className={cn('flex gap-2', className)}>
 			{options.map((option) => (
 				<Field key={option.value} label={option.label} labelPlacement='right-center' className={classNames?.item}>
 					<Radio

@@ -47,7 +47,8 @@ export function Demo() {
 					options={options}
 					defaultValue='Small'
 					allowDeselect={allowDeselect}
-					classNames={{ container: 'join', item: 'join-item' }}
+					className='join'
+					classNames={{ item: 'join-item' }}
 				/>
 			</Field>
 		</div>
