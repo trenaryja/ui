@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils'
+import { cn, loadImage } from '@/utils'
 import type { ComponentProps } from 'react'
 import { useEffect, useState } from 'react'
 import type { ImgData } from './LineFieldImage.utils'
@@ -27,12 +27,7 @@ export const LineFieldImage = ({
 	const [imgData, setImgData] = useState<ImgData | null>(null)
 
 	useEffect(() => {
-		const img = new Image()
-		img.crossOrigin = 'Anonymous'
-
-		img.onload = () => setImgData(processImageToLines(img, cellSize))
-
-		img.src = src
+		loadImage(src).then((img) => setImgData(processImageToLines(img, cellSize)))
 	}, [src, cellSize])
 
 	if (!imgData) return null

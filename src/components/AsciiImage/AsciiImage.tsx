@@ -1,7 +1,7 @@
 'use client'
 
 import { useAscii } from '@/hooks'
-import { characterRamps, cn } from '@/utils'
+import { characterRamps, cn, loadImage } from '@/utils'
 import type { ComponentProps } from 'react'
 import { useEffect } from 'react'
 import type { LiteralUnion } from 'type-fest'
@@ -29,14 +29,7 @@ export const AsciiImage = ({
 	const { preRef, ascii, setAscii, processSource } = useAscii({ characterRamp, reverseRamp, maxHeight, maxWidth })
 
 	useEffect(() => {
-		const image = new Image()
-		image.crossOrigin = 'Anonymous'
-
-		image.onload = () => {
-			setAscii(processSource(image))
-		}
-
-		image.src = src
+		loadImage(src).then((image) => setAscii(processSource(image)))
 	}, [src, processSource, setAscii])
 
 	return (

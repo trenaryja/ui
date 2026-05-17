@@ -4,6 +4,15 @@ import { createPortal } from 'react-dom'
 
 export const isServer = typeof window === 'undefined'
 
+export const loadImage = (src: string): Promise<HTMLImageElement> =>
+	new Promise((resolve, reject) => {
+		const img = new Image()
+		img.crossOrigin = 'Anonymous'
+		img.onload = () => resolve(img)
+		img.onerror = reject
+		img.src = src
+	})
+
 /** Render content into `target` via createPortal if set, otherwise return content as-is. */
 export const maybePortal = (content: ReactNode, target?: RefObject<HTMLElement | null>) =>
 	target?.current ? createPortal(content, target.current) : content
