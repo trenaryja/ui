@@ -1,4 +1,4 @@
-import { css, directionPlacements, flexPlacements, joinTyped } from '@/utils'
+import { css, directionPlacements, flexPlacements, isServer, joinTyped } from '@/utils'
 import { useId } from 'react'
 
 export const popoverPositions = [...joinTyped(directionPlacements, flexPlacements, ' '), 'center'] as const
@@ -51,7 +51,7 @@ export const useNativePopover = (options?: UseNativePopoverOptions) => {
 	const id = options?.id ?? reactId
 	const popoverId = `popover-${id}`
 	const anchorName = `--popover-anchor-${id.replace(/:/g, '')}`
-	const getPopoverElement = () => (typeof document !== 'undefined' ? document.getElementById(popoverId) : null)
+	const getPopoverElement = () => (isServer ? null : document.getElementById(popoverId))
 
 	return {
 		triggerProps: {

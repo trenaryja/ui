@@ -8,7 +8,6 @@ import { useEffect } from 'react'
  */
 export const useUnsavedChangesPrompt = (isDirty: boolean) => {
 	useEffect(() => {
-		if (typeof window === 'undefined') return
 		if (!isDirty) return
 
 		const onBeforeUnload = (event: BeforeUnloadEvent) => {

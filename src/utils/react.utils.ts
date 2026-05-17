@@ -1,6 +1,8 @@
-import { createElement } from 'react'
 import type { ComponentType, ReactNode, RefObject } from 'react'
+import { createElement } from 'react'
 import { createPortal } from 'react-dom'
+
+export const isServer = typeof window === 'undefined'
 
 /** Render content into `target` via createPortal if set, otherwise return content as-is. */
 export const maybePortal = (content: ReactNode, target?: RefObject<HTMLElement | null>) =>

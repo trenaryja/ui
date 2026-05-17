@@ -1,4 +1,4 @@
-import { attempt } from '@/utils'
+import { attempt, isServer } from '@/utils'
 import type { SyntheticEvent } from 'react'
 import { useEffect, useRef } from 'react'
 
@@ -16,7 +16,7 @@ export const useNativeDialog = ({ dialogId, hasEscapeKey, open, setOpen }: UseNa
 	const lastCloseWasCancelRef = useRef(false)
 
 	const getDialog = () => {
-		if (typeof document === 'undefined') return null
+		if (isServer) return null
 		const el = document.getElementById(dialogId)
 		return el instanceof HTMLDialogElement ? el : null
 	}

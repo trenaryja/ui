@@ -1,4 +1,5 @@
 import { useTimeout } from '@mantine/hooks'
+import * as R from 'remeda'
 import { useState } from 'react'
 
 type UseCycleOptions = {
@@ -56,7 +57,7 @@ export const useCycle = <const TValues extends readonly unknown[]>(
 	const norm = (n: number) => {
 		if (disabled) return 0
 		if (wrap) return (n + length) % length
-		return Math.max(0, Math.min(length - 1, n))
+		return R.clamp(n, { min: 0, max: length - 1 })
 	}
 
 	const resetEnabled = idleResetMs != null && idleResetMs > 0 && !disabled

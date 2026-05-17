@@ -27,7 +27,6 @@ export const useBreakpoint = <const TBreakpoints extends Breakpoints = DefaultBr
 	sorted.forEach(([name], i) => ranked.set(name as BreakpointName<TBreakpoints>, i))
 
 	useEffect(() => {
-		if (typeof window === 'undefined') return
 		const queries = sorted.map(([, min]) => window.matchMedia(`(min-width: ${min})`))
 
 		const read = () => {
