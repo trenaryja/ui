@@ -3,7 +3,7 @@ import type { ClassNames } from '@/types'
 import type { ComponentProps, ComponentType } from 'react'
 
 type BaseProps = Omit<ComponentProps<'input'>, 'children' | 'defaultValue' | 'type' | 'value'> & {
-	options: RadioOption[]
+	options: readonly RadioOption[]
 	value?: string
 	defaultValue?: string
 	/** Allow clicking a selected radio to deselect it */

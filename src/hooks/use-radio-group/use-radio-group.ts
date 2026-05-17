@@ -20,7 +20,7 @@ type UseRadioGroupParams = {
 	name?: string
 	value?: string
 	defaultValue?: string
-	options: RadioOption[]
+	options: readonly RadioOption[]
 	onChange?: (e: ChangeEvent<HTMLInputElement>) => void
 	/** Allow clicking a selected radio to deselect it */
 	allowDeselect?: boolean

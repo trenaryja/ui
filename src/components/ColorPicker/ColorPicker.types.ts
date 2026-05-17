@@ -1,28 +1,103 @@
 import type { ClassNames } from '@/types'
-import type { HexOrientation } from '@/utils'
-import type { ComponentProps } from 'react'
+import type {
+	ColorFormat,
+	FunctionalClassName,
+	Gamut,
+	HexOrientation,
+	TailwindColor,
+	TailwindColorName,
+	TailwindShade,
+} from '@/utils'
+import type { ComponentProps, ComponentType } from 'react'
 
-export type ColorFormat = 'hex' | 'hsl' | 'oklch' | 'rgb'
+export type { ColorFormat, Gamut }
 
-export const colorPickerSlots = ['root', 'svg', 'cell', 'cellSelected', 'lightness', 'preview', 'value'] as const
-export type ColorPickerSlot = (typeof colorPickerSlots)[number]
+export const colorPickerPreviewSlots = ['preview', 'value'] as const
+export type ColorPickerPreviewSlot = (typeof colorPickerPreviewSlots)[number]
 
-export type ColorPickerProps = ClassNames<ColorPickerSlot> &
-	Omit<ComponentProps<'div'>, 'onChange'> & {
-		/** Controlled color value (any CSS color string). */
-		value?: string
-		/** Uncontrolled initial color. */
-		defaultValue?: string
-		onChange?: (color: string) => void
-		/** Number of hex rings around the center cell. Default 6. */
-		rings?: number
-		/** Circumradius of each hex cell in px. Default 16. */
-		size?: number
-		/** OkLCH lightness 0–1. Default 0.65. */
-		defaultLightness?: number
-		/** Max OkLCH chroma for the outermost ring. Default 0.4. */
-		maxChroma?: number
-		orientation?: HexOrientation
-		/** Output color format passed to onChange. Default 'oklch'. */
-		format?: ColorFormat
+export type ColorPickerPreviewProps = ClassNames<ColorPickerPreviewSlot> &
+	ComponentProps<'div'> & {
+		color: string
 	}
+
+type ColorPickerBaseProps = Omit<ComponentProps<'div'>, 'onChange'> & {
+	value?: string
+	defaultValue?: string
+	onChange?: (color: string) => void
+	format?: ColorFormat
+}
+
+// --- HexWheel ---
+
+export type HexCellState = {
+	q: number
+	r: number
+	isSelected: boolean
+	color: string
+}
+
+export type ColorPickerHexWheelClassNames = {
+	svg?: string
+	cell?: FunctionalClassName<HexCellState>
+	lightness?: string
+}
+
+export type ColorPickerHexWheelProps = ColorPickerBaseProps & {
+	classNames?: ColorPickerHexWheelClassNames
+	rings?: number
+	defaultLightness?: number
+	gamut?: Gamut
+	orientation?: HexOrientation
+}
+
+// --- LCH ---
+
+export type ColorPickerLCHClassNames = {
+	lightness?: string
+	chroma?: string
+	hue?: string
+}
+
+export type ColorPickerLCHProps = ColorPickerBaseProps & {
+	classNames?: ColorPickerLCHClassNames
+	gamut?: Gamut
+}
+
+// --- Tailwind ---
+
+export type TailwindSwatchState = {
+	name: TailwindColorName
+	shade: TailwindShade
+	key: TailwindColor
+	color: string
+	isSelected: boolean
+}
+
+export type ColorPickerTailwindClassNames = {
+	swatch?: FunctionalClassName<TailwindSwatchState>
+	colorLabel?: string
+	shadeLabel?: string
+}
+
+export type ColorPickerTailwindProps = ColorPickerBaseProps & {
+	classNames?: ColorPickerTailwindClassNames
+	showColorNames?: boolean
+	showShadeLabels?: boolean
+}
+
+// --- Shared ---
+
+type VariantProps = {
+	'hex-wheel': ColorPickerHexWheelProps
+	tailwind: ColorPickerTailwindProps
+	lch: ColorPickerLCHProps
+}
+
+export type ColorPickerVariant = keyof VariantProps
+
+export type ColorPickerProps =
+	| (ColorPickerHexWheelProps & { variant?: 'hex-wheel' })
+	| (ColorPickerLCHProps & { variant: 'lch' })
+	| (ColorPickerTailwindProps & { variant: 'tailwind' })
+
+export type ColorPickerComponentMap = { [K in ColorPickerVariant]: ComponentType<VariantProps[K]> }
