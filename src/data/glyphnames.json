@@ -11,6 +11,14 @@
 		"char": "",
 		"code": "ea60"
 	},
+	"cod-add_small": {
+		"char": "",
+		"code": "ec7b"
+	},
+	"cod-agent": {
+		"char": "",
+		"code": "ec67"
+	},
 	"cod-archive": {
 		"char": "",
 		"code": "ea98"
@@ -70,6 +78,14 @@
 	"cod-arrow_up": {
 		"char": "",
 		"code": "eaa1"
+	},
+	"cod-ask": {
+		"char": "",
+		"code": "ec80"
+	},
+	"cod-attach": {
+		"char": "",
+		"code": "ec34"
 	},
 	"cod-azure": {
 		"char": "",
@@ -143,6 +159,10 @@
 		"char": "",
 		"code": "eaaf"
 	},
+	"cod-build": {
+		"char": "",
+		"code": "ec5a"
+	},
 	"cod-calendar": {
 		"char": "",
 		"code": "eab0"
@@ -158,6 +178,18 @@
 	"cod-case_sensitive": {
 		"char": "",
 		"code": "eab1"
+	},
+	"cod-chat_sparkle": {
+		"char": "",
+		"code": "ec4f"
+	},
+	"cod-chat_sparkle_error": {
+		"char": "",
+		"code": "ec56"
+	},
+	"cod-chat_sparkle_warning": {
+		"char": "",
+		"code": "ec55"
 	},
 	"cod-check": {
 		"char": "",
@@ -239,6 +271,10 @@
 		"char": "",
 		"code": "eabe"
 	},
+	"cod-claude": {
+		"char": "",
+		"code": "ec82"
+	},
 	"cod-clear_all": {
 		"char": "",
 		"code": "eabf"
@@ -246,6 +282,10 @@
 	"cod-clippy": {
 		"char": "",
 		"code": "eac0"
+	},
+	"cod-clockface": {
+		"char": "",
+		"code": "ec75"
 	},
 	"cod-close": {
 		"char": "",
@@ -263,6 +303,10 @@
 		"char": "",
 		"code": "eac2"
 	},
+	"cod-cloud_small": {
+		"char": "",
+		"code": "ec7a"
+	},
 	"cod-cloud_upload": {
 		"char": "",
 		"code": "eac3"
@@ -271,6 +315,14 @@
 		"char": "",
 		"code": "eac4"
 	},
+	"cod-code_oss": {
+		"char": "",
+		"code": "ec2b"
+	},
+	"cod-code_review": {
+		"char": "",
+		"code": "ec37"
+	},
 	"cod-coffee": {
 		"char": "",
 		"code": "ec15"
@@ -278,6 +330,14 @@
 	"cod-collapse_all": {
 		"char": "",
 		"code": "eac5"
+	},
+	"cod-collection": {
+		"char": "",
+		"code": "ec57"
+	},
+	"cod-collection_small": {
+		"char": "",
+		"code": "ec78"
 	},
 	"cod-color_mode": {
 		"char": "",
@@ -294,6 +354,14 @@
 	"cod-comment_discussion": {
 		"char": "",
 		"code": "eac7"
+	},
+	"cod-comment_discussion_quote": {
+		"char": "",
+		"code": "ec5b"
+	},
+	"cod-comment_discussion_sparkle": {
+		"char": "",
+		"code": "ec54"
 	},
 	"cod-comment_draft": {
 		"char": "",
@@ -319,13 +387,61 @@
 		"char": "",
 		"code": "ec1e"
 	},
+	"cod-copilot_blocked": {
+		"char": "",
+		"code": "ec3d"
+	},
+	"cod-copilot_error": {
+		"char": "",
+		"code": "ec4d"
+	},
+	"cod-copilot_in_progress": {
+		"char": "",
+		"code": "ec4c"
+	},
+	"cod-copilot_large": {
+		"char": "",
+		"code": "ec3a"
+	},
+	"cod-copilot_not_connected": {
+		"char": "",
+		"code": "ec3e"
+	},
+	"cod-copilot_snooze": {
+		"char": "",
+		"code": "ec52"
+	},
+	"cod-copilot_success": {
+		"char": "",
+		"code": "ec4e"
+	},
+	"cod-copilot_unavailable": {
+		"char": "",
+		"code": "ec42"
+	},
+	"cod-copilot_warning": {
+		"char": "",
+		"code": "ec38"
+	},
+	"cod-copilot_warning_large": {
+		"char": "",
+		"code": "ec3b"
+	},
 	"cod-copy": {
 		"char": "",
 		"code": "ebcc"
 	},
+	"cod-coverage": {
+		"char": "",
+		"code": "ec2e"
+	},
 	"cod-credit_card": {
 		"char": "",
 		"code": "eac9"
+	},
+	"cod-cursor": {
+		"char": "",
+		"code": "ec5c"
 	},
 	"cod-dash": {
 		"char": "",
@@ -390,6 +506,10 @@
 	"cod-debug_breakpoint_unsupported": {
 		"char": "",
 		"code": "eb8c"
+	},
+	"cod-debug_connected": {
+		"char": "",
+		"code": "ec63"
 	},
 	"cod-debug_console": {
 		"char": "",
@@ -499,6 +619,10 @@
 		"char": "",
 		"code": "eade"
 	},
+	"cod-diff_multiple": {
+		"char": "",
+		"code": "ec23"
+	},
 	"cod-diff_removed": {
 		"char": "",
 		"code": "eadf"
@@ -507,13 +631,33 @@
 		"char": "",
 		"code": "eae0"
 	},
+	"cod-diff_single": {
+		"char": "",
+		"code": "ec22"
+	},
 	"cod-discard": {
 		"char": "",
 		"code": "eae2"
 	},
+	"cod-download": {
+		"char": "",
+		"code": "ec74"
+	},
 	"cod-edit": {
 		"char": "",
 		"code": "ea73"
+	},
+	"cod-edit_code": {
+		"char": "",
+		"code": "ec68"
+	},
+	"cod-edit_session": {
+		"char": "",
+		"code": "ec36"
+	},
+	"cod-edit_sparkle": {
+		"char": "",
+		"code": "ec51"
 	},
 	"cod-editor_layout": {
 		"char": "",
@@ -526,6 +670,10 @@
 	"cod-empty_window": {
 		"char": "",
 		"code": "eae4"
+	},
+	"cod-eraser": {
+		"char": "",
+		"code": "ec5d"
 	},
 	"cod-error": {
 		"char": "",
@@ -550,6 +698,10 @@
 	"cod-extensions": {
 		"char": "",
 		"code": "eae6"
+	},
+	"cod-extensions_large": {
+		"char": "",
+		"code": "ec48"
 	},
 	"cod-eye": {
 		"char": "",
@@ -595,6 +747,10 @@
 		"char": "",
 		"code": "eaee"
 	},
+	"cod-file_text": {
+		"char": "",
+		"code": "ec5e"
+	},
 	"cod-file_zip": {
 		"char": "",
 		"code": "eaef"
@@ -610,6 +766,10 @@
 	"cod-filter_filled": {
 		"char": "",
 		"code": "ebce"
+	},
+	"cod-flag": {
+		"char": "",
+		"code": "ec3f"
 	},
 	"cod-flame": {
 		"char": "",
@@ -643,6 +803,10 @@
 		"char": "",
 		"code": "eaf7"
 	},
+	"cod-forward": {
+		"char": "",
+		"code": "ec73"
+	},
 	"cod-game": {
 		"char": "",
 		"code": "ec17"
@@ -655,9 +819,29 @@
 		"char": "",
 		"code": "eaf9"
 	},
+	"cod-gist": {
+		"char": "",
+		"code": "eafb"
+	},
 	"cod-gist_secret": {
 		"char": "",
 		"code": "eafa"
+	},
+	"cod-git_branch": {
+		"char": "",
+		"code": "ec6f"
+	},
+	"cod-git_branch_changes": {
+		"char": "",
+		"code": "ec6c"
+	},
+	"cod-git_branch_conflicts": {
+		"char": "",
+		"code": "ec6e"
+	},
+	"cod-git_branch_staged_changes": {
+		"char": "",
+		"code": "ec6d"
 	},
 	"cod-git_commit": {
 		"char": "",
@@ -687,6 +871,10 @@
 		"char": "",
 		"code": "ebbc"
 	},
+	"cod-git_pull_request_done": {
+		"char": "",
+		"code": "ec46"
+	},
 	"cod-git_pull_request_draft": {
 		"char": "",
 		"code": "ebdb"
@@ -698,6 +886,18 @@
 	"cod-git_pull_request_new_changes": {
 		"char": "",
 		"code": "ec0c"
+	},
+	"cod-git_stash": {
+		"char": "",
+		"code": "ec26"
+	},
+	"cod-git_stash_apply": {
+		"char": "",
+		"code": "ec27"
+	},
+	"cod-git_stash_pop": {
+		"char": "",
+		"code": "ec28"
 	},
 	"cod-github": {
 		"char": "",
@@ -715,13 +915,25 @@
 		"char": "",
 		"code": "eba1"
 	},
+	"cod-github_project": {
+		"char": "",
+		"code": "ec2f"
+	},
 	"cod-globe": {
 		"char": "",
 		"code": "eb01"
 	},
+	"cod-go_to_editing_session": {
+		"char": "",
+		"code": "ec35"
+	},
 	"cod-go_to_file": {
 		"char": "",
 		"code": "ea94"
+	},
+	"cod-go_to_search": {
+		"char": "",
+		"code": "ec32"
 	},
 	"cod-grabber": {
 		"char": "",
@@ -783,6 +995,10 @@
 		"char": "",
 		"code": "ebf9"
 	},
+	"cod-index_zero": {
+		"char": "",
+		"code": "ec66"
+	},
 	"cod-info": {
 		"char": "",
 		"code": "ea74"
@@ -826,6 +1042,18 @@
 	"cod-key": {
 		"char": "",
 		"code": "eb11"
+	},
+	"cod-keyboard_tab": {
+		"char": "",
+		"code": "ec3c"
+	},
+	"cod-keyboard_tab_above": {
+		"char": "",
+		"code": "ec44"
+	},
+	"cod-keyboard_tab_below": {
+		"char": "",
+		"code": "ec45"
 	},
 	"cod-law": {
 		"char": "",
@@ -871,6 +1099,10 @@
 		"char": "",
 		"code": "ebef"
 	},
+	"cod-layout_panel_dock": {
+		"char": "",
+		"code": "ec49"
+	},
 	"cod-layout_panel_justify": {
 		"char": "",
 		"code": "ebf0"
@@ -891,6 +1123,10 @@
 		"char": "",
 		"code": "ebf3"
 	},
+	"cod-layout_sidebar_left_dock": {
+		"char": "",
+		"code": "ec4a"
+	},
 	"cod-layout_sidebar_left_off": {
 		"char": "",
 		"code": "ec02"
@@ -898,6 +1134,10 @@
 	"cod-layout_sidebar_right": {
 		"char": "",
 		"code": "ebf4"
+	},
+	"cod-layout_sidebar_right_dock": {
+		"char": "",
+		"code": "ec4b"
 	},
 	"cod-layout_sidebar_right_off": {
 		"char": "",
@@ -918,6 +1158,14 @@
 	"cod-lightbulb_autofix": {
 		"char": "",
 		"code": "eb13"
+	},
+	"cod-lightbulb_empty": {
+		"char": "",
+		"code": "ec40"
+	},
+	"cod-lightbulb_sparkle": {
+		"char": "",
+		"code": "ec1f"
 	},
 	"cod-link": {
 		"char": "",
@@ -991,9 +1239,21 @@
 		"char": "",
 		"code": "ec06"
 	},
+	"cod-map_vertical": {
+		"char": "",
+		"code": "ec30"
+	},
+	"cod-map_vertical_filled": {
+		"char": "",
+		"code": "ec31"
+	},
 	"cod-markdown": {
 		"char": "",
 		"code": "eb1d"
+	},
+	"cod-mcp": {
+		"char": "",
+		"code": "ec47"
 	},
 	"cod-megaphone": {
 		"char": "",
@@ -1010,6 +1270,10 @@
 	"cod-merge": {
 		"char": "",
 		"code": "ebab"
+	},
+	"cod-merge_into": {
+		"char": "",
+		"code": "ec6b"
 	},
 	"cod-mic": {
 		"char": "",
@@ -1047,6 +1311,10 @@
 		"char": "",
 		"code": "eb24"
 	},
+	"cod-new_collection": {
+		"char": "",
+		"code": "ec58"
+	},
 	"cod-new_file": {
 		"char": "",
 		"code": "ea7f"
@@ -1054,6 +1322,10 @@
 	"cod-new_folder": {
 		"char": "",
 		"code": "ea80"
+	},
+	"cod-new_session": {
+		"char": "",
+		"code": "ec84"
 	},
 	"cod-newline": {
 		"char": "",
@@ -1079,9 +1351,21 @@
 		"char": "",
 		"code": "eb27"
 	},
+	"cod-open_in_product": {
+		"char": "",
+		"code": "ec65"
+	},
+	"cod-open_in_window": {
+		"char": "",
+		"code": "ec83"
+	},
 	"cod-open_preview": {
 		"char": "",
 		"code": "eb28"
+	},
+	"cod-openai": {
+		"char": "",
+		"code": "ec81"
 	},
 	"cod-organization": {
 		"char": "",
@@ -1106,6 +1390,10 @@
 	"cod-pass_filled": {
 		"char": "",
 		"code": "ebb3"
+	},
+	"cod-percentage": {
+		"char": "",
+		"code": "ec33"
 	},
 	"cod-person": {
 		"char": "",
@@ -1167,6 +1455,10 @@
 		"char": "",
 		"code": "eb31"
 	},
+	"cod-python": {
+		"char": "",
+		"code": "ec39"
+	},
 	"cod-question": {
 		"char": "",
 		"code": "eb32"
@@ -1174,6 +1466,10 @@
 	"cod-quote": {
 		"char": "",
 		"code": "eb33"
+	},
+	"cod-quotes": {
+		"char": "",
+		"code": "ec60"
 	},
 	"cod-radio_tower": {
 		"char": "",
@@ -1223,6 +1519,14 @@
 		"char": "",
 		"code": "eb3b"
 	},
+	"cod-remove_small": {
+		"char": "",
+		"code": "ec7c"
+	},
+	"cod-rename": {
+		"char": "",
+		"code": "ec61"
+	},
 	"cod-replace": {
 		"char": "",
 		"code": "eb3d"
@@ -1251,6 +1555,10 @@
 		"char": "",
 		"code": "ea63"
 	},
+	"cod-repo_pinned": {
+		"char": "",
+		"code": "ec43"
+	},
 	"cod-repo_pull": {
 		"char": "",
 		"code": "eb40"
@@ -1259,6 +1567,10 @@
 		"char": "",
 		"code": "eb41"
 	},
+	"cod-repo_selected": {
+		"char": "",
+		"code": "ec69"
+	},
 	"cod-report": {
 		"char": "",
 		"code": "eb42"
@@ -1266,6 +1578,10 @@
 	"cod-request_changes": {
 		"char": "",
 		"code": "eb43"
+	},
+	"cod-robot": {
+		"char": "",
+		"code": "ec20"
 	},
 	"cod-rocket": {
 		"char": "",
@@ -1295,13 +1611,25 @@
 		"char": "",
 		"code": "eb9e"
 	},
+	"cod-run_all_coverage": {
+		"char": "",
+		"code": "ec2d"
+	},
 	"cod-run_below": {
 		"char": "",
 		"code": "ebbe"
 	},
+	"cod-run_coverage": {
+		"char": "",
+		"code": "ec2c"
+	},
 	"cod-run_errors": {
 		"char": "",
 		"code": "ebde"
+	},
+	"cod-run_with_deps": {
+		"char": "",
+		"code": "ec62"
 	},
 	"cod-save": {
 		"char": "",
@@ -1314,6 +1642,10 @@
 	"cod-save_as": {
 		"char": "",
 		"code": "eb4a"
+	},
+	"cod-screen_cut": {
+		"char": "",
+		"code": "ec7f"
 	},
 	"cod-screen_full": {
 		"char": "",
@@ -1331,6 +1663,14 @@
 		"char": "",
 		"code": "ec0d"
 	},
+	"cod-search_large": {
+		"char": "",
+		"code": "ec70"
+	},
+	"cod-search_sparkle": {
+		"char": "",
+		"code": "ec50"
+	},
 	"cod-search_stop": {
 		"char": "",
 		"code": "eb4e"
@@ -1338,6 +1678,10 @@
 	"cod-send": {
 		"char": "",
 		"code": "ec0f"
+	},
+	"cod-send_to_remote_agent": {
+		"char": "",
+		"code": "ec53"
 	},
 	"cod-server": {
 		"char": "",
@@ -1351,6 +1695,10 @@
 		"char": "",
 		"code": "eba2"
 	},
+	"cod-session_in_progress": {
+		"char": "",
+		"code": "ec77"
+	},
 	"cod-settings": {
 		"char": "",
 		"code": "eb52"
@@ -1358,6 +1706,10 @@
 	"cod-settings_gear": {
 		"char": "",
 		"code": "eb51"
+	},
+	"cod-share": {
+		"char": "",
+		"code": "ec25"
 	},
 	"cod-shield": {
 		"char": "",
@@ -1370,6 +1722,10 @@
 	"cod-sign_out": {
 		"char": "",
 		"code": "ea6e"
+	},
+	"cod-skip": {
+		"char": "",
+		"code": "ec6a"
 	},
 	"cod-smiley": {
 		"char": "",
@@ -1390,6 +1746,10 @@
 	"cod-sparkle": {
 		"char": "",
 		"code": "ec10"
+	},
+	"cod-sparkle_filled": {
+		"char": "",
+		"code": "ec21"
 	},
 	"cod-split_horizontal": {
 		"char": "",
@@ -1418,6 +1778,14 @@
 	"cod-stop_circle": {
 		"char": "",
 		"code": "eba5"
+	},
+	"cod-strikethrough": {
+		"char": "",
+		"code": "ec64"
+	},
+	"cod-surround_with": {
+		"char": "",
+		"code": "ec24"
 	},
 	"cod-symbol_array": {
 		"char": "",
@@ -1474,6 +1842,10 @@
 	"cod-symbol_method": {
 		"char": "",
 		"code": "ea8c"
+	},
+	"cod-symbol_method_arrow": {
+		"char": "",
+		"code": "ec41"
 	},
 	"cod-symbol_misc": {
 		"char": "",
@@ -1563,6 +1935,10 @@
 		"char": "",
 		"code": "ebc5"
 	},
+	"cod-terminal_git_bash": {
+		"char": "",
+		"code": "ec71"
+	},
 	"cod-terminal_linux": {
 		"char": "",
 		"code": "ebc6"
@@ -1582,6 +1958,10 @@
 	"cod-text_size": {
 		"char": "",
 		"code": "eb69"
+	},
+	"cod-thinking": {
+		"char": "",
+		"code": "ec59"
 	},
 	"cod-three_bars": {
 		"char": "",
@@ -1643,6 +2023,10 @@
 		"char": "",
 		"code": "ebbb"
 	},
+	"cod-unarchive": {
+		"char": "",
+		"code": "ec76"
+	},
 	"cod-unfold": {
 		"char": "",
 		"code": "eb73"
@@ -1699,9 +2083,21 @@
 		"char": "",
 		"code": "eb7b"
 	},
+	"cod-vm_small": {
+		"char": "",
+		"code": "ec79"
+	},
 	"cod-vr": {
 		"char": "",
 		"code": "ec18"
+	},
+	"cod-vscode": {
+		"char": "",
+		"code": "ec29"
+	},
+	"cod-vscode_insiders": {
+		"char": "",
+		"code": "ec2a"
 	},
 	"cod-wand": {
 		"char": "",
@@ -1727,6 +2123,10 @@
 		"char": "",
 		"code": "eb7f"
 	},
+	"cod-window_active": {
+		"char": "",
+		"code": "ec72"
+	},
 	"cod-word_wrap": {
 		"char": "",
 		"code": "eb80"
@@ -1742,6 +2142,14 @@
 	"cod-workspace_untrusted": {
 		"char": "",
 		"code": "ebc2"
+	},
+	"cod-worktree": {
+		"char": "",
+		"code": "ec7e"
+	},
+	"cod-worktree_small": {
+		"char": "",
+		"code": "ec7d"
 	},
 	"cod-zoom_in": {
 		"char": "",
@@ -1871,6 +2279,10 @@
 		"char": "",
 		"code": "e6ae"
 	},
+	"custom-obsidian": {
+		"char": "",
+		"code": "e6bb"
+	},
 	"custom-orgmode": {
 		"char": "",
 		"code": "e633"
@@ -1919,6 +2331,14 @@
 		"char": "",
 		"code": "e62a"
 	},
+	"custom-wireshark": {
+		"char": "",
+		"code": "e6ba"
+	},
+	"custom-zsh": {
+		"char": "",
+		"code": "e6b9"
+	},
 	"dev-aarch64": {
 		"char": "",
 		"code": "e700"
@@ -1926,6 +2346,14 @@
 	"dev-adonisjs": {
 		"char": "",
 		"code": "e701"
+	},
+	"dev-aerospike": {
+		"char": "",
+		"code": "e8f1"
+	},
+	"dev-aframe": {
+		"char": "",
+		"code": "e8f2"
 	},
 	"dev-aftereffects": {
 		"char": "",
@@ -1938,6 +2366,10 @@
 	"dev-algolia": {
 		"char": "",
 		"code": "e70a"
+	},
+	"dev-almalinux": {
+		"char": "",
+		"code": "e8f3"
 	},
 	"dev-alpinejs": {
 		"char": "",
@@ -1975,6 +2407,10 @@
 		"char": "",
 		"code": "e723"
 	},
+	"dev-ansys": {
+		"char": "",
+		"code": "e8f4"
+	},
 	"dev-antdesign": {
 		"char": "",
 		"code": "e72a"
@@ -1995,9 +2431,17 @@
 		"char": "",
 		"code": "e72f"
 	},
+	"dev-apex": {
+		"char": "",
+		"code": "e8f5"
+	},
 	"dev-apl": {
 		"char": "",
 		"code": "e730"
+	},
+	"dev-apollographql": {
+		"char": "",
+		"code": "e8f6"
 	},
 	"dev-appcelerator": {
 		"char": "",
@@ -2022,6 +2466,10 @@
 	"dev-argocd": {
 		"char": "",
 		"code": "e734"
+	},
+	"dev-artixlinux": {
+		"char": "",
+		"code": "e8f7"
 	},
 	"dev-astro": {
 		"char": "",
@@ -2059,6 +2507,10 @@
 		"char": "",
 		"code": "e75d"
 	},
+	"dev-babylonjs": {
+		"char": "",
+		"code": "e8f8"
+	},
 	"dev-backbone": {
 		"char": "",
 		"code": "e752"
@@ -2079,6 +2531,10 @@
 		"char": "",
 		"code": "e760"
 	},
+	"dev-bazel": {
+		"char": "",
+		"code": "e8f9"
+	},
 	"dev-beats": {
 		"char": "",
 		"code": "e761"
@@ -2086,6 +2542,14 @@
 	"dev-behance": {
 		"char": "",
 		"code": "e762"
+	},
+	"dev-bevyengine": {
+		"char": "",
+		"code": "e8fa"
+	},
+	"dev-biome": {
+		"char": "",
+		"code": "e8fb"
 	},
 	"dev-bitbucket": {
 		"char": "",
@@ -2159,6 +2623,14 @@
 		"char": "",
 		"code": "e78b"
 	},
+	"dev-chakraui": {
+		"char": "",
+		"code": "e8fc"
+	},
+	"dev-chartjs": {
+		"char": "",
+		"code": "e8fd"
+	},
 	"dev-chrome": {
 		"char": "",
 		"code": "e743"
@@ -2170,6 +2642,10 @@
 	"dev-clarity": {
 		"char": "",
 		"code": "e78d"
+	},
+	"dev-clickhouse": {
+		"char": "",
+		"code": "e8fe"
 	},
 	"dev-clion": {
 		"char": "",
@@ -2195,9 +2671,17 @@
 		"char": "",
 		"code": "e793"
 	},
+	"dev-cloudrun": {
+		"char": "",
+		"code": "e8ff"
+	},
 	"dev-cmake": {
 		"char": "",
 		"code": "e794"
+	},
+	"dev-cobol": {
+		"char": "",
+		"code": "e900"
 	},
 	"dev-codeac": {
 		"char": "",
@@ -2251,6 +2735,10 @@
 		"char": "",
 		"code": "e7a2"
 	},
+	"dev-cpanel": {
+		"char": "",
+		"code": "e901"
+	},
 	"dev-cplusplus": {
 		"char": "",
 		"code": "e7a3"
@@ -2291,6 +2779,10 @@
 		"char": "",
 		"code": "e706"
 	},
+	"dev-datadog": {
+		"char": "",
+		"code": "e902"
+	},
 	"dev-datagrip": {
 		"char": "",
 		"code": "e7bd"
@@ -2298,6 +2790,10 @@
 	"dev-dataspell": {
 		"char": "",
 		"code": "e7be"
+	},
+	"dev-datatables": {
+		"char": "",
+		"code": "e903"
 	},
 	"dev-dbeaver": {
 		"char": "",
@@ -2307,9 +2803,17 @@
 		"char": "",
 		"code": "e77d"
 	},
+	"dev-delphi": {
+		"char": "",
+		"code": "e904"
+	},
 	"dev-denojs": {
 		"char": "",
 		"code": "e7c0"
+	},
+	"dev-detaspace": {
+		"char": "",
+		"code": "e905"
 	},
 	"dev-devicon": {
 		"char": "",
@@ -2322,6 +2826,10 @@
 	"dev-digitalocean": {
 		"char": "",
 		"code": "e7ae"
+	},
+	"dev-discloud": {
+		"char": "",
+		"code": "e906"
 	},
 	"dev-discordjs": {
 		"char": "",
@@ -2355,6 +2863,10 @@
 		"char": "",
 		"code": "e7c6"
 	},
+	"dev-dovecot": {
+		"char": "",
+		"code": "e907"
+	},
 	"dev-dreamweaver": {
 		"char": "",
 		"code": "e79c"
@@ -2371,9 +2883,21 @@
 		"char": "",
 		"code": "e742"
 	},
+	"dev-duckdb": {
+		"char": "",
+		"code": "e908"
+	},
+	"dev-dyalog": {
+		"char": "",
+		"code": "e909"
+	},
 	"dev-dynamodb": {
 		"char": "",
 		"code": "e7c8"
+	},
+	"dev-dynatrace": {
+		"char": "",
+		"code": "e90a"
 	},
 	"dev-eclipse": {
 		"char": "",
@@ -2415,6 +2939,10 @@
 		"char": "",
 		"code": "e71b"
 	},
+	"dev-entityframeworkcore": {
+		"char": "",
+		"code": "e90b"
+	},
 	"dev-envoy": {
 		"char": "",
 		"code": "e7d1"
@@ -2426,6 +2954,10 @@
 	"dev-eslint": {
 		"char": "",
 		"code": "e7d2"
+	},
+	"dev-expo": {
+		"char": "",
+		"code": "e90c"
 	},
 	"dev-express": {
 		"char": "",
@@ -2455,9 +2987,17 @@
 		"char": "",
 		"code": "e7d9"
 	},
+	"dev-fiber": {
+		"char": "",
+		"code": "e90d"
+	},
 	"dev-figma": {
 		"char": "",
 		"code": "e7da"
+	},
+	"dev-filamentphp": {
+		"char": "",
+		"code": "e90e"
 	},
 	"dev-filezilla": {
 		"char": "",
@@ -2466,6 +3006,10 @@
 	"dev-firebase": {
 		"char": "",
 		"code": "e787"
+	},
+	"dev-firebird": {
+		"char": "",
+		"code": "e90f"
 	},
 	"dev-firefox": {
 		"char": "",
@@ -2478,6 +3022,10 @@
 	"dev-flutter": {
 		"char": "",
 		"code": "e7dd"
+	},
+	"dev-forgejo": {
+		"char": "",
+		"code": "e910"
 	},
 	"dev-fortran": {
 		"char": "",
@@ -2498,6 +3046,14 @@
 	"dev-fsharp": {
 		"char": "",
 		"code": "e7a7"
+	},
+	"dev-fusion": {
+		"char": "",
+		"code": "e911"
+	},
+	"dev-gardener": {
+		"char": "",
+		"code": "e912"
 	},
 	"dev-gatling": {
 		"char": "",
@@ -2579,6 +3135,10 @@
 		"char": "",
 		"code": "e7ea"
 	},
+	"dev-gitkraken": {
+		"char": "",
+		"code": "e913"
+	},
 	"dev-gitlab": {
 		"char": "",
 		"code": "e7eb"
@@ -2590,6 +3150,14 @@
 	"dev-gitter": {
 		"char": "",
 		"code": "e7ed"
+	},
+	"dev-gleam": {
+		"char": "",
+		"code": "e914"
+	},
+	"dev-glitch": {
+		"char": "",
+		"code": "e915"
 	},
 	"dev-gnu": {
 		"char": "",
@@ -2614,6 +3182,10 @@
 	"dev-googlecloud": {
 		"char": "",
 		"code": "e7f1"
+	},
+	"dev-googlecolab": {
+		"char": "",
+		"code": "e916"
 	},
 	"dev-gradle": {
 		"char": "",
@@ -2655,6 +3227,10 @@
 		"char": "",
 		"code": "e7f7"
 	},
+	"dev-harbor": {
+		"char": "",
+		"code": "e917"
+	},
 	"dev-hardhat": {
 		"char": "",
 		"code": "e7f8"
@@ -2687,13 +3263,25 @@
 		"char": "",
 		"code": "e7fd"
 	},
+	"dev-hoppscotch": {
+		"char": "",
+		"code": "e918"
+	},
 	"dev-html5": {
 		"char": "",
 		"code": "e736"
 	},
+	"dev-htmx": {
+		"char": "",
+		"code": "e919"
+	},
 	"dev-hugo": {
 		"char": "",
 		"code": "e7fe"
+	},
+	"dev-hyperv": {
+		"char": "",
+		"code": "e91a"
 	},
 	"dev-ie": {
 		"char": "",
@@ -2706,6 +3294,10 @@
 	"dev-illustrator": {
 		"char": "",
 		"code": "e7b4"
+	},
+	"dev-inertiajs": {
+		"char": "",
+		"code": "e91b"
 	},
 	"dev-influxdb": {
 		"char": "",
@@ -2783,6 +3375,10 @@
 		"char": "",
 		"code": "e809"
 	},
+	"dev-jhipster": {
+		"char": "",
+		"code": "e91c"
+	},
 	"dev-jira": {
 		"char": "",
 		"code": "e75c"
@@ -2831,6 +3427,14 @@
 		"char": "",
 		"code": "e813"
 	},
+	"dev-kaldi": {
+		"char": "",
+		"code": "e91d"
+	},
+	"dev-kalilinux": {
+		"char": "",
+		"code": "e91e"
+	},
 	"dev-karatelabs": {
 		"char": "",
 		"code": "e814"
@@ -2875,6 +3479,10 @@
 		"char": "",
 		"code": "e81c"
 	},
+	"dev-kubeflow": {
+		"char": "",
+		"code": "e91f"
+	},
 	"dev-kubernetes": {
 		"char": "",
 		"code": "e81d"
@@ -2883,17 +3491,33 @@
 		"char": "",
 		"code": "e81e"
 	},
+	"dev-laminas": {
+		"char": "",
+		"code": "e920"
+	},
 	"dev-laravel": {
 		"char": "",
 		"code": "e73f"
+	},
+	"dev-laraveljetstream": {
+		"char": "",
+		"code": "e921"
 	},
 	"dev-latex": {
 		"char": "",
 		"code": "e81f"
 	},
+	"dev-leetcode": {
+		"char": "",
+		"code": "e922"
+	},
 	"dev-less": {
 		"char": "",
 		"code": "e758"
+	},
+	"dev-libgdx": {
+		"char": "",
+		"code": "e923"
 	},
 	"dev-linkedin": {
 		"char": "",
@@ -2902,6 +3526,10 @@
 	"dev-linux": {
 		"char": "",
 		"code": "e712"
+	},
+	"dev-linuxmint": {
+		"char": "",
+		"code": "e924"
 	},
 	"dev-liquibase": {
 		"char": "",
@@ -2923,6 +3551,10 @@
 		"char": "",
 		"code": "e825"
 	},
+	"dev-love2d": {
+		"char": "",
+		"code": "e925"
+	},
 	"dev-lua": {
 		"char": "",
 		"code": "e826"
@@ -2934,6 +3566,10 @@
 	"dev-magento": {
 		"char": "",
 		"code": "e740"
+	},
+	"dev-mapbox": {
+		"char": "",
+		"code": "e926"
 	},
 	"dev-mariadb": {
 		"char": "",
@@ -2959,6 +3595,10 @@
 		"char": "",
 		"code": "e82b"
 	},
+	"dev-mattermost": {
+		"char": "",
+		"code": "e927"
+	},
 	"dev-maven": {
 		"char": "",
 		"code": "e82c"
@@ -2966,6 +3606,14 @@
 	"dev-maya": {
 		"char": "",
 		"code": "e82d"
+	},
+	"dev-memcached": {
+		"char": "",
+		"code": "e928"
+	},
+	"dev-mercurial": {
+		"char": "",
+		"code": "e929"
 	},
 	"dev-meteor": {
 		"char": "",
@@ -3011,6 +3659,10 @@
 		"char": "",
 		"code": "e835"
 	},
+	"dev-monogame": {
+		"char": "",
+		"code": "e92a"
+	},
 	"dev-moodle": {
 		"char": "",
 		"code": "e836"
@@ -3035,6 +3687,10 @@
 		"char": "",
 		"code": "e838"
 	},
+	"dev-nats": {
+		"char": "",
+		"code": "e8f0"
+	},
 	"dev-neo4j": {
 		"char": "",
 		"code": "e839"
@@ -3047,6 +3703,14 @@
 		"char": "",
 		"code": "e83b"
 	},
+	"dev-netbeans": {
+		"char": "",
+		"code": "e92b"
+	},
+	"dev-netbox": {
+		"char": "",
+		"code": "e92c"
+	},
 	"dev-netlify": {
 		"char": "",
 		"code": "e83c"
@@ -3055,6 +3719,10 @@
 		"char": "",
 		"code": "e83d"
 	},
+	"dev-newrelic": {
+		"char": "",
+		"code": "e92d"
+	},
 	"dev-nextjs": {
 		"char": "",
 		"code": "e83e"
@@ -3062,6 +3730,10 @@
 	"dev-nginx": {
 		"char": "",
 		"code": "e776"
+	},
+	"dev-ngrok": {
+		"char": "",
+		"code": "e92e"
 	},
 	"dev-ngrx": {
 		"char": "",
@@ -3095,6 +3767,10 @@
 		"char": "",
 		"code": "e844"
 	},
+	"dev-nodered": {
+		"char": "",
+		"code": "e92f"
+	},
 	"dev-nodewebkit": {
 		"char": "",
 		"code": "e845"
@@ -3115,6 +3791,10 @@
 		"char": "",
 		"code": "e71e"
 	},
+	"dev-npss": {
+		"char": "",
+		"code": "e930"
+	},
 	"dev-nuget": {
 		"char": "",
 		"code": "e849"
@@ -3122,6 +3802,10 @@
 	"dev-numpy": {
 		"char": "",
 		"code": "e84a"
+	},
+	"dev-nuxt": {
+		"char": "",
+		"code": "e931"
 	},
 	"dev-nuxtjs": {
 		"char": "",
@@ -3203,6 +3887,10 @@
 		"char": "",
 		"code": "e85d"
 	},
+	"dev-passport": {
+		"char": "",
+		"code": "e932"
+	},
 	"dev-perl": {
 		"char": "",
 		"code": "e769"
@@ -3235,6 +3923,10 @@
 		"char": "",
 		"code": "e862"
 	},
+	"dev-pixijs": {
+		"char": "",
+		"code": "e933"
+	},
 	"dev-playwright": {
 		"char": "",
 		"code": "e863"
@@ -3242,6 +3934,10 @@
 	"dev-plotly": {
 		"char": "",
 		"code": "e864"
+	},
+	"dev-pm2": {
+		"char": "",
+		"code": "e934"
 	},
 	"dev-pnpm": {
 		"char": "",
@@ -3283,6 +3979,10 @@
 		"char": "",
 		"code": "e86d"
 	},
+	"dev-primeng": {
+		"char": "",
+		"code": "e935"
+	},
 	"dev-prisma": {
 		"char": "",
 		"code": "e86e"
@@ -3290,6 +3990,10 @@
 	"dev-processing": {
 		"char": "",
 		"code": "e86f"
+	},
+	"dev-processwire": {
+		"char": "",
+		"code": "e936"
 	},
 	"dev-prolog": {
 		"char": "",
@@ -3302,6 +4006,14 @@
 	"dev-protractor": {
 		"char": "",
 		"code": "e871"
+	},
+	"dev-proxmox": {
+		"char": "",
+		"code": "e937"
+	},
+	"dev-pug": {
+		"char": "",
+		"code": "e938"
 	},
 	"dev-pulsar": {
 		"char": "",
@@ -3355,6 +4067,10 @@
 		"char": "",
 		"code": "e87d"
 	},
+	"dev-qtest": {
+		"char": "",
+		"code": "e939"
+	},
 	"dev-quarkus": {
 		"char": "",
 		"code": "e87e"
@@ -3374,6 +4090,14 @@
 	"dev-rabbitmq": {
 		"char": "",
 		"code": "e882"
+	},
+	"dev-racket": {
+		"char": "",
+		"code": "e93a"
+	},
+	"dev-radstudio": {
+		"char": "",
+		"code": "e93b"
 	},
 	"dev-rails": {
 		"char": "",
@@ -3402,6 +4126,10 @@
 	"dev-reactbootstrap": {
 		"char": "",
 		"code": "e886"
+	},
+	"dev-reactnative": {
+		"char": "",
+		"code": "e93c"
 	},
 	"dev-reactnavigation": {
 		"char": "",
@@ -3435,6 +4163,14 @@
 		"char": "",
 		"code": "e88c"
 	},
+	"dev-reflex": {
+		"char": "",
+		"code": "e93d"
+	},
+	"dev-remix": {
+		"char": "",
+		"code": "e93e"
+	},
 	"dev-renpy": {
 		"char": "",
 		"code": "e88d"
@@ -3446,6 +4182,10 @@
 	"dev-requirejs": {
 		"char": "",
 		"code": "e770"
+	},
+	"dev-rexx": {
+		"char": "",
+		"code": "e93f"
 	},
 	"dev-rider": {
 		"char": "",
@@ -3583,6 +4323,10 @@
 		"char": "",
 		"code": "e8a8"
 	},
+	"dev-sourceengine": {
+		"char": "",
+		"code": "e940"
+	},
 	"dev-sourcetree": {
 		"char": "",
 		"code": "e8a9"
@@ -3590,6 +4334,10 @@
 	"dev-spack": {
 		"char": "",
 		"code": "e8aa"
+	},
+	"dev-spicedb": {
+		"char": "",
+		"code": "e941"
 	},
 	"dev-splunk": {
 		"char": "",
@@ -3623,6 +4371,10 @@
 		"char": "",
 		"code": "e8b1"
 	},
+	"dev-stackblitz": {
+		"char": "",
+		"code": "e942"
+	},
 	"dev-stackoverflow": {
 		"char": "",
 		"code": "e710"
@@ -3631,6 +4383,10 @@
 		"char": "",
 		"code": "e8b2"
 	},
+	"dev-stenciljs": {
+		"char": "",
+		"code": "e943"
+	},
 	"dev-storybook": {
 		"char": "",
 		"code": "e8b3"
@@ -3638,6 +4394,10 @@
 	"dev-streamlit": {
 		"char": "",
 		"code": "e8b4"
+	},
+	"dev-styledcomponents": {
+		"char": "",
+		"code": "e944"
 	},
 	"dev-stylus": {
 		"char": "",
@@ -3651,13 +4411,25 @@
 		"char": "",
 		"code": "e8b5"
 	},
+	"dev-sulu": {
+		"char": "",
+		"code": "e945"
+	},
 	"dev-supabase": {
 		"char": "",
 		"code": "e8b6"
 	},
+	"dev-surrealdb": {
+		"char": "",
+		"code": "e946"
+	},
 	"dev-svelte": {
 		"char": "",
 		"code": "e8b7"
+	},
+	"dev-svgo": {
+		"char": "",
+		"code": "e947"
 	},
 	"dev-swagger": {
 		"char": "",
@@ -3683,9 +4455,17 @@
 		"char": "",
 		"code": "e8ba"
 	},
+	"dev-talos": {
+		"char": "",
+		"code": "e948"
+	},
 	"dev-tauri": {
 		"char": "",
 		"code": "e8bb"
+	},
+	"dev-teleport": {
+		"char": "",
+		"code": "e949"
 	},
 	"dev-tensorflow": {
 		"char": "",
@@ -3698,6 +4478,10 @@
 	"dev-terraform": {
 		"char": "",
 		"code": "e8bd"
+	},
+	"dev-terramate": {
+		"char": "",
+		"code": "e94a"
 	},
 	"dev-tex": {
 		"char": "",
@@ -3715,9 +4499,17 @@
 		"char": "",
 		"code": "e8c1"
 	},
+	"dev-thymeleaf": {
+		"char": "",
+		"code": "e94b"
+	},
 	"dev-titaniumsdk": {
 		"char": "",
 		"code": "e8c2"
+	},
+	"dev-tmux": {
+		"char": "",
+		"code": "e94c"
 	},
 	"dev-tomcat": {
 		"char": "",
@@ -3750,6 +4542,14 @@
 	"dev-trpc": {
 		"char": "",
 		"code": "e8c8"
+	},
+	"dev-turbo": {
+		"char": "",
+		"code": "e94d"
+	},
+	"dev-twilio": {
+		"char": "",
+		"code": "e94e"
 	},
 	"dev-twitter": {
 		"char": "",
@@ -3799,6 +4599,10 @@
 		"char": "",
 		"code": "e8cf"
 	},
+	"dev-vaadin": {
+		"char": "",
+		"code": "e94f"
+	},
 	"dev-vagrant": {
 		"char": "",
 		"code": "e8d0"
@@ -3810,6 +4614,10 @@
 	"dev-vault": {
 		"char": "",
 		"code": "e8d2"
+	},
+	"dev-veevalidate": {
+		"char": "",
+		"code": "e950"
 	},
 	"dev-vercel": {
 		"char": "",
@@ -3851,6 +4659,10 @@
 		"char": "",
 		"code": "e8da"
 	},
+	"dev-vscodium": {
+		"char": "",
+		"code": "e951"
+	},
 	"dev-vsphere": {
 		"char": "",
 		"code": "e8db"
@@ -3867,17 +4679,33 @@
 		"char": "",
 		"code": "e8de"
 	},
+	"dev-vulkan": {
+		"char": "",
+		"code": "e952"
+	},
 	"dev-vyper": {
 		"char": "",
 		"code": "e8df"
+	},
+	"dev-waku": {
+		"char": "",
+		"code": "e953"
 	},
 	"dev-wasm": {
 		"char": "",
 		"code": "e8e0"
 	},
+	"dev-web3js": {
+		"char": "",
+		"code": "e954"
+	},
 	"dev-webflow": {
 		"char": "",
 		"code": "e8e1"
+	},
+	"dev-webgpu": {
+		"char": "",
+		"code": "e955"
 	},
 	"dev-weblate": {
 		"char": "",
@@ -3898,6 +4726,10 @@
 	"dev-windows11": {
 		"char": "",
 		"code": "e8e5"
+	},
+	"dev-wolfram": {
+		"char": "",
+		"code": "e956"
 	},
 	"dev-woocommerce": {
 		"char": "",
@@ -3950,6 +4782,14 @@
 	"dev-zig": {
 		"char": "",
 		"code": "e8ef"
+	},
+	"dev-zsh": {
+		"char": "",
+		"code": "e957"
+	},
+	"dev-zustand": {
+		"char": "",
+		"code": "e958"
 	},
 	"extra-progress_empty_left": {
 		"char": "",
@@ -10959,6 +11799,10 @@
 		"char": "",
 		"code": "ed72"
 	},
+	"fa-volume": {
+		"char": "",
+		"code": "efcf"
+	},
 	"fa-volume_control_phone": {
 		"char": "",
 		"code": "f2a0"
@@ -12035,6 +12879,10 @@
 		"char": "",
 		"code": "f320"
 	},
+	"linux-cachyos": {
+		"char": "",
+		"code": "f385"
+	},
 	"linux-centos": {
 		"char": "",
 		"code": "f304"
@@ -12102,6 +12950,10 @@
 	"linux-ferris": {
 		"char": "",
 		"code": "f323"
+	},
+	"linux-ffmpeg": {
+		"char": "",
+		"code": "f384"
 	},
 	"linux-flathub": {
 		"char": "",
@@ -12327,6 +13179,10 @@
 		"char": "",
 		"code": "f314"
 	},
+	"linux-openwrt": {
+		"char": "",
+		"code": "f382"
+	},
 	"linux-osh": {
 		"char": "",
 		"code": "f34f"
@@ -12478,6 +13334,10 @@
 	"linux-wikimedia": {
 		"char": "",
 		"code": "f36d"
+	},
+	"linux-wireguard": {
+		"char": "",
+		"code": "f383"
 	},
 	"linux-xerolinux": {
 		"char": "",
@@ -18147,6 +19007,14 @@
 		"char": "󱀝",
 		"code": "f101d"
 	},
+	"md-cards_heart": {
+		"char": "󰣐",
+		"code": "f08d0"
+	},
+	"md-cards_heart_outline": {
+		"char": "󱢠",
+		"code": "f18a0"
+	},
 	"md-cards_outline": {
 		"char": "󰘹",
 		"code": "f0639"
@@ -19119,6 +19987,10 @@
 		"char": "󱐛",
 		"code": "f141b"
 	},
+	"md-circle": {
+		"char": "󰝥",
+		"code": "f0765"
+	},
 	"md-circle_box": {
 		"char": "󱗜",
 		"code": "f15dc"
@@ -19166,6 +20038,10 @@
 	"md-circle_opacity": {
 		"char": "󱡓",
 		"code": "f1853"
+	},
+	"md-circle_outline": {
+		"char": "󰝦",
+		"code": "f0766"
 	},
 	"md-circle_slice_1": {
 		"char": "󰪞",
@@ -28719,6 +29595,10 @@
 		"char": "󰗽",
 		"code": "f05fd"
 	},
+	"md-logout_variant_2": {
+		"char": "󰗼",
+		"code": "f05fc"
+	},
 	"md-longitude": {
 		"char": "󰽚",
 		"code": "f0f5a"
@@ -29935,6 +30815,10 @@
 		"char": "󱖺",
 		"code": "f15ba"
 	},
+	"md-mountains": {
+		"char": "󰔉",
+		"code": "f0509"
+	},
 	"md-mouse": {
 		"char": "󰍽",
 		"code": "f037d"
@@ -30275,6 +31159,10 @@
 		"char": "󰎇",
 		"code": "f0387"
 	},
+	"md-music_note_2": {
+		"char": "󰎈",
+		"code": "f0388"
+	},
 	"md-music_note_bluetooth": {
 		"char": "󰗾",
 		"code": "f05fe"
@@ -30390,6 +31278,10 @@
 	"md-navigation_outline": {
 		"char": "󱘇",
 		"code": "f1607"
+	},
+	"md-navigation_variant": {
+		"char": "󱣰",
+		"code": "f18f0"
 	},
 	"md-navigation_variant_outline": {
 		"char": "󱣱",
@@ -30751,6 +31643,10 @@
 		"char": "󰎠",
 		"code": "f03a0"
 	},
+	"md-numeric_0": {
+		"char": "󰬹",
+		"code": "f0b39"
+	},
 	"md-numeric_0_box": {
 		"char": "󰎡",
 		"code": "f03a1"
@@ -30766,6 +31662,14 @@
 	"md-numeric_0_box_outline": {
 		"char": "󰎣",
 		"code": "f03a3"
+	},
+	"md-numeric_0_circle": {
+		"char": "󰲞",
+		"code": "f0c9e"
+	},
+	"md-numeric_0_circle_outline": {
+		"char": "󰲟",
+		"code": "f0c9f"
 	},
 	"md-numeric_1": {
 		"char": "󰬺",
@@ -33055,6 +33959,10 @@
 		"char": "󰻁",
 		"code": "f0ec1"
 	},
+	"md-radiobox_blank": {
+		"char": "󰐽",
+		"code": "f043d"
+	},
 	"md-radiobox_marked": {
 		"char": "󰐾",
 		"code": "f043e"
@@ -33771,6 +34679,14 @@
 		"char": "󱪺",
 		"code": "f1aba"
 	},
+	"md-roman_numeral_1": {
+		"char": "󱂈",
+		"code": "f1088"
+	},
+	"md-roman_numeral_10": {
+		"char": "󱂑",
+		"code": "f1091"
+	},
 	"md-roman_numeral_2": {
 		"char": "󱂉",
 		"code": "f1089"
@@ -33782,6 +34698,10 @@
 	"md-roman_numeral_4": {
 		"char": "󱂋",
 		"code": "f108b"
+	},
+	"md-roman_numeral_5": {
+		"char": "󱂌",
+		"code": "f108c"
 	},
 	"md-roman_numeral_6": {
 		"char": "󱂍",
@@ -35066,6 +35986,10 @@
 	"md-sitemap_outline": {
 		"char": "󱦜",
 		"code": "f199c"
+	},
+	"md-size_l": {
+		"char": "󱎦",
+		"code": "f13a6"
 	},
 	"md-size_m": {
 		"char": "󱎥",
